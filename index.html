@@ -26,7 +26,7 @@
 :root{--green-dark:#1a3a0f;--green-mid:#2d6016;--green-bright:#4a9422;--green-light:#a8d878;--green-pale:#e8f5d8;--cream:#faf8f2;--cream-dark:#f0ece0;--text:#1a1a18;--text-muted:#6b6b5e;--text-light:#9b9b8e;--white:#ffffff}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6;overflow-x:hidden;padding-bottom:72px}
 nav{position:sticky;top:0;z-index:100;background:rgba(250,248,242,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,148,34,0.12);padding:0 5%}
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
@@ -175,6 +175,17 @@ footer{background:#0d1a08;padding:40px 5%}
 .footer-links a{font-size:13px;color:rgba(250,248,242,0.4);text-decoration:none;transition:color 0.2s}
 .footer-links a:hover{color:rgba(250,248,242,0.7)}
 .footer-disc{font-size:11px;color:rgba(250,248,242,0.25);text-align:center;margin-top:20px;max-width:1100px;margin-left:auto;margin-right:auto;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(250,248,242,0.97);backdrop-filter:blur(16px);border-top:1px solid rgba(74,148,34,0.12);display:flex;align-items:center;justify-content:space-around;height:64px;padding:0 8px}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;border-radius:12px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;transition:all 0.18s;flex:1;min-width:0}
+.bn-item:hover{background:var(--green-pale)}
+.bn-item.active{background:var(--green-pale)}
+.bn-item.active .bn-icon{color:var(--green-dark)}
+.bn-item.active .bn-label{color:var(--green-dark);font-weight:600}
+.bn-icon{font-size:20px;line-height:1;color:var(--text-muted);transition:color 0.18s}
+.bn-label{font-size:10px;color:var(--text-muted);letter-spacing:0.01em;white-space:nowrap;transition:color 0.18s}
+.bn-item-pro .bn-icon{color:var(--green-mid)}
+.bn-item-pro .bn-label{color:var(--green-mid)}
+.bn-item-pro{background:var(--green-pale)}
 .result-section{max-width:1100px;margin:0 auto;padding:0 5% 60px;display:none}
 .result-section.visible{display:block}
 .result-card{background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.1);overflow:hidden;box-shadow:0 4px 24px rgba(26,58,15,0.08)}
@@ -804,6 +815,50 @@ OneSignalDeferred.push(async function(OneSignal) {
   if(!btn) return;
   const subscribed = OneSignal.User.PushSubscription.optedIn;
   if(subscribed) btn.classList.add('active');
+});
+</script>
+
+<nav class="bottom-nav">
+  <button class="bn-item active" id="bn-accueil" onclick="bnActivate('bn-accueil');window.scrollTo({top:0,behavior:'smooth'})">
+    <span class="bn-icon">🏠</span>
+    <span class="bn-label">Accueil</span>
+  </button>
+  <button class="bn-item" id="bn-analyser" onclick="bnActivate('bn-analyser');document.getElementById('main-search').focus();document.getElementById('main-search').scrollIntoView({behavior:'smooth',block:'center'})">
+    <span class="bn-icon">🔍</span>
+    <span class="bn-label">Analyser</span>
+  </button>
+  <button class="bn-item" id="bn-scores" onclick="bnActivate('bn-scores');document.getElementById('scores').scrollIntoView({behavior:'smooth'})">
+    <span class="bn-icon">📊</span>
+    <span class="bn-label">Scores</span>
+  </button>
+  <button class="bn-item bn-item-pro" id="bn-premium" onclick="bnActivate('bn-premium');document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">
+    <span class="bn-icon">👑</span>
+    <span class="bn-label">Premium</span>
+  </button>
+  <button class="bn-item" id="bn-alertes" onclick="bnActivate('bn-alertes');toggleNotif()">
+    <span class="bn-icon">🔔</span>
+    <span class="bn-label">Alertes</span>
+  </button>
+</nav>
+
+<script>
+function bnActivate(id) {
+  document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+window.addEventListener('scroll', function() {
+  const sections = [
+    {id:'bn-accueil', pos:0},
+    {id:'bn-analyser', pos:document.getElementById('main-search')?.offsetTop||0},
+    {id:'bn-scores', pos:document.getElementById('scores')?.offsetTop||0},
+    {id:'bn-premium', pos:document.getElementById('tarifs')?.offsetTop||0},
+  ];
+  const y = window.scrollY + 100;
+  let current = 'bn-accueil';
+  sections.forEach(s => { if(y >= s.pos) current = s.id; });
+  document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(current);
+  if(el) el.classList.add('active');
 });
 </script>
 

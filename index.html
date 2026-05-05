@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -44,6 +46,51 @@ nav{position:sticky;top:0;z-index:100;background:rgba(250,248,242,0.95);backdrop
 .nav-bell.active{background:var(--green-pale);border-color:var(--green-bright);color:var(--green-bright)}
 .nav-bell .bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--green-bright);border-radius:50%;border:2px solid var(--cream);display:none}
 .nav-bell.active .bell-dot{display:block}
+.nav-account{background:none;border:1px solid rgba(26,58,15,0.15);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.nav-account:hover{border-color:var(--green-bright);color:var(--green-bright)}
+.nav-avatar{width:28px;height:28px;background:var(--green-dark);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:13px;color:var(--cream);font-weight:600}
+.auth-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:700;background:rgba(0,0,0,0.5);align-items:center;justify-content:center}
+.auth-overlay.open{display:flex}
+.auth-box{background:var(--cream);border-radius:20px;padding:36px;width:90%;max-width:420px;position:relative;max-height:90vh;overflow-y:auto}
+.auth-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted)}
+.auth-logo{font-family:'Fraunces',serif;font-size:22px;color:var(--green-dark);font-weight:600;margin-bottom:20px}
+.auth-tabs{display:flex;border-bottom:2px solid var(--cream-dark);margin-bottom:24px}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:14px;font-weight:500;cursor:pointer;color:var(--text-muted);border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.auth-tab.active{color:var(--green-dark);border-bottom-color:var(--green-dark)}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px}
+.auth-field input{width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color 0.2s}
+.auth-field input:focus{border-color:var(--green-bright)}
+.auth-btn{width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background 0.2s;margin-top:8px}
+.auth-btn:hover{background:var(--green-mid)}
+.auth-error{font-size:13px;color:#c44020;margin-top:10px;display:none;padding:10px 12px;background:#fff0ee;border-radius:8px}
+.auth-forgot{font-size:12px;color:var(--green-mid);cursor:pointer;text-align:right;display:block;margin-bottom:12px}
+.account-panel{display:none;position:fixed;top:0;right:0;width:100%;max-width:360px;height:100%;z-index:700;background:var(--cream);box-shadow:-8px 0 40px rgba(0,0,0,0.15);flex-direction:column;overflow-y:auto}
+.account-panel.open{display:flex}
+.account-panel-header{padding:20px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(26,58,15,0.1)}
+.account-panel-title{font-family:'Fraunces',serif;font-size:18px;color:var(--green-dark);font-weight:500}
+.account-panel-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted)}
+.account-avatar-big{width:72px;height:72px;border-radius:50%;background:var(--green-dark);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:30px;color:var(--cream);font-weight:600;margin:28px auto 12px}
+.account-user-name{text-align:center;font-size:18px;font-weight:500;color:var(--text);margin-bottom:4px}
+.account-user-email{text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:24px}
+.account-plan-card{margin:0 20px 20px;border-radius:14px;padding:20px}
+.account-plan-card.free{background:var(--cream-dark);border:1px solid rgba(26,58,15,0.1)}
+.account-plan-card.premium{background:var(--green-dark)}
+.account-plan-tag{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.account-plan-card.free .account-plan-tag{color:var(--text-muted)}
+.account-plan-card.premium .account-plan-tag{color:var(--green-light)}
+.account-plan-name{font-family:'Fraunces',serif;font-size:24px;font-weight:500;margin-bottom:14px}
+.account-plan-card.free .account-plan-name{color:var(--green-dark)}
+.account-plan-card.premium .account-plan-name{color:var(--cream)}
+.account-plan-action{width:100%;padding:11px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.account-plan-card.free .account-plan-action{background:var(--green-dark);color:var(--cream)}
+.account-plan-card.premium .account-plan-action{background:rgba(255,255,255,0.12);color:var(--cream)}
+.account-items{padding:0 20px;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.account-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--white);border-radius:12px;cursor:pointer;border:1px solid rgba(26,58,15,0.08);transition:background 0.2s;font-size:14px;color:var(--text)}
+.account-item:hover{background:var(--green-pale)}
+.account-item.danger{color:#c44020}
+.account-item.danger:hover{background:#fff0ee}
+.account-item-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
 .showcase{padding:64px 5% 52px;background:var(--green-dark)}
 .showcase-inner{max-width:1100px;margin:0 auto}
 .showcase-top{text-align:center;margin-bottom:44px}
@@ -309,6 +356,9 @@ footer{background:#0d1a08;padding:40px 5%}
       <li><a href="#scores">Les scores</a></li>
       <li><a href="#tarifs">Tarifs</a></li>
       <li><a href="#tarifs" class="nav-cta">Essayer gratuitement</a></li>
+      <li><button class="nav-account" id="nav-account-btn" onclick="openAuth()" title="Mon compte">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button></li>
       <li><button class="nav-bell" id="notif-btn" onclick="toggleNotif()" title="Recevoir les alertes CrocScore">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="bell-dot"></span>
@@ -779,6 +829,109 @@ footer{background:#0d1a08;padding:40px 5%}
 </footer>
 
 <script>
+// ── Firebase Auth ────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDLMmJf5JXlssTlITICWmZMqeAUxtq0ZZo",
+  authDomain: "crocscore.firebaseapp.com",
+  projectId: "crocscore",
+  storageBucket: "crocscore.firebasestorage.app",
+  messagingSenderId: "638665500993",
+  appId: "1:638665500993:web:6fdc0cd375c0e6358719c0"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+auth.onAuthStateChanged(user => {
+  const btn = document.getElementById('nav-account-btn');
+  if(user) {
+    const initial = (user.displayName || user.email || '?')[0].toUpperCase();
+    btn.innerHTML = `<div class="nav-avatar">${initial}</div>`;
+  } else {
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+  }
+});
+
+function openAuth() {
+  if(auth.currentUser) { openAccount(); return; }
+  document.getElementById('auth-overlay').classList.add('open');
+}
+function closeAuth() {
+  document.getElementById('auth-overlay').classList.remove('open');
+  document.getElementById('signin-error').style.display='none';
+  document.getElementById('signup-error').style.display='none';
+}
+function switchTab(tab) {
+  document.getElementById('form-signin').style.display = tab==='signin'?'block':'none';
+  document.getElementById('form-signup').style.display = tab==='signup'?'block':'none';
+  document.getElementById('tab-signin').classList.toggle('active', tab==='signin');
+  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+}
+async function signIn() {
+  const email = document.getElementById('signin-email').value.trim();
+  const pw = document.getElementById('signin-password').value;
+  const err = document.getElementById('signin-error');
+  err.style.display='none';
+  try {
+    await auth.signInWithEmailAndPassword(email, pw);
+    closeAuth();
+  } catch(e) { err.textContent=authError(e.code); err.style.display='block'; }
+}
+async function signUp() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const pw = document.getElementById('signup-password').value;
+  const err = document.getElementById('signup-error');
+  err.style.display='none';
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pw);
+    if(name) await cred.user.updateProfile({displayName: name});
+    closeAuth();
+  } catch(e) { err.textContent=authError(e.code); err.style.display='block'; }
+}
+async function forgotPassword() {
+  const email = document.getElementById('signin-email').value.trim();
+  if(!email){ alert('Entrez votre email d\'abord.'); return; }
+  try { await auth.sendPasswordResetEmail(email); alert('Email de réinitialisation envoyé !'); }
+  catch(e){ alert('Erreur : ' + e.message); }
+}
+function authError(code) {
+  const msgs = {
+    'auth/user-not-found':'Aucun compte avec cet email.',
+    'auth/wrong-password':'Mot de passe incorrect.',
+    'auth/invalid-credential':'Email ou mot de passe incorrect.',
+    'auth/email-already-in-use':'Cet email est déjà utilisé.',
+    'auth/weak-password':'Mot de passe trop court (6 caractères min).',
+    'auth/invalid-email':'Adresse email invalide.',
+    'auth/too-many-requests':'Trop de tentatives. Réessayez plus tard.'
+  };
+  return msgs[code] || 'Une erreur est survenue. Réessayez.';
+}
+function openAccount() {
+  const user = auth.currentUser;
+  if(!user) return;
+  const initial = (user.displayName||user.email||'?')[0].toUpperCase();
+  document.getElementById('account-avatar-letter').textContent = initial;
+  document.getElementById('account-display-name').textContent = user.displayName || 'Utilisateur';
+  document.getElementById('account-email-display').textContent = user.email;
+  document.getElementById('account-panel').classList.add('open');
+}
+function closeAccount() {
+  document.getElementById('account-panel').classList.remove('open');
+}
+async function signOut() {
+  await auth.signOut();
+  closeAccount();
+}
+async function deleteAccount() {
+  if(!confirm('Supprimer définitivement votre compte ? Cette action est irréversible.')) return;
+  try { await auth.currentUser.delete(); closeAccount(); }
+  catch(e){ alert('Pour supprimer votre compte, déconnectez-vous et reconnectez-vous d\'abord, puis réessayez.'); }
+}
+function cancelSubscription() {
+  if(!confirm('Résilier votre abonnement Premium ? Vous repaserez au plan gratuit à la fin de la période.')) return;
+  alert('Résiliation prise en compte. Votre Premium reste actif jusqu\'à la fin de la période en cours.');
+}
+
 // ── Scoring ──────────────────────────────────────────────
 function scoreProduct(p) {
   let score = 50;
@@ -969,6 +1122,62 @@ OneSignalDeferred.push(async function(OneSignal) {
   if(subscribed) btn.classList.add('active');
 });
 </script>
+
+<!-- MODAL CONNEXION -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div class="auth-logo">🐾 CrocScore</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Se connecter</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Créer un compte</button>
+    </div>
+    <div id="form-signin">
+      <div class="auth-field"><label>Email</label><input type="email" id="signin-email" placeholder="votre@email.com"/></div>
+      <div class="auth-field"><label>Mot de passe</label><input type="password" id="signin-password" placeholder="••••••••"/></div>
+      <span class="auth-forgot" onclick="forgotPassword()">Mot de passe oublié ?</span>
+      <button class="auth-btn" onclick="signIn()">Se connecter</button>
+      <div class="auth-error" id="signin-error"></div>
+    </div>
+    <div id="form-signup" style="display:none">
+      <div class="auth-field"><label>Prénom</label><input type="text" id="signup-name" placeholder="Votre prénom"/></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="signup-email" placeholder="votre@email.com"/></div>
+      <div class="auth-field"><label>Mot de passe</label><input type="password" id="signup-password" placeholder="6 caractères minimum"/></div>
+      <button class="auth-btn" onclick="signUp()">Créer mon compte</button>
+      <div class="auth-error" id="signup-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANNEAU COMPTE -->
+<div class="account-panel" id="account-panel">
+  <div class="account-panel-header">
+    <span class="account-panel-title">Mon compte</span>
+    <button class="account-panel-close" onclick="closeAccount()">✕</button>
+  </div>
+  <div class="account-avatar-big" id="account-avatar-letter">?</div>
+  <div class="account-user-name" id="account-display-name">—</div>
+  <div class="account-user-email" id="account-email-display">—</div>
+  <div class="account-plan-card free" id="account-plan-card">
+    <div class="account-plan-tag">Mon abonnement</div>
+    <div class="account-plan-name" id="account-plan-name">Gratuit</div>
+    <button class="account-plan-action" id="account-plan-btn" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'});closeAccount()">Passer à Premium →</button>
+  </div>
+  <div class="account-items">
+    <div class="account-item" onclick="closeAccount();document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">
+      <span class="account-item-icon">👑</span> Voir les offres Premium
+    </div>
+    <div class="account-item" id="cancel-sub-item" style="display:none" onclick="cancelSubscription()">
+      <span class="account-item-icon">⏸️</span> Résilier l'abonnement
+    </div>
+    <div class="account-item" onclick="signOut()">
+      <span class="account-item-icon">🚪</span> Se déconnecter
+    </div>
+    <div class="account-item danger" onclick="deleteAccount()">
+      <span class="account-item-icon">🗑️</span> Supprimer mon compte
+    </div>
+  </div>
+</div>
 
 <input type="file" id="barcode-file-input" accept="image/*" capture="environment" style="display:none" onchange="handleBarcodeFile(this)">
 

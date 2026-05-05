@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="CrocScore">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -859,23 +859,56 @@ document.getElementById('main-search').addEventListener('keydown',function(e){if
 
 // ── Scan code-barres ──────────────────────────────────────
 let html5QrCode = null;
+
 function openScan() {
-  document.getElementById('scan-modal').classList.add('open');
-  html5QrCode = new Html5Qrcode('scan-reader');
-  html5QrCode.start(
-    {facingMode:'environment'},
-    {fps:10, qrbox:{width:250,height:150}},
-    async (barcode) => {
-      await html5QrCode.stop();
-      closeScan();
-      await fetchByBarcode(barcode);
-    },
-    () => {}
-  ).catch(() => { closeScan(); alert('Impossible d\'accéder à la caméra.'); });
+  if(typeof Html5Qrcode !== 'undefined') {
+    openCameraScan();
+  } else {
+    // Fallback : photo depuis la galerie/caméra
+    document.getElementById('barcode-file-input').click();
+  }
 }
+
+function openCameraScan() {
+  document.getElementById('scan-modal').classList.add('open');
+  try {
+    html5QrCode = new Html5Qrcode('scan-reader');
+    html5QrCode.start(
+      {facingMode:'environment'},
+      {fps:10, qrbox:{width:250,height:150}},
+      async (barcode) => {
+        await html5QrCode.stop();
+        closeScan();
+        await fetchByBarcode(barcode);
+      },
+      () => {}
+    ).catch(() => { closeScan(); document.getElementById('barcode-file-input').click(); });
+  } catch(e) {
+    closeScan();
+    document.getElementById('barcode-file-input').click();
+  }
+}
+
 function closeScan() {
   document.getElementById('scan-modal').classList.remove('open');
   if(html5QrCode){ html5QrCode.stop().catch(()=>{}); html5QrCode=null; }
+}
+
+async function handleBarcodeFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  input.value = '';
+  if('BarcodeDetector' in window) {
+    try {
+      const img = await createImageBitmap(file);
+      const detector = new BarcodeDetector({formats:['ean_13','ean_8','code_128','upc_a','upc_e']});
+      const barcodes = await detector.detect(img);
+      if(barcodes.length > 0) { fetchByBarcode(barcodes[0].rawValue); return; }
+    } catch(e) {}
+  }
+  // Fallback manuel
+  const code = prompt('Code-barres non détecté automatiquement.\nEntrez-le manuellement :');
+  if(code && code.trim()) fetchByBarcode(code.trim());
 }
 async function fetchByBarcode(barcode) {
   document.getElementById('scan-loading').classList.add('open');
@@ -936,6 +969,8 @@ OneSignalDeferred.push(async function(OneSignal) {
   if(subscribed) btn.classList.add('active');
 });
 </script>
+
+<input type="file" id="barcode-file-input" accept="image/*" capture="environment" style="display:none" onchange="handleBarcodeFile(this)">
 
 <div class="scan-modal" id="scan-modal">
   <div class="scan-header">

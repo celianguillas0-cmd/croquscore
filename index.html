@@ -845,11 +845,14 @@ const auth = firebase.auth();
 
 auth.onAuthStateChanged(user => {
   const btn = document.getElementById('nav-account-btn');
+  const bnIcon = document.getElementById('bn-compte-icon');
   if(user) {
     const initial = (user.displayName || user.email || '?')[0].toUpperCase();
-    btn.innerHTML = `<div class="nav-avatar">${initial}</div>`;
+    if(btn) btn.innerHTML = `<div class="nav-avatar">${initial}</div>`;
+    if(bnIcon) bnIcon.textContent = initial;
   } else {
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    if(btn) btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    if(bnIcon) bnIcon.textContent = '👤';
   }
 });
 
@@ -1219,6 +1222,10 @@ OneSignalDeferred.push(async function(OneSignal) {
   <button class="bn-item" id="bn-alertes" onclick="bnActivate('bn-alertes');toggleNotif()">
     <span class="bn-icon">🔔</span>
     <span class="bn-label">Alertes</span>
+  </button>
+  <button class="bn-item" id="bn-compte" onclick="bnActivate('bn-compte');openAuth()">
+    <span class="bn-icon" id="bn-compte-icon">👤</span>
+    <span class="bn-label">Compte</span>
   </button>
 </nav>
 

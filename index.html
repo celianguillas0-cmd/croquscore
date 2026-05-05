@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrocScore — Analyseur de croquettes pour chiens et chats</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a3a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CrocScore">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--green-dark:#1a3a0f;--green-mid:#2d6016;--green-bright:#4a9422;--green-light:#a8d878;--green-pale:#e8f5d8;--cream:#faf8f2;--cream-dark:#f0ece0;--text:#1a1a18;--text-muted:#6b6b5e;--text-light:#9b9b8e;--white:#ffffff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6;overflow-x:hidden}
+nav{position:sticky;top:0;z-index:100;background:rgba(250,248,242,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,148,34,0.12);padding:0 5%}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{width:36px;height:36px;background:var(--green-pale);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--green-dark);letter-spacing:-0.3px}
+.nav-logo-text span{color:var(--green-bright)}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{text-decoration:none;font-size:14px;color:var(--text-muted);transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--green-dark)!important;color:var(--cream)!important;padding:8px 20px;border-radius:8px;font-weight:500!important}
+.nav-cta:hover{background:var(--green-mid)!important}
+.hero{max-width:1100px;margin:0 auto;padding:80px 5% 60px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green-pale);color:var(--green-mid);font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;margin-bottom:20px;border:1px solid rgba(74,148,34,0.2)}
+.hero-badge-dot{width:6px;height:6px;background:var(--green-bright);border-radius:50%}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(36px,5vw,54px);font-weight:500;color:var(--green-dark);line-height:1.1;letter-spacing:-1px;margin-bottom:20px}
+.hero h1 em{font-style:italic;color:var(--green-bright)}
+.hero-sub{font-size:17px;color:var(--text-muted);line-height:1.65;margin-bottom:36px;max-width:440px}
+.hero-search{background:var(--white);border:1.5px solid rgba(26,58,15,0.15);border-radius:14px;padding:6px 6px 6px 16px;display:flex;align-items:center;gap:8px;margin-bottom:16px;box-shadow:0 4px 20px rgba(26,58,15,0.08)}
+.hero-search input{flex:1;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);background:transparent}
+.hero-search input::placeholder{color:var(--text-light)}
+.hero-search button{background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 24px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background 0.2s}
+.hero-search button:hover{background:var(--green-mid)}
+.hero-scan{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);cursor:pointer;padding:8px 0}
+.hero-stats{display:flex;gap:28px;margin-top:36px;padding-top:28px;border-top:1px solid rgba(26,58,15,0.1)}
+.hero-stat-num{font-family:'Fraunces',serif;font-size:26px;font-weight:500;color:var(--green-dark)}
+.hero-stat-label{font-size:12px;color:var(--text-muted);margin-top:1px}
+.hero-visual{position:relative;padding:20px}
+.hero-card-main{background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.1);padding:24px;box-shadow:0 8px 40px rgba(26,58,15,0.1);animation:floatCard 4s ease-in-out infinite}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(26,58,15,0.08)}
+.card-icon{width:52px;height:52px;background:var(--green-pale);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.card-name{font-weight:500;font-size:15px;color:var(--text)}
+.card-brand{font-size:13px;color:var(--text-muted);margin-top:2px}
+.score-pill{margin-left:auto;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:22px;font-weight:600}
+.sp-b{background:#d4f0a0;color:#2d6016}
+.criteria-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.crit-name{font-size:12px;color:var(--text-muted);width:120px;flex-shrink:0}
+.crit-track{flex:1;height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden}
+.crit-fill{height:100%;border-radius:3px}
+.f-great{background:var(--green-bright)}
+.f-ok{background:#e8a020}
+.f-poor{background:#c44020}
+.crit-pct{font-size:12px;color:var(--text-light);width:30px;text-align:right}
+.card-advice{background:var(--green-pale);border-radius:10px;padding:12px;font-size:12px;color:var(--green-mid);line-height:1.5;margin-top:16px}
+.how{background:var(--green-dark);padding:80px 5%}
+.how-inner{max-width:1100px;margin:0 auto}
+.section-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--green-light);margin-bottom:12px}
+.how h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:500;color:var(--cream);letter-spacing:-0.5px;margin-bottom:52px;max-width:500px;line-height:1.2}
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.how-step{padding:28px;background:rgba(255,255,255,0.05);border-radius:16px;border:1px solid rgba(168,216,120,0.15)}
+.step-num{font-family:'Fraunces',serif;font-size:48px;font-weight:400;color:rgba(168,216,120,0.3);line-height:1;margin-bottom:16px}
+.step-title{font-size:17px;font-weight:500;color:var(--cream);margin-bottom:8px}
+.step-desc{font-size:14px;color:rgba(250,248,242,0.6);line-height:1.65}
+.scores-section{padding:80px 5%;max-width:1100px;margin:0 auto}
+.scores-section h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:500;color:var(--green-dark);letter-spacing:-0.5px;margin-bottom:40px;line-height:1.2}
+.scores-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.score-card{border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:transform 0.2s}
+.score-card:hover{transform:translateY(-4px)}
+.sc-letter{font-family:'Fraunces',serif;font-size:48px;font-weight:600;line-height:1;margin-bottom:8px}
+.sc-label{font-size:12px;font-weight:500;margin-bottom:6px}
+.sc-desc{font-size:11px;line-height:1.4;opacity:0.75}
+.ca{background:#e8f5d8;color:#1a3a0f}
+.cb{background:#d4f0a0;color:#2d6016}
+.cc{background:#fdedc0;color:#8b5e0a}
+.cd{background:#fdd8b0;color:#8b3a0a}
+.ce{background:#f8c8c8;color:#b46400}
+.pricing{background:var(--cream-dark);padding:80px 5%}
+.pricing-inner{max-width:900px;margin:0 auto;text-align:center}
+.pricing h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:500;color:var(--green-dark);letter-spacing:-0.5px;margin-bottom:12px}
+.pricing-sub{font-size:16px;color:var(--text-muted);margin-bottom:48px}
+.pricing-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pricing-card{background:var(--white);border-radius:20px;padding:32px;text-align:left;border:1.5px solid transparent;transition:border-color 0.2s}
+.pricing-card:hover{border-color:rgba(74,148,34,0.3)}
+.pricing-card-pro{background:var(--green-dark);border-color:var(--green-dark)!important;position:relative;overflow:hidden}
+.pricing-popular{position:absolute;top:20px;right:20px;background:var(--green-bright);color:var(--white);font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px}
+.plan-name{font-size:13px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px}
+.pricing-card-pro .plan-name{color:var(--green-light)}
+.plan-price{font-family:'Fraunces',serif;font-size:48px;font-weight:500;color:var(--green-dark);line-height:1;margin-bottom:4px}
+.pricing-card-pro .plan-price{color:var(--cream)}
+.plan-period{font-size:14px;color:var(--text-muted);margin-bottom:28px}
+.pricing-card-pro .plan-period{color:rgba(250,248,242,0.6)}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.plan-features li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text)}
+.pricing-card-pro .plan-features li{color:var(--cream)}
+.feat-dot{width:18px;height:18px;background:var(--green-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:var(--green-dark)}
+.pricing-card-pro .feat-dot{background:rgba(255,255,255,0.15);color:var(--cream)}
+.plan-btn{width:100%;padding:13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;border:none}
+.btn-free{background:var(--cream-dark);color:var(--text)}
+.btn-free:hover{background:var(--green-pale);color:var(--green-dark)}
+.btn-pro{background:var(--green-bright);color:var(--white)}
+.btn-pro:hover{background:var(--green-mid)}
+.why-section{padding:80px 5%;max-width:1100px;margin:0 auto}
+.why-section h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:500;color:var(--green-dark);letter-spacing:-0.5px;margin-bottom:40px;text-align:center;line-height:1.2}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.why-card{background:var(--white);border-radius:16px;padding:28px;border:1px solid rgba(26,58,15,0.08)}
+.why-icon{width:48px;height:48px;background:var(--green-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.why-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:8px}
+.why-desc{font-size:14px;color:var(--text-muted);line-height:1.65}
+.cta-section{background:var(--green-dark);padding:80px 5%;text-align:center}
+.cta-inner{max-width:600px;margin:0 auto}
+.cta-section h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,46px);font-weight:500;color:var(--cream);letter-spacing:-0.5px;margin-bottom:16px;line-height:1.2}
+.cta-section h2 em{font-style:italic;color:var(--green-light)}
+.cta-sub{font-size:16px;color:rgba(250,248,242,0.65);margin-bottom:36px;line-height:1.6}
+.cta-btn{display:inline-block;background:var(--green-bright);color:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;padding:16px 36px;border-radius:12px;text-decoration:none;border:none;cursor:pointer;transition:background 0.2s}
+.cta-btn:hover{background:var(--green-mid)}
+.cta-disc{margin-top:20px;font-size:12px;color:rgba(250,248,242,0.4)}
+footer{background:#0d1a08;padding:40px 5%}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-family:'Fraunces',serif;font-size:18px;color:var(--green-light);font-weight:500}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-size:13px;color:rgba(250,248,242,0.4);text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:rgba(250,248,242,0.7)}
+.footer-disc{font-size:11px;color:rgba(250,248,242,0.25);text-align:center;margin-top:20px;max-width:1100px;margin-left:auto;margin-right:auto;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)}
+.result-section{max-width:1100px;margin:0 auto;padding:0 5% 60px;display:none}
+.result-section.visible{display:block}
+.result-card{background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.1);overflow:hidden;box-shadow:0 4px 24px rgba(26,58,15,0.08)}
+.result-header{padding:24px;border-bottom:1px solid rgba(26,58,15,0.08);display:flex;align-items:center;gap:16px}
+.result-score-big{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:30px;font-weight:600;flex-shrink:0}
+.rsb-b{background:#d4f0a0;color:#2d6016}
+.result-body{padding:24px}
+.tabs{display:flex;gap:8px;margin-bottom:20px}
+.tab{padding:7px 16px;font-size:13px;border:1px solid rgba(26,58,15,0.15);border-radius:20px;cursor:pointer;background:transparent;color:var(--text-muted);font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.tab.active{background:var(--green-dark);color:var(--cream);border-color:var(--green-dark)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.crit-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.crit-lbl{font-size:14px;color:var(--text-muted);width:150px;flex-shrink:0}
+.crit-track2{flex:1;height:6px;background:var(--cream-dark);border-radius:3px;overflow:hidden}
+.crit-fill2{height:100%;border-radius:3px}
+.tag-dog2{background:var(--green-pale);color:var(--green-dark);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;display:inline-block}
+.tag-avg{background:#fdedc0;color:#8b5e0a;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;display:inline-block}
+.advice2{background:var(--green-pale);border-radius:12px;padding:16px;font-size:14px;color:var(--green-mid);line-height:1.6;margin-top:4px}
+.advice2-title{font-size:14px;font-weight:500;color:var(--green-dark);margin-bottom:8px}
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;gap:40px}
+  .hero-visual{display:none}
+  .how-steps{grid-template-columns:1fr}
+  .scores-grid{grid-template-columns:repeat(3,1fr)}
+  .pricing-cards{grid-template-columns:1fr}
+  .why-grid{grid-template-columns:1fr}
+  .footer-inner{flex-direction:column;gap:20px;text-align:center}
+  .nav-links{display:none}
+}
+
+.mini-steps{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.mini-step{display:flex;flex-direction:column;align-items:center;gap:6px}
+.mini-step-icon{width:44px;height:44px;background:var(--green-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--green-dark)}
+.mini-step-text{font-size:12px;color:var(--text-muted);font-weight:500}
+.mini-step-arrow{font-size:18px;color:var(--green-light);margin-bottom:16px}
+
+.why-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.why-mini-card{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid rgba(26,58,15,0.08);border-radius:12px;padding:12px 14px}
+.why-mini-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.why-mini-content{flex:1}
+.why-mini-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
+.why-mini-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+.problem-solution{display:flex;flex-direction:column;gap:0;margin-bottom:28px;border-radius:16px;overflow:hidden;border:1px solid rgba(26,58,15,0.12)}
+.prob-block{background:#fff8ee;padding:16px 18px;border-bottom:1px solid rgba(180,100,0,0.1)}
+.prob-label{font-size:11px;font-weight:600;color:#b46400;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.prob-stat{font-family:'Fraunces',serif;font-size:36px;font-weight:600;color:#b46400;line-height:1;margin-bottom:6px}
+.prob-desc{font-size:12px;color:#6b6b5e;line-height:1.5}
+.arrow-down{text-align:center;background:#f0ece0;padding:6px;font-size:18px;color:#9b9b8e}
+.sol-block{background:#f0fce8;padding:16px 18px}
+.sol-label{font-size:11px;font-weight:600;color:#2d6016;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.sol-stat{font-family:'Fraunces',serif;font-size:36px;font-weight:600;color:#2d6016;line-height:1;margin-bottom:6px}
+.sol-desc{font-size:12px;color:#6b6b5e;line-height:1.5}
+
+.suivi-section{padding:80px 5%;background:var(--cream)}
+.suivi-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.suivi-features{display:flex;flex-direction:column;gap:16px}
+.suivi-feature{display:flex;align-items:flex-start;gap:12px}
+.suivi-feature-icon{width:28px;height:28px;background:var(--green-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.suivi-feature-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
+.suivi-feature-desc{font-size:13px;color:var(--text-muted);line-height:1.5}
+.suivi-card{background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.1);overflow:hidden;box-shadow:0 8px 40px rgba(26,58,15,0.1)}
+.suivi-card-header{padding:20px;border-bottom:1px solid rgba(26,58,15,0.08);display:flex;align-items:center;gap:12px}
+.suivi-animal-icon{font-size:32px}
+.suivi-animal-name{font-size:16px;font-weight:500;color:var(--text)}
+.suivi-animal-info{font-size:12px;color:var(--text-muted);margin-top:2px}
+.suivi-month-badge{margin-left:auto;background:var(--green-pale);color:var(--green-mid);font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px}
+.suivi-card-body{padding:20px;display:flex;flex-direction:column;gap:16px}
+.suivi-score-row{display:flex;align-items:center;justify-content:space-between}
+.suivi-score-label{font-size:13px;color:var(--text-muted)}
+.suivi-score-val{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:16px;font-weight:600}
+.suivi-progress-section{}
+.suivi-progress-label{font-size:12px;color:var(--text-muted);margin-bottom:10px;font-weight:500}
+.suivi-progress-track{display:flex;gap:12px;height:80px;align-items:flex-end}
+.suivi-progress-item{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.suivi-bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;background:var(--cream-dark);border-radius:6px;overflow:hidden;min-height:60px}
+.suivi-bar{width:100%;border-radius:6px;transition:height 1s ease}
+.suivi-progress-item span{font-size:11px;color:var(--text-muted)}
+.suivi-bar-score{font-size:12px;font-weight:600}
+.suivi-conseil{background:var(--green-pale);border-radius:10px;padding:12px;font-size:12px;color:var(--green-mid);line-height:1.6}
+.suivi-conseil-title{font-size:12px;font-weight:600;color:var(--green-dark);margin-bottom:4px}
+.suivi-alert{display:flex;align-items:center;gap:8px;font-size:12px;color:#b46400;background:#fff8ee;border-radius:10px;padding:10px 12px}
+@media(max-width:768px){.suivi-inner{grid-template-columns:1fr}.suivi-right{display:none}}
+
+</style>
+</head>
+<body>
+
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <div class="nav-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <ellipse cx="5" cy="8" rx="2" ry="2.5" fill="#4a9422"/>
+          <ellipse cx="9.5" cy="5.5" rx="2" ry="2.5" fill="#4a9422"/>
+          <ellipse cx="14.5" cy="5.5" rx="2" ry="2.5" fill="#4a9422"/>
+          <ellipse cx="19" cy="8" rx="2" ry="2.5" fill="#4a9422"/>
+          <path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z" fill="#4a9422"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Croc<span>Score</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#comment">Comment ça marche</a></li>
+      <li><a href="#scores">Les scores</a></li>
+      <li><a href="#tarifs">Tarifs</a></li>
+      <li><a href="#tarifs" class="nav-cta">Essayer gratuitement</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-badge"><div class="hero-badge-dot"></div> Comme Yuka — mais pour vos animaux</div>
+    <h1>Vos croquettes méritent <em>un verdict</em>.</h1>
+    <p class="hero-sub">Tapez une marque. Obtenez un score. Protégez votre animal.</p>
+    <div class="problem-solution">
+      <div class="prob-block">
+        <div class="prob-label">⚠️ Le problème</div>
+        <div class="prob-stat">742€</div>
+        <div class="prob-desc">C'est le budget vétérinaire annuel moyen d'un grand chien. 75% de ces frais sont liés à des maladies — souvent causées par une mauvaise alimentation.</div>
+      </div>
+      <div class="arrow-down">↓</div>
+      <div class="sol-block">
+        <div class="sol-label">✅ La solution</div>
+        <div class="sol-stat">1,99€<span style="font-size:14px;font-weight:400"> le 1er mois</span></div>
+        <div class="sol-desc">CrocScore analyse vos croquettes en 5 secondes et vous dit exactement si elles sont bonnes pour votre animal — avant que les problèmes arrivent.</div>
+      </div>
+    </div>
+    <div class="hero-search">
+      <input type="text" id="main-search" placeholder="Nom du produit ou marque..." />
+      <button onclick="doSearch()">Analyser</button>
+    </div>
+    <div class="hero-scan">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="2" width="2" height="12" fill="#9b9b8e"/>
+        <rect x="4" y="2" width="1" height="12" fill="#9b9b8e"/>
+        <rect x="6" y="2" width="2" height="12" fill="#9b9b8e"/>
+        <rect x="9" y="2" width="1" height="12" fill="#9b9b8e"/>
+        <rect x="11" y="2" width="2" height="12" fill="#9b9b8e"/>
+        <rect x="14" y="2" width="1" height="12" fill="#9b9b8e"/>
+      </svg>
+      Scanner le code-barres
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">30€</div><div class="hero-stat-label">Dépensés en mauvaises croquettes par mois en moyenne</div></div>
+      <div><div class="hero-stat-num">73%</div><div class="hero-stat-label">Des croquettes contiennent trop de céréales</div></div>
+      <div><div class="hero-stat-num">1,99€</div><div class="hero-stat-label">Le 1er mois pour protéger votre animal</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card-main">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <ellipse cx="5" cy="8" rx="2" ry="2.5" fill="#4a9422"/>
+            <ellipse cx="9.5" cy="5.5" rx="2" ry="2.5" fill="#4a9422"/>
+            <ellipse cx="14.5" cy="5.5" rx="2" ry="2.5" fill="#4a9422"/>
+            <ellipse cx="19" cy="8" rx="2" ry="2.5" fill="#4a9422"/>
+            <path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z" fill="#4a9422"/>
+          </svg>
+        </div>
+        <div>
+          <div class="card-name">Royal Canin Adult Maxi</div>
+          <div class="card-brand">Royal Canin · Chien</div>
+        </div>
+        <div class="score-pill sp-b">B</div>
+      </div>
+      <div class="criteria-item"><span class="crit-name">Protéines</span><div class="crit-track"><div class="crit-fill f-great" style="width:72%"></div></div><span class="crit-pct">72%</span></div>
+      <div class="criteria-item"><span class="crit-name">Matières grasses</span><div class="crit-track"><div class="crit-fill f-ok" style="width:55%"></div></div><span class="crit-pct">55%</span></div>
+      <div class="criteria-item"><span class="crit-name">Céréales</span><div class="crit-track"><div class="crit-fill f-poor" style="width:80%"></div></div><span class="crit-pct">80%</span></div>
+      <div class="criteria-item"><span class="crit-name">Additifs</span><div class="crit-track"><div class="crit-fill f-ok" style="width:45%"></div></div><span class="crit-pct">45%</span></div>
+      <div class="card-advice">Proportion de céréales élevée. Des alternatives plus riches en viande identifiée existent.</div>
+    </div>
+  </div>
+</section>
+
+<div class="result-section" id="result-section">
+  <div class="result-card">
+    <div class="result-header">
+      <div class="result-score-big rsb-b">B</div>
+      <div>
+        <div style="font-size:18px;font-weight:500;color:var(--text)" id="result-name">Royal Canin Adult Maxi</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:3px">Royal Canin · Chien · 15kg</div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <span class="tag-dog2">Chien</span>
+          <span class="tag-avg">Qualité moyenne</span>
+        </div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('analyse',this)">Analyse</button>
+        <button class="tab" onclick="showTab('conseils',this)">Conseils</button>
+        <button class="tab" onclick="showTab('suivi',this)">Suivi mensuel</button>
+      </div>
+      <div class="tab-content active" id="tab-analyse">
+        
+        <div class="crit-row"><span class="crit-lbl">Matières grasses</span><div class="crit-track2"><div class="crit-fill2 f-ok" style="width:55%"></div></div><span style="font-size:13px;color:var(--text-muted);width:32px;text-align:right">55%</span></div>
+        <div class="crit-row"><span class="crit-lbl">Céréales</span><div class="crit-track2"><div class="crit-fill2 f-poor" style="width:80%"></div></div><span style="font-size:13px;color:var(--text-muted);width:32px;text-align:right">80%</span></div>
+        <div class="crit-row"><span class="crit-lbl">Additifs</span><div class="crit-track2"><div class="crit-fill2 f-ok" style="width:45%"></div></div><span style="font-size:13px;color:var(--text-muted);width:32px;text-align:right">45%</span></div>
+        <div class="crit-row"><span class="crit-lbl">Viande identifiée</span><div class="crit-track2"><div class="crit-fill2 f-great" style="width:68%"></div></div><span style="font-size:13px;color:var(--text-muted);width:32px;text-align:right">68%</span></div>
+      </div>
+      <div class="tab-content" id="tab-conseils">
+        <div class="advice2"><div class="advice2-title">Conseil CrocScore</div>Ce produit contient une proportion élevée de céréales qui peuvent être difficiles à digérer. Les protéines sont correctes mais leur source est partiellement floue. Des alternatives plus riches en viande identifiée existent pour un prix similaire.</div>
+        <div style="margin-top:16px;padding:16px;border:1px solid rgba(26,58,15,0.1);border-radius:12px">
+          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">Meilleures alternatives</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(26,58,15,0.06)"><span style="font-size:14px">Orijen Original Dog</span><span style="background:#e8f5d8;color:#1a3a0f;font-family:'Fraunces',serif;font-size:16px;font-weight:600;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">A</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><span style="font-size:14px">Acana Heritage</span><span style="background:#e8f5d8;color:#1a3a0f;font-family:'Fraunces',serif;font-size:16px;font-weight:600;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">A</span></div>
+        </div>
+      </div>
+      <div class="tab-content" id="tab-suivi">
+        <div style="text-align:center;padding:24px;background:var(--green-pale);border-radius:12px">
+          <div style="font-size:16px;font-weight:500;color:var(--green-dark);margin-bottom:8px">Suivi mensuel Premium</div>
+          <div style="font-size:14px;color:var(--green-mid);margin-bottom:20px;line-height:1.6">Recevez chaque mois un bilan de santé nutritionnel personnalisé pour votre animal, des alertes rappels produits et des recommandations adaptées à son âge et son poids.</div>
+          <button class="btn-pro" style="padding:12px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none">Essayer 7 jours gratuit</button>
+          <div style="font-size:12px;color:var(--green-mid);margin-top:10px;opacity:0.7">1,99€ le 1er mois, puis 2,99€/mois — sans engagement</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="how" id="comment">
+  <div class="how-inner">
+    <div class="section-label">Comment ça marche</div>
+    <h2>Analysez les croquettes de votre animal en 3 étapes</h2>
+    <div class="how-steps">
+      <div class="how-step"><div class="step-num">01</div><div class="step-title">Recherchez ou scannez</div><div class="step-desc">Tapez le nom du produit ou scannez le code-barres depuis votre téléphone. CrocScore analyse des milliers de références disponibles en France.</div></div>
+      <div class="how-step"><div class="step-num">02</div><div class="step-title">Obtenez le score</div><div class="step-desc">Notre algorithme analyse les ingrédients, les protéines, les céréales et les additifs pour donner un score de A à E en quelques secondes.</div></div>
+      <div class="how-step"><div class="step-num">03</div><div class="step-title">Suivez votre animal</div><div class="step-desc">Avec le suivi mensuel Premium, recevez un bilan de santé nutritionnel personnalisé pour votre chien ou votre chat chaque mois.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="scores-section" id="scores">
+  <div class="section-label" style="color:var(--green-mid)">Le système de notation</div>
+  <h2>Un score simple de A à E, comme Yuka — mais pour vos animaux</h2>
+  <div class="scores-grid">
+    <div class="score-card ca"><div class="sc-letter">A</div><div class="sc-label">Excellent</div><div class="sc-desc">Ingrédients premium, viande identifiée, sans céréales inutiles</div></div>
+    <div class="score-card cb"><div class="sc-letter">B</div><div class="sc-label">Bon</div><div class="sc-desc">Bonne composition, quelques améliorations possibles</div></div>
+    <div class="score-card cc"><div class="sc-letter">C</div><div class="sc-label">Moyen</div><div class="sc-desc">Correct mais trop de céréales ou additifs</div></div>
+    <div class="score-card cd"><div class="sc-letter">D</div><div class="sc-label">Médiocre</div><div class="sc-desc">Composition déséquilibrée, peu de viande identifiée</div></div>
+    <div class="score-card ce"><div class="sc-letter">E</div><div class="sc-label">Mauvais</div><div class="sc-desc">À éviter — ingrédients de mauvaise qualité</div></div>
+  </div>
+</section>
+
+<section class="why-section">
+  <h2>Ce que vous gagnez avec CrocScore</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="#4a9422"/>
+        </svg>
+      </div>
+      <div class="why-title">742€ — c'est le budget vétérinaire moyen d'un grand chien par an</div>
+      <div class="why-desc">Selon les études, 75% des frais vétérinaires sont liés à des maladies — souvent évitables par une meilleure alimentation. Une gastro-entérite coûte 80€, un problème digestif chronique plusieurs centaines. CrocScore coûte 1,99€ le 1er mois, puis 2,99€/mois.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#4a9422"/>
+        </svg>
+      </div>
+      <div class="why-title">La tranquillité d'esprit que vous méritez</div>
+      <div class="why-desc">Vous aimez votre animal. Savoir exactement ce qu'il mange chaque jour, c'est l'assurance de faire le bon choix — sans doute, sans culpabilité.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z" fill="#4a9422"/>
+        </svg>
+      </div>
+      <div class="why-title">Un suivi personnalisé mois après mois</div>
+      <div class="why-desc">CrocScore s'adapte à votre animal — son âge, son poids, sa race. Chaque mois un nouveau bilan personnalisé pour suivre son évolution et ajuster son alimentation.</div>
+    </div>
+  </div>
+</section>
+
+<section class="suivi-section">
+  <div class="suivi-inner">
+    <div class="suivi-left">
+      <div class="section-label" style="color:var(--green-mid)">Suivi Premium</div>
+      <h2 style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:500;color:var(--green-dark);letter-spacing:-0.5px;line-height:1.2;margin-bottom:16px">Votre animal a son propre <em style="font-style:italic;color:var(--green-bright)">carnet de santé</em></h2>
+      <p style="font-size:16px;color:var(--text-muted);line-height:1.65;margin-bottom:32px">Chaque mois CrocScore génère un bilan nutritionnel personnalisé basé sur l'âge, le poids et la race de votre animal. Vous savez exactement comment il évolue.</p>
+      <div class="suivi-features">
+        <div class="suivi-feature">
+          <div class="suivi-feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#2d6016"/></svg>
+          </div>
+          <div>
+            <div class="suivi-feature-title">Bilan mensuel personnalisé</div>
+            <div class="suivi-feature-desc">Adapté à l'âge, au poids et à la race de votre animal</div>
+          </div>
+        </div>
+        <div class="suivi-feature">
+          <div class="suivi-feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#2d6016"/></svg>
+          </div>
+          <div>
+            <div class="suivi-feature-title">Alertes rappels produits</div>
+            <div class="suivi-feature-desc">Notifié immédiatement si un lot de vos croquettes est rappelé</div>
+          </div>
+        </div>
+        <div class="suivi-feature">
+          <div class="suivi-feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#2d6016"/></svg>
+          </div>
+          <div>
+            <div class="suivi-feature-title">Historique sur 12 mois</div>
+            <div class="suivi-feature-desc">Suivez l'évolution nutritionnelle de votre animal dans le temps</div>
+          </div>
+        </div>
+        <div class="suivi-feature">
+          <div class="suivi-feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#2d6016"/></svg>
+          </div>
+          <div>
+            <div class="suivi-feature-title">Recommandations saisonnières</div>
+            <div class="suivi-feature-desc">Les besoins de votre animal changent selon les saisons — CrocScore s'adapte</div>
+          </div>
+        </div>
+      </div>
+      <button class="plan-btn btn-pro" style="max-width:280px;margin-top:28px" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Essayer 7 jours gratuit →</button>
+    </div>
+    <div class="suivi-right">
+      <div class="suivi-card">
+        <div class="suivi-card-header">
+          <div class="suivi-animal-icon">🐕</div>
+          <div>
+            <div class="suivi-animal-name">Rex</div>
+            <div class="suivi-animal-info">Golden Retriever · 3 ans · 28kg</div>
+          </div>
+          <div class="suivi-month-badge">Mai 2026</div>
+        </div>
+        <div class="suivi-card-body">
+          <div class="suivi-score-row">
+            <span class="suivi-score-label">Score nutritionnel ce mois</span>
+            <span class="suivi-score-val score-b">B+</span>
+          </div>
+          <div class="suivi-progress-section">
+            <div class="suivi-progress-label">Évolution sur 3 mois</div>
+            <div class="suivi-progress-track">
+              <div class="suivi-progress-item">
+                <div class="suivi-bar-wrap"><div class="suivi-bar" style="height:40%;background:#e8a020"></div></div>
+                <span>Mars</span>
+                <span class="suivi-bar-score" style="color:#e8a020">C</span>
+              </div>
+              <div class="suivi-progress-item">
+                <div class="suivi-bar-wrap"><div class="suivi-bar" style="height:65%;background:#a0c840"></div></div>
+                <span>Avr.</span>
+                <span class="suivi-bar-score" style="color:#a0c840">B</span>
+              </div>
+              <div class="suivi-progress-item">
+                <div class="suivi-bar-wrap"><div class="suivi-bar" style="height:80%;background:#4a9422"></div></div>
+                <span>Mai</span>
+                <span class="suivi-bar-score" style="color:#4a9422">B+</span>
+              </div>
+            </div>
+          </div>
+          <div class="suivi-conseil">
+            <div class="suivi-conseil-title">💡 Conseil du mois</div>
+            Rex entre dans sa phase adulte. Réduisez légèrement les graisses et privilégiez les croquettes riches en glucosamine pour ses articulations.
+          </div>
+          <div class="suivi-alert">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z" fill="#b46400"/></svg>
+            Aucun rappel produit ce mois — vos croquettes sont sûres ✓
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="tarifs">
+  <div class="pricing-inner">
+    <div class="section-label" style="color:var(--green-mid)">Tarifs</div>
+    <h2>Commencez gratuitement</h2>
+    <p class="pricing-sub">Analysez vos premières croquettes sans carte bancaire. Passez en Premium quand vous voulez.</p>
+    <div class="pricing-cards">
+      <div class="pricing-card">
+        <div class="plan-name">Gratuit</div>
+        <div class="plan-price">0€</div>
+        <div class="plan-period">pour toujours</div>
+        <ul class="plan-features">
+          <li><div class="feat-dot">✓</div> 5 analyses par mois</li>
+          <li><div class="feat-dot">✓</div> Score A à E</li>
+          <li><div class="feat-dot">✓</div> Conseils basiques</li>
+          <li><div class="feat-dot">✓</div> Recherche par nom</li>
+        </ul>
+        <button class="plan-btn btn-free">Commencer gratuitement</button>
+      </div>
+      <div class="pricing-card pricing-card-pro">
+        <div class="pricing-popular">Le plus populaire</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price" style="color:var(--cream)">1,99€</div>
+        <div class="plan-period">le 1er mois, puis 2,99€/mois — sans engagement</div>
+        <ul class="plan-features">
+          <li><div class="feat-dot">✓</div> Analyses illimitées</li>
+          <li><div class="feat-dot">✓</div> Scan code-barres</li>
+          <li><div class="feat-dot">✓</div> Suivi mensuel de santé</li>
+          <li><div class="feat-dot">✓</div> Alertes rappels produits</li>
+          <li><div class="feat-dot">✓</div> Meilleures alternatives</li>
+          <li><div class="feat-dot">✓</div> Support prioritaire</li>
+        </ul>
+        <button class="plan-btn btn-pro">Essayer 7 jours gratuit</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Votre animal mérite les <em>meilleures</em> croquettes</h2>
+    <p class="cta-sub">Chaque jour sans analyser les croquettes de votre animal est un jour de plus où il mange peut-être mal sans que vous le sachiez. Agissez maintenant — c'est gratuit.</p>
+    <button class="cta-btn" onclick="document.getElementById('main-search').focus();window.scrollTo({top:0,behavior:'smooth'})">Analyser mes croquettes gratuitement</button>
+    <p class="cta-disc">Sans carte bancaire — Accès immédiat</p>
+  </div>
+</section>
+
+<!-- POLITIQUE DE CONFIDENTIALITE -->
+<div id="modal-confidentialite" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
+  <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
+    <button onclick="document.getElementById('modal-confidentialite').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">✕</button>
+    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:24px">Politique de confidentialité</h2>
+    <p style="font-size:13px;color:#6b6b5e;margin-bottom:16px"><strong>Dernière mise à jour :</strong> Mai 2026</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">1. Collecte des données</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore collecte uniquement les données strictement nécessaires au fonctionnement du service : adresse email lors de l'inscription, et les recherches de produits effectuées. Aucune donnée sensible n'est collectée.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">2. Utilisation des données</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Vos données sont utilisées uniquement pour fournir le service CrocScore. Elles ne sont jamais vendues, revendues ou transmises à des tiers à des fins commerciales.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">3. Cookies</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore utilise uniquement des cookies techniques nécessaires au bon fonctionnement de l'application. Aucun cookie publicitaire ou de tracking n'est utilisé.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">4. Vos droits (RGPD)</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Pour exercer ces droits, contactez-nous à contact@crocscore.fr</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">5. Hébergement</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est hébergé sur Netlify (États-Unis) dans le respect des réglementations européennes en vigueur.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">6. Contact</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Pour toute question relative à la confidentialité de vos données : contact@crocscore.fr</p>
+  </div>
+</div>
+
+<!-- MENTIONS LEGALES -->
+<div id="modal-mentions" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
+  <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
+    <button onclick="document.getElementById('modal-mentions').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">✕</button>
+    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:24px">Mentions légales</h2>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Éditeur du site</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est édité par une auto-entreprise enregistrée en France. Contact : contact@crocscore.fr</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Limitation de responsabilité</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les informations fournies par CrocScore sont issues de la base de données collaborative Open Pet Food Facts. CrocScore ne garantit pas l'exactitude, l'exhaustivité ou l'actualité des informations affichées. L'utilisateur est seul responsable de l'utilisation qu'il fait de ces informations.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Avertissement santé animale</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est un outil d'information uniquement. Les scores et conseils affichés ne constituent en aucun cas un avis vétérinaire. Pour toute question relative à la santé de votre animal, consultez un vétérinaire qualifié. CrocScore ne saurait être tenu responsable de décisions prises sur la base des informations affichées.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Propriété intellectuelle</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'ensemble du contenu de CrocScore (design, textes, algorithme de scoring) est protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Source des données</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Les données produits proviennent d'Open Pet Food Facts, base de données open source sous licence Open Database License (ODbL). CrocScore n'est pas affilié à Open Pet Food Facts.</p>
+  </div>
+</div>
+
+<!-- CGU -->
+<div id="modal-cgu" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
+  <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
+    <button onclick="document.getElementById('modal-cgu').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">✕</button>
+    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:24px">Conditions Générales d'Utilisation</h2>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">1. Acceptation des CGU</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'utilisation de CrocScore implique l'acceptation pleine et entière des présentes conditions. CrocScore se réserve le droit de modifier ces conditions à tout moment.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">2. Description du service</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est un service d'information nutritionnelle pour animaux de compagnie. Le service fournit des scores indicatifs basés sur les données disponibles dans la base Open Pet Food Facts. Ces scores sont donnés à titre purement informatif.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">3. Abonnement Premium</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'abonnement Premium est sans engagement et résiliable à tout moment. Le prélèvement est mensuel. Aucun remboursement ne sera effectué pour un mois entamé.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">4. Limitation de responsabilité</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore ne peut être tenu responsable d'aucun dommage direct ou indirect résultant de l'utilisation du service ou de l'impossibilité d'y accéder. L'utilisateur utilise le service sous sa seule et entière responsabilité.</p>
+    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">5. Droit applicable</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Les présentes CGU sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">CrocScore</div>
+    <ul class="footer-links">
+      <li><a href="#" onclick="document.getElementById('modal-mentions').style.display='block';return false">Mentions légales</a></li>
+      <li><a href="#" onclick="document.getElementById('modal-confidentialite').style.display='block';return false">Confidentialité</a></li>
+      <li><a href="mailto:contact@crocscore.fr">Contact</a></li>
+      <li><a href="#" onclick="document.getElementById('modal-cgu').style.display='block';return false">CGU</a></li>
+    </ul>
+  </div>
+  <p class="footer-disc">⚠️ Les données proviennent d'Open Pet Food Facts, base de données collaborative non garantie. CrocScore est un outil informatif uniquement et ne remplace en aucun cas l'avis d'un vétérinaire qualifié. CrocScore décline toute responsabilité quant aux décisions prises sur la base des informations affichées. © 2026 CrocScore</p>
+</footer>
+
+<script>
+function doSearch(){
+  const val=document.getElementById('main-search').value.trim();
+  if(!val)return;
+  document.getElementById('result-name').textContent=val||'Royal Canin Adult Maxi';
+  const rs=document.getElementById('result-section');
+  rs.classList.add('visible');
+  rs.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.getElementById('main-search').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch()});
+function showTab(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW enregistré'))
+      .catch(err => console.log('SW erreur:', err));
+  });
+}
+</script>
+
+</body>
+</html>

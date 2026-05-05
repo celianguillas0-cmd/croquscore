@@ -57,7 +57,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(250,248,242,0.95);backdrop
 .showcase-divider{display:flex;align-items:center;gap:16px;max-width:1100px;margin:44px auto 0;opacity:0.15}
 .showcase-divider::before,.showcase-divider::after{content:'';flex:1;height:1px;background:var(--green-light)}
 .showcase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
-.sc-feat{background:rgba(255,255,255,0.04);border:1px solid rgba(168,216,120,0.1);border-radius:16px;padding:22px 20px;transition:all 0.2s;cursor:default}
+.sc-feat{background:rgba(255,255,255,0.04);border:1px solid rgba(168,216,120,0.1);border-radius:16px;padding:22px 20px;transition:all 0.2s;cursor:default;position:relative}
+.sc-feat-crown{position:absolute;top:12px;right:12px;font-size:15px;line-height:1}
 .sc-feat:hover{background:rgba(255,255,255,0.08);border-color:rgba(168,216,120,0.25);transform:translateY(-3px)}
 .sc-feat-icon{width:42px;height:42px;background:rgba(168,216,120,0.12);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
 .sc-feat-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:8px;letter-spacing:0.05em;text-transform:uppercase}
@@ -322,36 +323,42 @@ footer{background:#0d1a08;padding:40px 5%}
         <div class="sc-feat-desc">Un score chiffré de 0 à 100 pour chaque produit, comme Yuka — pour comparer facilement au premier coup d'œil.</div>
       </div>
       <div class="sc-feat">
+        <span class="sc-feat-crown">👑</span>
         <div class="sc-feat-icon">📱</div>
         <div class="sc-feat-badge pro">Premium</div>
         <div class="sc-feat-title">Scan code-barres</div>
         <div class="sc-feat-desc">Analysez directement en magasin en pointant votre téléphone sur le produit.</div>
       </div>
       <div class="sc-feat">
+        <span class="sc-feat-crown">👑</span>
         <div class="sc-feat-icon">📅</div>
         <div class="sc-feat-badge pro">Premium</div>
         <div class="sc-feat-title">Bilan mensuel</div>
         <div class="sc-feat-desc">Un rapport nutritionnel personnalisé pour votre animal, chaque mois, adapté à son âge et son poids.</div>
       </div>
       <div class="sc-feat">
+        <span class="sc-feat-crown">👑</span>
         <div class="sc-feat-icon">🚨</div>
         <div class="sc-feat-badge pro">Premium</div>
         <div class="sc-feat-title">Alertes rappels produits</div>
         <div class="sc-feat-desc">Soyez prévenu immédiatement si un produit que vous utilisez est retiré du marché.</div>
       </div>
       <div class="sc-feat">
+        <span class="sc-feat-crown">👑</span>
         <div class="sc-feat-icon">🔄</div>
         <div class="sc-feat-badge pro">Premium</div>
         <div class="sc-feat-title">Meilleures alternatives</div>
         <div class="sc-feat-desc">On vous suggère automatiquement des croquettes supérieures dans la même gamme de prix.</div>
       </div>
       <div class="sc-feat">
+        <span class="sc-feat-crown">👑</span>
         <div class="sc-feat-icon">⚖️</div>
         <div class="sc-feat-badge pro">Premium</div>
         <div class="sc-feat-title">Comparaison côte à côte</div>
         <div class="sc-feat-desc">Comparez jusqu'à 3 produits en même temps pour faire le meilleur choix en un coup d'œil.</div>
       </div>
       <div class="sc-feat">
+        <span class="sc-feat-crown">👑</span>
         <div class="sc-feat-icon">🐾</div>
         <div class="sc-feat-badge pro">Premium</div>
         <div class="sc-feat-title">Profil animal</div>

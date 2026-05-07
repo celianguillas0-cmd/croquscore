@@ -1041,14 +1041,19 @@ function openScan() {
 
 function openCameraScan() {
   document.getElementById('scan-modal').classList.add('open');
+  let handled = false;
   try {
     html5QrCode = new Html5Qrcode('scan-reader');
     html5QrCode.start(
       {facingMode:'environment'},
       {fps:10, qrbox:{width:250,height:150}},
       async (barcode) => {
-        await html5QrCode.stop();
-        closeScan();
+        if (handled) return;
+        handled = true;
+        const qr = html5QrCode;
+        html5QrCode = null;
+        document.getElementById('scan-modal').classList.remove('open');
+        try { await qr.stop(); } catch(e) {}
         await fetchByBarcode(barcode);
       },
       () => {}
@@ -1061,7 +1066,11 @@ function openCameraScan() {
 
 function closeScan() {
   document.getElementById('scan-modal').classList.remove('open');
-  if(html5QrCode){ html5QrCode.stop().catch(()=>{}); html5QrCode=null; }
+  if (html5QrCode) {
+    const qr = html5QrCode;
+    html5QrCode = null;
+    try { qr.stop().catch(() => {}); } catch(e) {}
+  }
 }
 
 async function handleBarcodeFile(input) {

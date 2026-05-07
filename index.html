@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="products.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -1094,12 +1095,36 @@ function displayProduct(p, fallbackName) {
   rs.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
+// ── Recherche locale ──────────────────────────────────────
+function searchLocal(query) {
+  if(typeof LOCAL_PRODUCTS === 'undefined') return null;
+  const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+  if(!words.length) return null;
+  let best = null, bestScore = 0;
+  for(const p of LOCAL_PRODUCTS) {
+    const hay = (p.product_name + ' ' + (p.brands||'')).toLowerCase();
+    let hits = 0;
+    for(const w of words) if(hay.includes(w)) hits++;
+    const ratio = hits / words.length;
+    if(ratio > bestScore) { bestScore = ratio; best = p; }
+    if(bestScore === 1) break;
+  }
+  return bestScore >= 0.6 ? best : null;
+}
+
+function searchLocalByBarcode(code) {
+  if(typeof LOCAL_PRODUCTS === 'undefined') return null;
+  return LOCAL_PRODUCTS.find(p => p.code === code) || null;
+}
+
 // ── Recherche texte ───────────────────────────────────────
 async function doSearch() {
   const val = document.getElementById('main-search').value.trim();
   if(!val) return;
   document.getElementById('scan-loading').classList.add('open');
   try {
+    const local = searchLocal(val);
+    if(local) { displayProduct(local, val); return; }
     const res = await fetch(`https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(val)}&search_simple=1&action=process&json=1&page_size=1`);
     const data = await res.json();
     if(data.products && data.products.length > 0) {
@@ -1183,6 +1208,8 @@ async function handleBarcodeFile(input) {
 async function fetchByBarcode(barcode) {
   document.getElementById('scan-loading').classList.add('open');
   try {
+    const local = searchLocalByBarcode(barcode);
+    if(local) { displayProduct(local, local.product_name||barcode); return; }
     const res = await fetch(`https://world.openpetfoodfacts.org/api/v0/product/${barcode}.json`);
     const data = await res.json();
     if(data.status===1 && data.product) {

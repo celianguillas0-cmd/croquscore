@@ -1377,7 +1377,9 @@ function openCameraScan() {
         const qr = html5QrCode;
         html5QrCode = null;
         document.getElementById('scan-modal').classList.remove('open');
-        try { await qr.stop(); } catch(e) {}
+        document.getElementById('scan-loading').classList.add('open');
+        // Ne pas attendre stop() — peut bloquer indéfiniment sur iOS/Safari
+        try { qr.stop().catch(()=>{}); } catch(e) {}
         await fetchByBarcode(barcode);
       },
       () => {}

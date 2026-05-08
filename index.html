@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="products.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -1250,41 +1251,49 @@ function displayProduct(p, fallbackName) {
   rs.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-// ── Autocomplete (données réelles Open Pet Food Facts) ────
+// ── Recherche dans la base locale ────────────────────────
+function localSearch(query) {
+  if(typeof LOCAL_PRODUCTS==='undefined') return [];
+  const words = query.toLowerCase().split(/\s+/).filter(w=>w.length>1);
+  if(!words.length) return [];
+  const scored = [];
+  for(const p of LOCAL_PRODUCTS) {
+    const hay = (p.product_name+' '+(p.brands||'')).toLowerCase();
+    let hits = 0;
+    for(const w of words) if(hay.includes(w)) hits++;
+    if(hits>0) scored.push({p, hits});
+  }
+  scored.sort((a,b)=>b.hits-a.hits);
+  return scored.map(x=>x.p);
+}
+
+function localSearchByBarcode(code) {
+  if(typeof LOCAL_PRODUCTS==='undefined') return null;
+  return LOCAL_PRODUCTS.find(p=>p.code===code)||null;
+}
+
+// ── Autocomplete depuis la base locale ───────────────────
 let acFocused = -1;
 let acResults = [];
-let acTimer   = null;
 
 function autocomplete(val) {
   const dd = document.getElementById('ac-dropdown');
   val = val.trim();
-  if(!val || val.length < 3) { dd.style.display='none'; acResults=[]; return; }
-  clearTimeout(acTimer);
-  acTimer = setTimeout(() => fetchAcSuggestions(val), 320);
-}
-
-async function fetchAcSuggestions(val) {
-  const dd = document.getElementById('ac-dropdown');
-  try {
-    const url = `https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(val)}&search_simple=1&action=process&json=1&page_size=7&fields=product_name,brands,categories,nutriments,ingredients_text`;
-    const res  = await fetch(url);
-    const data = await res.json();
-    if(!data.products || !data.products.length) { dd.style.display='none'; return; }
-    acResults = data.products.filter(p => p.product_name);
-    if(!acResults.length) { dd.style.display='none'; return; }
-    const scoreColors = {A:'#e8f5d8',B:'#d4f0a0',C:'#fdedc0',D:'#fdd8b0',E:'#f8c8c8'};
-    const scoreTxt    = {A:'#1a3a0f',B:'#2d6016',C:'#8b5e0a',D:'#8b3a0a',E:'#b46400'};
-    dd.innerHTML = acResults.map((p,i) => {
-      const sc  = scoreProduct(p);
-      const brand = p.brands ? ' · '+p.brands.split(',')[0] : '';
-      return `<div class="ac-item" data-i="${i}" onmousedown="selectAc(${i})">
-        <div class="ac-item-badge" style="background:${scoreColors[sc.letter]};color:${scoreTxt[sc.letter]}">${sc.letter}</div>
-        <div class="ac-item-name">${p.product_name}</div>
-        <div class="ac-item-cat">${brand}</div>
-      </div>`;
-    }).join('');
-    dd.style.display='block'; acFocused=-1;
-  } catch(e) { dd.style.display='none'; }
+  if(!val || val.length < 2) { dd.style.display='none'; acResults=[]; return; }
+  acResults = localSearch(val).slice(0, 8);
+  if(!acResults.length) { dd.style.display='none'; return; }
+  const SC = {A:'#e8f5d8',B:'#d4f0a0',C:'#fdedc0',D:'#fdd8b0',E:'#f8c8c8'};
+  const ST = {A:'#1a3a0f',B:'#2d6016',C:'#8b5e0a',D:'#8b3a0a',E:'#b46400'};
+  dd.innerHTML = acResults.map((p,i)=>{
+    const sc  = scoreProduct(p);
+    const cat = (p.categories||'').replace('pour ','');
+    return `<div class="ac-item" data-i="${i}" onmousedown="selectAc(${i})">
+      <div class="ac-item-badge" style="background:${SC[sc.letter]};color:${ST[sc.letter]}">${sc.letter}</div>
+      <div class="ac-item-name">${p.product_name}</div>
+      <div class="ac-item-cat">${cat}</div>
+    </div>`;
+  }).join('');
+  dd.style.display='block'; acFocused=-1;
 }
 
 function selectAc(i) {
@@ -1314,6 +1323,10 @@ async function doSearch() {
   document.getElementById('ac-dropdown').style.display='none';
   document.getElementById('scan-loading').classList.add('open');
   try {
+    // 1. Base locale en priorité (instantané)
+    const local = localSearch(val);
+    if(local.length > 0) { displayProduct(local[0], val); return; }
+    // 2. Fallback API Open Pet Food Facts
     const res  = await fetch(`https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(val)}&search_simple=1&action=process&json=1&page_size=1`);
     const data = await res.json();
     if(data.products && data.products.length > 0) {
@@ -1397,6 +1410,10 @@ async function handleBarcodeFile(input) {
 async function fetchByBarcode(barcode) {
   document.getElementById('scan-loading').classList.add('open');
   try {
+    // 1. Base locale en priorité
+    const local = localSearchByBarcode(barcode);
+    if(local) { displayProduct(local, local.product_name||barcode); return; }
+    // 2. Fallback API Open Pet Food Facts
     const res  = await fetch(`https://world.openpetfoodfacts.org/api/v0/product/${barcode}.json`);
     const data = await res.json();
     if(data.status===1 && data.product) {

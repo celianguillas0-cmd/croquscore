@@ -1366,27 +1366,28 @@ function openScan() {
 function openCameraScan() {
   document.getElementById('scan-modal').classList.add('open');
   let handled = false;
+
+  const onSuccess = async (barcode) => {
+    if (handled) return;
+    handled = true;
+    closeScan(); // fire-and-forget stop, ferme la modal
+    document.getElementById('scan-loading').classList.add('open');
+    await fetchByBarcode(barcode);
+  };
+
   try {
     html5QrCode = new Html5Qrcode('scan-reader');
     html5QrCode.start(
       {facingMode:'environment'},
       {fps:10, qrbox:{width:250,height:150}},
-      async (barcode) => {
-        if (handled) return;
-        handled = true;
-        const qr = html5QrCode;
-        html5QrCode = null;
-        document.getElementById('scan-modal').classList.remove('open');
-        document.getElementById('scan-loading').classList.add('open');
-        // Ne pas attendre stop() — peut bloquer indéfiniment sur iOS/Safari
-        try { qr.stop().catch(()=>{}); } catch(e) {}
-        await fetchByBarcode(barcode);
-      },
+      onSuccess,
       () => {}
-    ).catch(() => { closeScan(); document.getElementById('barcode-file-input').click(); });
+    ).catch(() => {
+      // N'ouvrir le fallback que si aucun code n'a déjà été traité
+      if (!handled) { closeScan(); document.getElementById('barcode-file-input').click(); }
+    });
   } catch(e) {
-    closeScan();
-    document.getElementById('barcode-file-input').click();
+    if (!handled) { closeScan(); document.getElementById('barcode-file-input').click(); }
   }
 }
 
@@ -1448,7 +1449,11 @@ async function fetchByBarcode(barcode) {
     }
   } catch(e) {
     document.getElementById('scan-loading').classList.remove('open');
-    showScanNotFound(barcode);
+    try { showScanNotFound(barcode); } catch(e2) {
+      // Dernier recours : mettre le code dans le champ de recherche
+      document.getElementById('main-search').value = barcode;
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
   }
 }
 

@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="CrocScore">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script src="products.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+<script src="products.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -1358,9 +1358,6 @@ function openScan() {
 }
 
 function openCameraScan() {
-  // ── Bug principal : stop() ne doit JAMAIS être appelé dans le callback de succès ──
-  // Cela corrompt l'état interne d'Html5Qrcode sur mobile (iOS/Android) et bloque tout.
-  // Solution : callback synchrone, stop() dans setTimeout(0), fetchByBarcode sans await.
   const modal = document.getElementById('scan-modal');
   document.getElementById('scan-reader').innerHTML = '';
   modal.classList.add('open');
@@ -1371,15 +1368,17 @@ function openCameraScan() {
     html5QrCode.start(
       {facingMode:'environment'},
       {fps:10, qrbox:{width:250,height:150}},
-      (barcode) => {                                   // PAS async
+      (barcode) => {
         if (handled) return;
         handled = true;
-        modal.classList.remove('open');                // 1. fermer modal (sync)
-        document.getElementById('scan-loading').classList.add('open'); // 2. spinner (sync)
+        modal.classList.remove('open');
         const qr = html5QrCode;
         html5QrCode = null;
-        setTimeout(() => { try { qr.stop().catch(()=>{}); } catch(e){} }, 0); // 3. stop hors contexte
-        fetchByBarcode(barcode);                       // 4. fetch (fire-and-forget, PAS await)
+        setTimeout(() => { try { qr.stop().catch(()=>{}); } catch(e){} }, 100);
+        // Afficher la section résultat IMMÉDIATEMENT avec état de chargement
+        // — l'utilisateur voit toujours quelque chose, même avant l'appel API
+        showScanLoading(barcode);
+        fetchByBarcode(barcode);
       },
       () => {}
     ).catch(() => {
@@ -1400,6 +1399,34 @@ function closeScan() {
   }
 }
 
+// Affiche immédiatement la section résultat avec un état de chargement
+// Appelé de façon synchrone depuis le callback de scan avant tout appel réseau
+function showScanLoading(barcode) {
+  const name = document.getElementById('result-name');
+  if (name) name.textContent = 'Recherche en cours…';
+  const badge = document.querySelector('.result-score-big');
+  if (badge) { badge.textContent = '…'; badge.style.background = '#f0ece0'; badge.style.color = '#aaa'; }
+  const grid = document.getElementById('nutr-grid');
+  if (grid) grid.innerHTML = '';
+  const tags = document.getElementById('tags-composition');
+  if (tags) tags.innerHTML = '';
+  const bars = document.getElementById('analyse-bars');
+  if (bars) bars.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--text-muted)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:14px">Code <code style="background:var(--cream-dark);padding:2px 6px;border-radius:4px">' + barcode + '</code> — recherche en cours…</div></div>';
+  activateAnalyseTab();
+  // Rendre visible et scroller AVANT tout appel réseau
+  const rs = document.getElementById('result-section');
+  if (!rs) return;
+  rs.classList.add('visible');
+  // getBoundingClientRect() force un reflow synchrone → position correcte immédiatement
+  try {
+    const rect = rs.getBoundingClientRect();
+    const top = rect.top + window.pageYOffset - 70;
+    window.scrollTo({top: Math.max(0, top), behavior: 'smooth'});
+  } catch(e) {
+    try { rs.scrollIntoView({block: 'start'}); } catch(e2) {}
+  }
+}
+
 async function handleBarcodeFile(input) {
   const file = input.files[0];
   if (!file) return;
@@ -1409,41 +1436,60 @@ async function handleBarcodeFile(input) {
       const img = await createImageBitmap(file);
       const detector = new BarcodeDetector({formats:['ean_13','ean_8','code_128','upc_a','upc_e']});
       const barcodes = await detector.detect(img);
-      if (barcodes.length > 0) { fetchByBarcode(barcodes[0].rawValue); return; }
+      if (barcodes.length > 0) {
+        showScanLoading(barcodes[0].rawValue);
+        fetchByBarcode(barcodes[0].rawValue);
+        return;
+      }
     } catch(e) {}
   }
   const code = prompt('Code-barres non détecté.\nEntrez-le manuellement :');
-  if (code && code.trim()) fetchByBarcode(code.trim());
+  if (code && code.trim()) {
+    showScanLoading(code.trim());
+    fetchByBarcode(code.trim());
+  }
+}
+
+// Fetch avec timeout via AbortController
+async function fetchWithTimeout(url, ms) {
+  ms = ms || 7000;
+  const ctrl = new AbortController();
+  const id = setTimeout(function() { ctrl.abort(); }, ms);
+  try {
+    const r = await fetch(url, {signal: ctrl.signal});
+    clearTimeout(id);
+    return r;
+  } catch(e) {
+    clearTimeout(id);
+    throw e;
+  }
 }
 
 async function fetchByBarcode(barcode) {
-  document.getElementById('scan-loading').classList.add('open');
   let product = null;
 
-  // 1. Base locale
+  // 1. Base locale (synchrone, toujours disponible)
   try { product = localSearchByBarcode(barcode); } catch(e) {}
 
-  // 2. Open Pet Food Facts
+  // 2. Open Pet Food Facts (avec timeout 7s)
   if (!product) {
     try {
-      const r = await fetch('https://world.openpetfoodfacts.org/api/v0/product/'+barcode+'.json');
+      const r = await fetchWithTimeout('https://world.openpetfoodfacts.org/api/v0/product/' + barcode + '.json');
       const d = await r.json();
-      if (d.status===1 && d.product) product = d.product;
+      if (d.status === 1 && d.product) product = d.product;
     } catch(e) {}
   }
 
-  // 3. Open Food Facts général (fallback)
+  // 3. Open Food Facts général (fallback, timeout 7s)
   if (!product) {
     try {
-      const r = await fetch('https://world.openfoodfacts.org/api/v0/product/'+barcode+'.json');
+      const r = await fetchWithTimeout('https://world.openfoodfacts.org/api/v0/product/' + barcode + '.json');
       const d = await r.json();
-      if (d.status===1 && d.product) product = d.product;
+      if (d.status === 1 && d.product) product = d.product;
     } catch(e) {}
   }
 
-  // Toujours fermer le spinner AVANT d'afficher quoi que ce soit
-  document.getElementById('scan-loading').classList.remove('open');
-
+  // Mettre à jour la section résultat (déjà visible grâce à showScanLoading)
   try {
     if (product) {
       displayProduct(product, product.product_name || barcode);
@@ -1451,10 +1497,7 @@ async function fetchByBarcode(barcode) {
       showScanNotFound(barcode);
     }
   } catch(e) {
-    // Dernier recours : placer le code dans le champ et lancer la recherche texte
-    const s = document.getElementById('main-search');
-    if (s) { s.value = barcode; }
-    showResultSection();
+    showScanNotFound(barcode);
   }
 }
 
@@ -1463,18 +1506,23 @@ function showResultSection() {
   const rs = document.getElementById('result-section');
   if (!rs) return;
   rs.classList.add('visible');
-  // requestAnimationFrame garantit que le repaint CSS (display:none→block) est terminé avant le scroll
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      rs.scrollIntoView({behavior:'smooth', block:'start'});
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      try {
+        const rect = rs.getBoundingClientRect();
+        const top = rect.top + window.pageYOffset - 70;
+        window.scrollTo({top: Math.max(0, top), behavior: 'smooth'});
+      } catch(e) {
+        try { rs.scrollIntoView({block: 'start'}); } catch(e2) {}
+      }
     });
   });
 }
 
 // Active l'onglet Analyse de façon null-safe
 function activateAnalyseTab() {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
   const btn = document.querySelector('.tab[onclick*="analyse"]');
   if (btn) btn.classList.add('active');
   const tab = document.getElementById('tab-analyse');
@@ -1485,19 +1533,13 @@ function showScanNotFound(barcode) {
   const name = document.getElementById('result-name');
   if (name) name.textContent = 'Produit non trouvé';
   const badge = document.querySelector('.result-score-big');
-  if (badge) { badge.textContent='?'; badge.style.background='#e0e0d8'; badge.style.color='#888'; }
+  if (badge) { badge.textContent = '?'; badge.style.background = '#e0e0d8'; badge.style.color = '#888'; }
   const grid = document.getElementById('nutr-grid');
   if (grid) grid.innerHTML = '';
   const tags = document.getElementById('tags-composition');
   if (tags) tags.innerHTML = '';
   const bars = document.getElementById('analyse-bars');
-  if (bars) bars.innerHTML = `
-    <div style="text-align:center;padding:28px 16px">
-      <div style="font-size:38px;margin-bottom:14px">🔍</div>
-      <div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:6px">Code <code style="font-size:13px;background:var(--cream-dark);padding:2px 6px;border-radius:4px">${barcode}</code> non trouvé</div>
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Ce produit n'est pas encore dans notre base.<br>Essayez de le rechercher par nom.</div>
-      <button onclick="document.getElementById('result-section').classList.remove('visible');document.getElementById('main-search').focus();window.scrollTo({top:0,behavior:'smooth'})" style="background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif">Rechercher par nom →</button>
-    </div>`;
+  if (bars) bars.innerHTML = '<div style="text-align:center;padding:28px 16px"><div style="font-size:38px;margin-bottom:14px">🔍</div><div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:6px">Code <code style="font-size:13px;background:var(--cream-dark);padding:2px 6px;border-radius:4px">' + barcode + '</code> non trouvé</div><div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Ce produit n\'est pas encore dans notre base.<br>Essayez de le rechercher par nom.</div><button onclick="document.getElementById(\'result-section\').classList.remove(\'visible\');document.getElementById(\'main-search\').focus();window.scrollTo({top:0,behavior:\'smooth\'})" style="background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">Rechercher par nom →</button></div>';
   activateAnalyseTab();
   showResultSection();
 }

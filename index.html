@@ -344,6 +344,13 @@ footer{background:#0d1a08;padding:40px 5%}
 .payment-toast-title{font-weight:600;font-size:15px;font-family:'DM Sans',sans-serif}
 .payment-toast-sub{font-size:13px;opacity:0.72;font-family:'DM Sans',sans-serif;margin-top:3px;line-height:1.4}
 .stripe-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);margin-top:6px}
+.ac-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid rgba(26,58,15,0.12);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:200;overflow:hidden;display:none}
+.ac-item{padding:11px 16px;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);border-bottom:1px solid rgba(26,58,15,0.06);display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background 0.15s}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover,.ac-item.focused{background:rgba(26,58,15,0.05)}
+.ac-item-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-item-cat{font-size:11px;color:var(--text-muted);white-space:nowrap;flex-shrink:0}
+.ac-item-badge{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -480,9 +487,10 @@ footer{background:#0d1a08;padding:40px 5%}
         <div class="sol-desc">CrocScore analyse vos croquettes en 5 secondes et vous dit exactement si elles sont bonnes pour votre animal — avant que les problèmes arrivent.</div>
       </div>
     </div>
-    <div class="hero-search">
-      <input type="text" id="main-search" placeholder="Nom du produit ou marque..." />
+    <div class="hero-search" style="position:relative">
+      <input type="text" id="main-search" placeholder="Nom du produit ou marque..." autocomplete="off" oninput="autocomplete(this.value)" onkeydown="handleAcKey(event)" />
       <button onclick="doSearch()">Analyser</button>
+      <div id="ac-dropdown" class="ac-dropdown"></div>
     </div>
     <div class="hero-scan" onclick="openScan()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -1041,24 +1049,98 @@ function cancelSubscription() {
   alert('Résiliation prise en compte. Votre Premium reste actif jusqu\'à la fin de la période en cours.');
 }
 
-// ── Scoring ──────────────────────────────────────────────
+// ── Scoring enrichi (11 champs nutritionnels) ────────────────
 function scoreProduct(p) {
   let score = 50;
   const ingr = (p.ingredients_text || '').toLowerCase();
   const nutr = p.nutriments || {};
-  const proteins = nutr.proteins_100g || 0;
-  const fat = nutr.fat_100g || 0;
-  const carbs = nutr.carbohydrates_100g || 0;
-  if(proteins >= 30) score += 20; else if(proteins >= 20) score += 10; else if(proteins < 10) score -= 15;
-  if(fat >= 10 && fat <= 20) score += 5; else if(fat > 25) score -= 5;
-  if(carbs > 40) score -= 15; else if(carbs < 20) score += 10;
-  const goodMeat = ['poulet','boeuf','poisson','saumon','canard','agneau','thon','dinde','veau'];
+  const proteins = nutr.proteins_100g      || 0;
+  const fat      = nutr.fat_100g           || 0;
+  const carbs    = nutr.carbohydrates_100g || 0;
+  const fiber    = nutr.fiber_100g         || 0;
+  const moisture = nutr.moisture_100g      || 0;
+  const ash      = nutr.ash_100g           || 0;
+  const omega3   = nutr.omega3_100g        || 0;
+  const omega6   = nutr.omega6_100g        || 0;
+  const kcal     = nutr.energy_kcal_100g   || 0;
+  const calcium  = nutr.calcium_100g       || 0;
+  const phos     = nutr.phosphorus_100g    || 0;
+  const isPate   = (p.categories||'').includes('pâté');
+
+  // ── Protéines (poids fort) ──────────────────────────────────
+  if(!isPate) {
+    if(proteins>=36) score+=24; else if(proteins>=30) score+=18;
+    else if(proteins>=24) score+=10; else if(proteins>=18) score+=4;
+    else if(proteins<14) score-=18; else score-=6;
+  } else {
+    if(proteins>=12) score+=22; else if(proteins>=9) score+=14;
+    else if(proteins>=6) score+=6; else if(proteins<4) score-=16;
+  }
+
+  // ── Lipides ─────────────────────────────────────────────────
+  if(!isPate) {
+    if(fat>=12&&fat<=20) score+=8; else if(fat>=8&&fat<12) score+=3;
+    else if(fat>24) score-=6; else if(fat<7) score-=4;
+  } else {
+    if(fat>=4&&fat<=8) score+=6; else if(fat>10) score-=4;
+  }
+
+  // ── Glucides (moins = mieux pour carnivores) ─────────────────
+  if(!isPate) {
+    if(carbs<10) score+=14; else if(carbs<20) score+=8;
+    else if(carbs<32) score+=2; else if(carbs>42) score-=14;
+    else score-=6;
+  } else {
+    if(carbs<3) score+=10; else if(carbs<6) score+=5;
+    else if(carbs>8) score-=8;
+  }
+
+  // ── Fibres ──────────────────────────────────────────────────
+  if(fiber>=3&&fiber<=6) score+=4; else if(fiber>8) score-=4;
+
+  // ── Humidité (pour pâtés : haute = mieux) ───────────────────
+  if(isPate&&moisture>=70) score+=6; else if(isPate&&moisture>=50) score+=3;
+
+  // ── Cendres brutes ──────────────────────────────────────────
+  if(ash>=5&&ash<=8) score+=2; else if(ash>10) score-=5;
+
+  // ── Oméga-3 / Oméga-6 ───────────────────────────────────────
+  if(omega3>=0.8) score+=6; else if(omega3>=0.5) score+=3;
+  else if(omega3<0.2&&omega3>0) score-=3;
+  if(omega6>0) {
+    const ratio = omega6/Math.max(omega3,0.01);
+    if(ratio<=5) score+=4; else if(ratio<=10) score+=1;
+    else score-=4;
+  }
+
+  // ── Calcium / Phosphore ──────────────────────────────────────
+  if(calcium>=1.0&&calcium<=1.6) score+=3;
+  if(phos>0&&calcium>0) {
+    const caP = calcium/phos;
+    if(caP>=1.1&&caP<=1.6) score+=3; else if(caP<1.0) score-=4;
+  }
+
+  // ── Ingrédients (composition) ────────────────────────────────
+  const meatNamed = ['poulet','bœuf','boeuf','saumon','canard','agneau',
+                     'thon','dinde','lapin','truite','sardine','cabillaud',
+                     'veau','cheval','hareng','sanglier','cerf'];
   const firstIngr = ingr.split(',')[0] || '';
-  if(goodMeat.some(g => firstIngr.includes(g))) score += 15;
-  if(['maïs','blé','farine de céréales','sous-produits','dérivés'].some(b => firstIngr.includes(b))) score -= 15;
-  const cerealCount = (ingr.match(/maïs|blé|céréales|amidon|gluten/g)||[]).length;
-  score -= cerealCount * 5;
-  if(goodMeat.filter(m => ingr.includes(m)).length >= 2) score += 10;
+  // 1er ingrédient = viande identifiée ?
+  if(meatNamed.some(m => firstIngr.includes(m))) score+=14;
+  else if(['sous-produits','protéines animales','viandes et','farine de viande'].some(b=>firstIngr.includes(b))) score-=12;
+  // Diversité viandes nommées
+  const meatCount = meatNamed.filter(m=>ingr.includes(m)).length;
+  if(meatCount>=3) score+=8; else if(meatCount>=2) score+=5;
+  // Céréales
+  const cerealCount = (ingr.match(/maïs|blé|sorgho|amidon|gluten/g)||[]).length;
+  score -= cerealCount*4;
+  // Légumes / superfood
+  if(['patate douce','pois','lentilles','myrtille','épinards','potiron'].some(v=>ingr.includes(v))) score+=4;
+  // Probiotiques / prébiotiques
+  if(ingr.includes('probiotiques')||ingr.includes('prébiotiques')) score+=3;
+  // Taurine (indispensable pour chats)
+  if(ingr.includes('taurine')) score+=2;
+
   score = Math.max(5, Math.min(99, Math.round(score)));
   let letter, bg, color;
   if(score>=80){letter='A';bg='#e8f5d8';color='#1a3a0f';}
@@ -1094,6 +1176,65 @@ function displayProduct(p, fallbackName) {
   rs.classList.add('visible');
   rs.scrollIntoView({behavior:'smooth', block:'start'});
 }
+
+// ── Autocomplete ─────────────────────────────────────────
+let acFocused = -1;
+let acResults = [];
+
+function autocomplete(val) {
+  const dd = document.getElementById('ac-dropdown');
+  val = val.trim();
+  if(!val || val.length < 2 || typeof LOCAL_PRODUCTS === 'undefined') {
+    dd.style.display = 'none'; acResults = []; return;
+  }
+  const words = val.toLowerCase().split(/\s+/).filter(w=>w.length>1);
+  const scored = [];
+  for(const p of LOCAL_PRODUCTS) {
+    const hay = (p.product_name+' '+(p.brands||'')).toLowerCase();
+    let hits = 0;
+    for(const w of words) if(hay.includes(w)) hits++;
+    if(hits>0) scored.push({p, hits});
+  }
+  scored.sort((a,b)=>b.hits-a.hits);
+  acResults = scored.slice(0,7).map(x=>x.p);
+  if(!acResults.length) { dd.style.display='none'; return; }
+  const scoreColors = {A:'#e8f5d8',B:'#d4f0a0',C:'#fdedc0',D:'#fdd8b0',E:'#f8c8c8'};
+  const scoreTxt    = {A:'#1a3a0f',B:'#2d6016',C:'#8b5e0a',D:'#8b3a0a',E:'#b46400'};
+  dd.innerHTML = acResults.map((p,i) => {
+    const sc = scoreProduct(p);
+    const cat = (p.categories||'').replace('pour ','');
+    return `<div class="ac-item" data-i="${i}" onmousedown="selectAc(${i})">
+      <div class="ac-item-badge" style="background:${scoreColors[sc.letter]};color:${scoreTxt[sc.letter]}">${sc.letter}</div>
+      <div class="ac-item-name">${p.product_name}</div>
+      <div class="ac-item-cat">${cat}</div>
+    </div>`;
+  }).join('');
+  dd.style.display='block'; acFocused=-1;
+}
+
+function selectAc(i) {
+  const p = acResults[i];
+  if(!p) return;
+  document.getElementById('main-search').value = p.product_name;
+  document.getElementById('ac-dropdown').style.display='none';
+  displayProduct(p, p.product_name);
+}
+
+function handleAcKey(e) {
+  const dd = document.getElementById('ac-dropdown');
+  const items = dd.querySelectorAll('.ac-item');
+  if(e.key==='ArrowDown'){e.preventDefault();acFocused=Math.min(acFocused+1,items.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();acFocused=Math.max(acFocused-1,0);}
+  else if(e.key==='Enter'){
+    if(acFocused>=0&&acResults[acFocused]){selectAc(acFocused);return;}
+    dd.style.display='none'; doSearch(); return;
+  } else if(e.key==='Escape'){dd.style.display='none';return;}
+  items.forEach((el,i)=>el.classList.toggle('focused',i===acFocused));
+}
+
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.hero-search')) document.getElementById('ac-dropdown').style.display='none';
+});
 
 // ── Recherche locale ──────────────────────────────────────
 function searchLocal(query) {

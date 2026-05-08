@@ -1,6 +1,6 @@
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 
-const CACHE_NAME = 'crocscore-v5';
+const CACHE_NAME = 'crocscore-v6';
 
 // Vider les anciens caches au démarrage
 self.addEventListener('activate', event => {
@@ -27,7 +27,12 @@ self.addEventListener('fetch', event => {
     );
     return;
   }
-  // Cache-first pour les autres assets statiques
+  // Appels API cross-origin (OPFF, OFF) : toujours réseau, jamais de cache
+  if (url.origin !== self.location.origin) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+  // Cache-first pour les assets locaux statiques
   event.respondWith(
     caches.match(event.request).then(response => response || fetch(event.request))
   );

@@ -253,9 +253,9 @@ footer{background:#0d1a08;padding:40px 5%}
 .scan-loading.open{display:flex}
 .scan-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.2);border-top-color:var(--green-bright);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.result-section{max-width:1100px;margin:0 auto;padding:0 5% 60px;display:none}
+.result-section{position:fixed;top:64px;left:0;right:0;bottom:0;z-index:300;background:var(--cream);overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}
 .result-section.visible{display:block}
-.result-card{background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.1);overflow:hidden;box-shadow:0 4px 24px rgba(26,58,15,0.08)}
+.result-card{background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.1);overflow:hidden;box-shadow:0 4px 24px rgba(26,58,15,0.08);max-width:1100px;margin:10px auto 60px}
 .result-header{padding:24px;border-bottom:1px solid rgba(26,58,15,0.08);display:flex;align-items:center;gap:16px}
 .result-score-big{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:30px;font-weight:600;flex-shrink:0}
 .rsb-b{background:#d4f0a0;color:#2d6016}
@@ -402,6 +402,53 @@ footer{background:#0d1a08;padding:40px 5%}
     </div>
   </div>
 </nav>
+
+<div class="result-section" id="result-section">
+  <div style="max-width:1100px;margin:0 auto;padding:14px 5% 0;display:flex;align-items:center;justify-content:space-between">
+    <button onclick="closeResult()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:14px;font-family:'DM Sans',sans-serif;padding:6px 0;display:flex;align-items:center;gap:5px">← Retour</button>
+  </div>
+  <div class="result-card">
+    <div class="result-header">
+      <div class="result-score-big rsb-b">B</div>
+      <div>
+        <div style="font-size:18px;font-weight:500;color:var(--text)" id="result-name">Royal Canin Adult Maxi</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:3px">Royal Canin · Chien · 15kg</div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <span class="tag-dog2">Chien</span>
+          <span class="tag-avg">Qualité moyenne</span>
+        </div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('analyse',this)">Analyse</button>
+        <button class="tab" onclick="showTab('conseils',this)">Conseils</button>
+        <button class="tab" onclick="showTab('suivi',this)">Suivi mensuel</button>
+      </div>
+      <div class="tab-content active" id="tab-analyse">
+        <div id="nutr-grid" class="nutr-grid"></div>
+        <div id="analyse-bars"></div>
+        <div id="tags-composition" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px"></div>
+      </div>
+      <div class="tab-content" id="tab-conseils">
+        <div class="advice2"><div class="advice2-title">Conseil CrocScore</div>Ce produit contient une proportion élevée de céréales qui peuvent être difficiles à digérer. Les protéines sont correctes mais leur source est partiellement floue. Des alternatives plus riches en viande identifiée existent pour un prix similaire.</div>
+        <div style="margin-top:16px;padding:16px;border:1px solid rgba(26,58,15,0.1);border-radius:12px">
+          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">Meilleures alternatives</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(26,58,15,0.06)"><span style="font-size:14px">Orijen Original Dog</span><span style="background:#e8f5d8;color:#1a3a0f;font-family:'Fraunces',serif;font-size:16px;font-weight:600;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">A</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><span style="font-size:14px">Acana Heritage</span><span style="background:#e8f5d8;color:#1a3a0f;font-family:'Fraunces',serif;font-size:16px;font-weight:600;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">A</span></div>
+        </div>
+      </div>
+      <div class="tab-content" id="tab-suivi">
+        <div style="text-align:center;padding:24px;background:var(--green-pale);border-radius:12px">
+          <div style="font-size:16px;font-weight:500;color:var(--green-dark);margin-bottom:8px">Suivi mensuel Premium</div>
+          <div style="font-size:14px;color:var(--green-mid);margin-bottom:20px;line-height:1.6">Recevez chaque mois un bilan de santé nutritionnel personnalisé pour votre animal, des alertes rappels produits et des recommandations adaptées à son âge et son poids.</div>
+          <button class="btn-pro" style="padding:12px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none">Essayer 7 jours gratuit</button>
+          <div style="font-size:12px;color:var(--green-mid);margin-top:10px;opacity:0.7">1,99€ le 1er mois, puis 2,99€/mois — sans engagement</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="showcase">
   <div class="showcase-inner">
@@ -550,50 +597,6 @@ footer{background:#0d1a08;padding:40px 5%}
     </div>
   </div>
 </section>
-
-<div class="result-section" id="result-section">
-  <div class="result-card">
-    <div class="result-header">
-      <div class="result-score-big rsb-b">B</div>
-      <div>
-        <div style="font-size:18px;font-weight:500;color:var(--text)" id="result-name">Royal Canin Adult Maxi</div>
-        <div style="font-size:14px;color:var(--text-muted);margin-top:3px">Royal Canin · Chien · 15kg</div>
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <span class="tag-dog2">Chien</span>
-          <span class="tag-avg">Qualité moyenne</span>
-        </div>
-      </div>
-    </div>
-    <div class="result-body">
-      <div class="tabs">
-        <button class="tab active" onclick="showTab('analyse',this)">Analyse</button>
-        <button class="tab" onclick="showTab('conseils',this)">Conseils</button>
-        <button class="tab" onclick="showTab('suivi',this)">Suivi mensuel</button>
-      </div>
-      <div class="tab-content active" id="tab-analyse">
-        <div id="nutr-grid" class="nutr-grid"></div>
-        <div id="analyse-bars"></div>
-        <div id="tags-composition" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px"></div>
-      </div>
-      <div class="tab-content" id="tab-conseils">
-        <div class="advice2"><div class="advice2-title">Conseil CrocScore</div>Ce produit contient une proportion élevée de céréales qui peuvent être difficiles à digérer. Les protéines sont correctes mais leur source est partiellement floue. Des alternatives plus riches en viande identifiée existent pour un prix similaire.</div>
-        <div style="margin-top:16px;padding:16px;border:1px solid rgba(26,58,15,0.1);border-radius:12px">
-          <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">Meilleures alternatives</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(26,58,15,0.06)"><span style="font-size:14px">Orijen Original Dog</span><span style="background:#e8f5d8;color:#1a3a0f;font-family:'Fraunces',serif;font-size:16px;font-weight:600;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">A</span></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><span style="font-size:14px">Acana Heritage</span><span style="background:#e8f5d8;color:#1a3a0f;font-family:'Fraunces',serif;font-size:16px;font-weight:600;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center">A</span></div>
-        </div>
-      </div>
-      <div class="tab-content" id="tab-suivi">
-        <div style="text-align:center;padding:24px;background:var(--green-pale);border-radius:12px">
-          <div style="font-size:16px;font-weight:500;color:var(--green-dark);margin-bottom:8px">Suivi mensuel Premium</div>
-          <div style="font-size:14px;color:var(--green-mid);margin-bottom:20px;line-height:1.6">Recevez chaque mois un bilan de santé nutritionnel personnalisé pour votre animal, des alertes rappels produits et des recommandations adaptées à son âge et son poids.</div>
-          <button class="btn-pro" style="padding:12px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none">Essayer 7 jours gratuit</button>
-          <div style="font-size:12px;color:var(--green-mid);margin-top:10px;opacity:0.7">1,99€ le 1er mois, puis 2,99€/mois — sans engagement</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <section class="how" id="comment">
   <div class="how-inner">
@@ -1413,18 +1416,9 @@ function showScanLoading(barcode) {
   const bars = document.getElementById('analyse-bars');
   if (bars) bars.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--text-muted)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div style="font-size:14px">Code <code style="background:var(--cream-dark);padding:2px 6px;border-radius:4px">' + barcode + '</code> — recherche en cours…</div></div>';
   activateAnalyseTab();
-  // Rendre visible et scroller AVANT tout appel réseau
-  const rs = document.getElementById('result-section');
-  if (!rs) return;
-  rs.classList.add('visible');
-  // getBoundingClientRect() force un reflow synchrone → position correcte immédiatement
-  try {
-    const rect = rs.getBoundingClientRect();
-    const top = rect.top + window.pageYOffset - 70;
-    window.scrollTo({top: Math.max(0, top), behavior: 'smooth'});
-  } catch(e) {
-    try { rs.scrollIntoView({block: 'start'}); } catch(e2) {}
-  }
+  // position:fixed → toujours dans le viewport, aucun scroll nécessaire
+  var rs = document.getElementById('result-section');
+  if (rs) { rs.scrollTop = 0; rs.classList.add('visible'); }
 }
 
 async function handleBarcodeFile(input) {
@@ -1501,22 +1495,17 @@ async function fetchByBarcode(barcode) {
   }
 }
 
-// Centralise l'affichage de la section résultat + scroll robuste
+// Affiche la section résultat (position:fixed → toujours visible, pas de scroll)
 function showResultSection() {
-  const rs = document.getElementById('result-section');
+  var rs = document.getElementById('result-section');
   if (!rs) return;
+  rs.scrollTop = 0;
   rs.classList.add('visible');
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      try {
-        const rect = rs.getBoundingClientRect();
-        const top = rect.top + window.pageYOffset - 70;
-        window.scrollTo({top: Math.max(0, top), behavior: 'smooth'});
-      } catch(e) {
-        try { rs.scrollIntoView({block: 'start'}); } catch(e2) {}
-      }
-    });
-  });
+}
+
+function closeResult() {
+  var rs = document.getElementById('result-section');
+  if (rs) rs.classList.remove('visible');
 }
 
 // Active l'onglet Analyse de façon null-safe
@@ -1539,7 +1528,7 @@ function showScanNotFound(barcode) {
   const tags = document.getElementById('tags-composition');
   if (tags) tags.innerHTML = '';
   const bars = document.getElementById('analyse-bars');
-  if (bars) bars.innerHTML = '<div style="text-align:center;padding:28px 16px"><div style="font-size:38px;margin-bottom:14px">🔍</div><div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:6px">Code <code style="font-size:13px;background:var(--cream-dark);padding:2px 6px;border-radius:4px">' + barcode + '</code> non trouvé</div><div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Ce produit n\'est pas encore dans notre base.<br>Essayez de le rechercher par nom.</div><button onclick="document.getElementById(\'result-section\').classList.remove(\'visible\');document.getElementById(\'main-search\').focus();window.scrollTo({top:0,behavior:\'smooth\'})" style="background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">Rechercher par nom →</button></div>';
+  if (bars) bars.innerHTML = '<div style="text-align:center;padding:28px 16px"><div style="font-size:38px;margin-bottom:14px">🔍</div><div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:6px">Code <code style="font-size:13px;background:var(--cream-dark);padding:2px 6px;border-radius:4px">' + barcode + '</code> non trouvé</div><div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Ce produit n\'est pas encore dans notre base.<br>Essayez de le rechercher par nom.</div><button onclick="closeResult();document.getElementById(\'main-search\').focus()" style="background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">Rechercher par nom →</button></div>';
   activateAnalyseTab();
   showResultSection();
 }

@@ -554,7 +554,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <button onclick="doSearch()">Analyser</button>
       <div id="ac-dropdown" class="ac-dropdown"></div>
     </div>
-    <label for="barcode-file-input" class="hero-scan">
+    <button type="button" class="hero-scan" onclick="openScan()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <rect x="1" y="2" width="2" height="12" fill="#9b9b8e"/>
         <rect x="4" y="2" width="1" height="12" fill="#9b9b8e"/>
@@ -564,7 +564,7 @@ footer{background:#0d1a08;padding:40px 5%}
         <rect x="14" y="2" width="1" height="12" fill="#9b9b8e"/>
       </svg>
       Scanner le code-barres
-    </label>
+    </button>
     <div class="hero-stats">
       <div><div class="hero-stat-num">30€</div><div class="hero-stat-label">Dépensés en mauvaises croquettes par mois en moyenne</div></div>
       <div><div class="hero-stat-num">73%</div><div class="hero-stat-label">Des croquettes contiennent trop de céréales</div></div>
@@ -1350,13 +1350,57 @@ async function doSearch() {
 document.getElementById('main-search').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch()});
 
 // ── Scan code-barres ──────────────────────────────────────
-// Scan via capture photo natif — fonctionne sans exception sur iOS et Android
+let html5QrCode = null;
+
 function openScan() {
-  document.getElementById('barcode-file-input').click();
+  if (typeof Html5Qrcode !== 'undefined') {
+    openCameraScan();
+  } else {
+    document.getElementById('barcode-file-input').click();
+  }
+}
+
+function openCameraScan() {
+  const modal = document.getElementById('scan-modal');
+  document.getElementById('scan-reader').innerHTML = '';
+  modal.classList.add('open');
+  let handled = false;
+  try {
+    html5QrCode = new Html5Qrcode('scan-reader');
+    html5QrCode.start(
+      {facingMode: 'environment'},
+      {fps: 10, qrbox: {width: 250, height: 150}},
+      function(barcode) {
+        if (handled) return;
+        handled = true;
+        modal.classList.remove('open');
+        const qr = html5QrCode;
+        html5QrCode = null;
+        setTimeout(function() { try { qr.stop().catch(function(){}); } catch(e) {} }, 200);
+        showScanLoading(barcode);
+        fetchByBarcode(barcode);
+      },
+      function() {}
+    ).catch(function() {
+      if (!handled) {
+        handled = true;
+        modal.classList.remove('open');
+        document.getElementById('barcode-file-input').click();
+      }
+    });
+  } catch(e) {
+    modal.classList.remove('open');
+    document.getElementById('barcode-file-input').click();
+  }
 }
 
 function closeScan() {
   document.getElementById('scan-modal').classList.remove('open');
+  if (html5QrCode) {
+    const qr = html5QrCode;
+    html5QrCode = null;
+    setTimeout(function() { try { qr.stop().catch(function(){}); } catch(e) {} }, 0);
+  }
 }
 
 // Affiche immédiatement la section résultat avec un état de chargement
@@ -1531,11 +1575,21 @@ function showTab(name,btn){
 }
 </script>
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW enregistré'))
-      .catch(err => console.log('SW erreur:', err));
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      reg.addEventListener('updatefound', function() {
+        const w = reg.installing;
+        w.addEventListener('statechange', function() {
+          if (w.state === 'installed' && navigator.serviceWorker.controller) {
+            window.location.reload();
+          }
+        });
+      });
+    });
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      window.location.reload();
+    });
   });
 }
 

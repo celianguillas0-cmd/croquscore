@@ -1,6 +1,6 @@
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 
-const CACHE_NAME = 'crocscore-v10';
+const CACHE_NAME = 'crocscore-v11';
 
 // Vider les anciens caches au démarrage
 self.addEventListener('activate', event => {

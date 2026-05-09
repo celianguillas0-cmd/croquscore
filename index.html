@@ -1602,19 +1602,7 @@ function showTab(name,btn){
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js').then(function(reg) {
-      reg.addEventListener('updatefound', function() {
-        const w = reg.installing;
-        w.addEventListener('statechange', function() {
-          if (w.state === 'installed' && navigator.serviceWorker.controller) {
-            window.location.reload();
-          }
-        });
-      });
-    });
-    navigator.serviceWorker.addEventListener('controllerchange', function() {
-      window.location.reload();
-    });
+    navigator.serviceWorker.register('/sw.js');
   });
 }
 

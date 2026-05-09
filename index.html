@@ -1350,56 +1350,13 @@ async function doSearch() {
 document.getElementById('main-search').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch()});
 
 // ── Scan code-barres ──────────────────────────────────────
-let html5QrCode = null;
-
+// Scan via capture photo natif — fonctionne sans exception sur iOS et Android
 function openScan() {
-  if(typeof Html5Qrcode !== 'undefined') {
-    openCameraScan();
-  } else {
-    document.getElementById('barcode-file-input').click();
-  }
-}
-
-function openCameraScan() {
-  const modal = document.getElementById('scan-modal');
-  document.getElementById('scan-reader').innerHTML = '';
-  modal.classList.add('open');
-  let handled = false;
-
-  try {
-    html5QrCode = new Html5Qrcode('scan-reader');
-    html5QrCode.start(
-      {facingMode:'environment'},
-      {fps:10, qrbox:{width:250,height:150}},
-      (barcode) => {
-        if (handled) return;
-        handled = true;
-        modal.classList.remove('open');
-        const qr = html5QrCode;
-        html5QrCode = null;
-        setTimeout(() => { try { qr.stop().catch(()=>{}); } catch(e){} }, 100);
-        // Afficher la section résultat IMMÉDIATEMENT avec état de chargement
-        // — l'utilisateur voit toujours quelque chose, même avant l'appel API
-        showScanLoading(barcode);
-        fetchByBarcode(barcode);
-      },
-      () => {}
-    ).catch(() => {
-      if (!handled) { handled = true; modal.classList.remove('open'); document.getElementById('barcode-file-input').click(); }
-    });
-  } catch(e) {
-    modal.classList.remove('open');
-    document.getElementById('barcode-file-input').click();
-  }
+  document.getElementById('barcode-file-input').click();
 }
 
 function closeScan() {
   document.getElementById('scan-modal').classList.remove('open');
-  if (html5QrCode) {
-    const qr = html5QrCode;
-    html5QrCode = null;
-    setTimeout(() => { try { qr.stop().catch(()=>{}); } catch(e){} }, 0);
-  }
 }
 
 // Affiche immédiatement la section résultat avec un état de chargement
@@ -1422,25 +1379,59 @@ function showScanLoading(barcode) {
 }
 
 async function handleBarcodeFile(input) {
-  const file = input.files[0];
+  var file = input.files[0];
   if (!file) return;
   input.value = '';
+
+  // Afficher le panneau résultat IMMÉDIATEMENT (position:fixed, toujours visible)
+  var rs    = document.getElementById('result-section');
+  var name  = document.getElementById('result-name');
+  var badge = document.querySelector('.result-score-big');
+  var grid  = document.getElementById('nutr-grid');
+  var tags  = document.getElementById('tags-composition');
+  var bars  = document.getElementById('analyse-bars');
+  if (name)  name.textContent = 'Lecture du code-barres…';
+  if (badge) { badge.textContent = '…'; badge.style.background = '#f0ece0'; badge.style.color = '#aaa'; }
+  if (grid)  grid.innerHTML = '';
+  if (tags)  tags.innerHTML = '';
+  if (bars)  bars.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--text-muted)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div>Analyse de l\'image…</div></div>';
+  activateAnalyseTab();
+  if (rs) { rs.scrollTop = 0; rs.classList.add('visible'); }
+
+  var barcode = null;
+
+  // Méthode 1 : BarcodeDetector natif (Android Chrome, Edge)
   if ('BarcodeDetector' in window) {
     try {
-      const img = await createImageBitmap(file);
-      const detector = new BarcodeDetector({formats:['ean_13','ean_8','code_128','upc_a','upc_e']});
-      const barcodes = await detector.detect(img);
-      if (barcodes.length > 0) {
-        showScanLoading(barcodes[0].rawValue);
-        fetchByBarcode(barcodes[0].rawValue);
-        return;
-      }
+      var bd    = new BarcodeDetector({formats: ['ean_13','ean_8','code_128','upc_a','upc_e','code_39']});
+      var bimg  = await createImageBitmap(file);
+      var codes = await bd.detect(bimg);
+      if (codes.length > 0) barcode = codes[0].rawValue;
     } catch(e) {}
   }
-  const code = prompt('Code-barres non détecté.\nEntrez-le manuellement :');
-  if (code && code.trim()) {
-    showScanLoading(code.trim());
-    fetchByBarcode(code.trim());
+
+  // Méthode 2 : html5QrCode.scanFile (iOS Safari + tous navigateurs)
+  if (!barcode && typeof Html5Qrcode !== 'undefined') {
+    try {
+      var helperEl = document.getElementById('qr-file-helper');
+      if (!helperEl) {
+        helperEl = document.createElement('div');
+        helperEl.id = 'qr-file-helper';
+        helperEl.style.display = 'none';
+        document.body.appendChild(helperEl);
+      }
+      var scanner = new Html5Qrcode('qr-file-helper');
+      barcode = await scanner.scanFile(file, false);
+    } catch(e) {}
+  }
+
+  if (barcode) {
+    showScanLoading(barcode);
+    fetchByBarcode(barcode);
+  } else {
+    if (name)  name.textContent = 'Code non détecté';
+    if (badge) { badge.textContent = '?'; badge.style.background = '#e0e0d8'; badge.style.color = '#888'; }
+    if (bars)  bars.innerHTML = '<div style="text-align:center;padding:28px 16px"><div style="font-size:38px;margin-bottom:14px">📷</div><div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px">Code-barres non détecté</div><div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Reprenez la photo de plus près, bien cadré, avec bonne luminosité.</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button onclick="closeResult();setTimeout(function(){document.getElementById(\'barcode-file-input\').click()},200)" style="background:var(--green-pale);color:var(--green-dark);border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">📷 Réessayer</button><button onclick="var c=prompt(\'Entrez le code-barres :\');if(c&&c.trim()){showScanLoading(c.trim());fetchByBarcode(c.trim())}" style="background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">Saisir manuellement</button></div></div>';
   }
 }
 

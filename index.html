@@ -554,7 +554,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <button onclick="doSearch()">Analyser</button>
       <div id="ac-dropdown" class="ac-dropdown"></div>
     </div>
-    <button type="button" class="hero-scan" onclick="openScan()">
+    <label for="barcode-file-input" class="hero-scan" style="cursor:pointer">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <rect x="1" y="2" width="2" height="12" fill="#9b9b8e"/>
         <rect x="4" y="2" width="1" height="12" fill="#9b9b8e"/>
@@ -564,7 +564,7 @@ footer{background:#0d1a08;padding:40px 5%}
         <rect x="14" y="2" width="1" height="12" fill="#9b9b8e"/>
       </svg>
       Scanner le code-barres
-    </button>
+    </label>
     <div class="hero-stats">
       <div><div class="hero-stat-num">30€</div><div class="hero-stat-label">Dépensés en mauvaises croquettes par mois en moyenne</div></div>
       <div><div class="hero-stat-num">73%</div><div class="hero-stat-label">Des croquettes contiennent trop de céréales</div></div>
@@ -1435,7 +1435,11 @@ function showScanLoading(barcode) {
   activateAnalyseTab();
   // position:fixed → toujours dans le viewport, aucun scroll nécessaire
   var rs = document.getElementById('result-section');
-  if (rs) { rs.scrollTop = 0; rs.classList.add('visible'); }
+  if (rs) {
+    rs.scrollTop = 0;
+    rs.classList.add('visible');
+    rs.style.display = 'block';
+  }
 }
 
 async function handleBarcodeFile(input) {
@@ -1456,7 +1460,11 @@ async function handleBarcodeFile(input) {
   if (tags)  tags.innerHTML = '';
   if (bars)  bars.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--text-muted)"><div style="font-size:32px;margin-bottom:12px">⏳</div><div>Analyse de l\'image…</div></div>';
   activateAnalyseTab();
-  if (rs) { rs.scrollTop = 0; rs.classList.add('visible'); }
+  if (rs) {
+    rs.scrollTop = 0;
+    rs.classList.add('visible');
+    rs.style.display = 'block';
+  }
 
   var barcode = null;
 
@@ -1491,7 +1499,7 @@ async function handleBarcodeFile(input) {
   } else {
     if (name)  name.textContent = 'Code non détecté';
     if (badge) { badge.textContent = '?'; badge.style.background = '#e0e0d8'; badge.style.color = '#888'; }
-    if (bars)  bars.innerHTML = '<div style="text-align:center;padding:28px 16px"><div style="font-size:38px;margin-bottom:14px">📷</div><div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px">Code-barres non détecté</div><div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Reprenez la photo de plus près, bien cadré, avec bonne luminosité.</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button onclick="closeResult();setTimeout(function(){document.getElementById(\'barcode-file-input\').click()},200)" style="background:var(--green-pale);color:var(--green-dark);border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">📷 Réessayer</button><button onclick="var c=prompt(\'Entrez le code-barres :\');if(c&&c.trim()){showScanLoading(c.trim());fetchByBarcode(c.trim())}" style="background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">Saisir manuellement</button></div></div>';
+    if (bars)  bars.innerHTML = '<div style="text-align:center;padding:28px 16px"><div style="font-size:38px;margin-bottom:14px">📷</div><div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px">Code-barres non détecté</div><div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Reprenez la photo de plus près, bien cadré, avec bonne luminosité.</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><label for="barcode-file-input" onclick="closeResult()" style="background:var(--green-pale);color:var(--green-dark);border-radius:10px;padding:11px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif;display:inline-block">📷 Réessayer</label><button onclick="var c=prompt(\'Entrez le code-barres :\');if(c&&c.trim()){showScanLoading(c.trim());fetchByBarcode(c.trim())}" style="background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:\'DM Sans\',sans-serif">Saisir manuellement</button></div></div>';
   }
 }
 
@@ -1552,11 +1560,12 @@ function showResultSection() {
   if (!rs) return;
   rs.scrollTop = 0;
   rs.classList.add('visible');
+  rs.style.display = 'block';
 }
 
 function closeResult() {
   var rs = document.getElementById('result-section');
-  if (rs) rs.classList.remove('visible');
+  if (rs) { rs.classList.remove('visible'); rs.style.display = ''; }
 }
 
 // Active l'onglet Analyse de façon null-safe

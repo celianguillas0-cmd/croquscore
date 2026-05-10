@@ -247,7 +247,7 @@ footer{background:#0d1a08;padding:40px 5%}
 .bn-item.active{background:var(--green-pale)}
 .bn-item.active .bn-icon{color:var(--green-dark)}
 .bn-item.active .bn-label{color:var(--green-dark);font-weight:600}
-.scan-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;background:#000;flex-direction:column}
+.scan-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;background:#000;flex-direction:column}
 .scan-modal.open{display:flex}
 .scan-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.6)}
 .scan-title{font-size:16px;font-weight:500;color:#fff;font-family:'DM Sans',sans-serif}
@@ -2968,11 +2968,9 @@ function openCameraScan() {
     html5QrCode.start(
       {facingMode:'environment'},
       {fps:10, qrbox:{width:250,height:150}},
-      async (barcode) => {
-        await html5QrCode.stop();
+      (barcode) => {
         closeScan();
-        await new Promise(r => setTimeout(r, 350));
-        await fetchByBarcode(barcode);
+        fetchByBarcode(barcode);
       },
       () => {}
     ).catch(() => { closeScan(); document.getElementById('barcode-file-input').click(); });
@@ -3077,25 +3075,20 @@ function submitSrmForm(barcode) {
 }
 
 async function fetchByBarcode(barcode) {
-  const inPanel = document.getElementById('analyser-overlay').style.display === 'flex';
-  if (inPanel) {
-    renderAnalyserLoading();
-  } else {
-    showSrmLoading();
+  if (document.getElementById('analyser-overlay').style.display !== 'flex') {
+    openAnalyserPanel();
   }
+  renderAnalyserLoading();
   try {
     const res = await fetch(`https://world.openpetfoodfacts.org/api/v0/product/${barcode}.json`);
     const data = await res.json();
-    if(data.status===1 && data.product) {
-      if (inPanel) renderAnalyserResult(data.product, data.product.product_name||barcode);
-      else showSrmFound(data.product, data.product.product_name||barcode);
+    if (data.status === 1 && data.product) {
+      renderAnalyserResult(data.product, data.product.product_name || barcode);
     } else {
-      if (inPanel) renderAnalyserNotFound(barcode);
-      else showSrmNotFound(barcode);
+      renderAnalyserNotFound(barcode);
     }
   } catch(e) {
-    if (inPanel) renderAnalyserNotFound(barcode);
-    else showSrmNotFound(barcode);
+    renderAnalyserNotFound(barcode);
   }
 }
 function showTab(name,btn){

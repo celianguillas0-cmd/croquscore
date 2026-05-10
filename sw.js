@@ -1,6 +1,6 @@
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 
-const CACHE_NAME = 'crocscore-v5';
+const CACHE_NAME = 'crocscore-v9';
 
 // Vider les anciens caches au démarrage
 self.addEventListener('activate', event => {
@@ -8,6 +8,8 @@ self.addEventListener('activate', event => {
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
+    .then(() => self.clients.matchAll({ type: 'window' }))
+    .then(clients => clients.forEach(client => client.navigate(client.url)))
   );
 });
 

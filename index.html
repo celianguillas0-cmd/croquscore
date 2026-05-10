@@ -258,6 +258,34 @@ footer{background:#0d1a08;padding:40px 5%}
 .scan-tip{padding:20px;text-align:center;font-size:14px;color:rgba(255,255,255,0.6);font-family:'DM Sans',sans-serif;background:rgba(0,0,0,0.6)}
 .scan-loading{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:600;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .scan-loading.open{display:flex}
+.srm-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:700;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)}
+.srm-overlay.open{display:block}
+.srm-sheet{position:fixed;bottom:0;left:0;right:0;z-index:701;background:var(--white);border-radius:24px 24px 0 0;padding:0 0 env(safe-area-inset-bottom);max-height:90vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,0.2);transform:translateY(110%);transition:transform 0.35s cubic-bezier(.32,.72,0,1);pointer-events:none}
+.srm-sheet.open{transform:translateY(0);pointer-events:all}
+.srm-handle{width:40px;height:4px;background:rgba(0,0,0,0.12);border-radius:4px;margin:14px auto 0}
+.srm-head{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.srm-title{font-family:'Fraunces',serif;font-size:18px;font-weight:500;color:var(--green-dark)}
+.srm-close{background:var(--cream-dark);border:none;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.srm-body{padding:16px 20px 24px}
+.srm-loading-state{display:flex;flex-direction:column;align-items:center;gap:12px;padding:32px 0}
+.srm-spinner{width:40px;height:40px;border:3px solid rgba(74,148,34,0.2);border-top-color:var(--green-bright);border-radius:50%;animation:spin 0.8s linear infinite}
+#analyser-search-input::placeholder{color:rgba(255,255,255,0.5)}
+#analyser-search-input{color:white}
+.srm-found-name{font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px}
+.srm-found-brand{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+.srm-score-row{display:flex;align-items:center;gap:12px;background:var(--green-pale);border-radius:12px;padding:12px 16px;margin-bottom:16px}
+.srm-score-badge{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:22px;font-weight:600;flex-shrink:0}
+.srm-score-label{font-size:13px;color:var(--green-dark)}
+.srm-btn-primary{width:100%;padding:14px;background:var(--green-dark);color:var(--cream);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:8px}
+.srm-btn-secondary{width:100%;padding:12px;background:var(--cream-dark);color:var(--text);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer}
+.srm-notfound-icon{text-align:center;font-size:36px;margin-bottom:8px}
+.srm-notfound-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.srm-notfound-sub{font-size:13px;color:var(--text-muted);margin-bottom:18px}
+.srm-field{margin-bottom:12px}
+.srm-field label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px}
+.srm-field input{width:100%;padding:10px 12px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:var(--cream)}
+.srm-field input:focus{border-color:var(--green-bright)}
+.srm-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .prem-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:800;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:12px}
 .prem-overlay.open{display:flex}
 .prem-modal{background:var(--white);border-radius:20px;width:100%;max-width:480px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden}
@@ -1128,7 +1156,7 @@ function displayProduct(p, fallbackName) {
   });
   const rs = document.getElementById('result-section');
   rs.classList.add('visible');
-  rs.scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(() => rs.scrollIntoView({behavior:'smooth', block:'start'}), 100);
   var _animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
   var _curAnimal = _statsAnimal || (_animals.length ? _animals[0].name : null);
   var _hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
@@ -2854,6 +2882,7 @@ function showManualForm(productName) {
   var rs = document.getElementById('result-section');
   document.getElementById('result-name').textContent = productName || 'Produit inconnu';
   rs.classList.add('visible');
+  document.getElementById('result-name').textContent = 'Produit scanné — renseignez les infos';
   var existing = document.getElementById('manual-form-block');
   if (existing) existing.remove();
   var block = document.createElement('div');
@@ -2873,7 +2902,7 @@ function showManualForm(productName) {
   var scoreCard = rs.querySelector('.result-score-card');
   if (scoreCard) scoreCard.parentNode.insertBefore(block, scoreCard);
   else rs.appendChild(block);
-  rs.scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(() => rs.scrollIntoView({behavior:'smooth', block:'start'}), 100);
 }
 
 function submitManualForm(productName) {
@@ -2942,6 +2971,7 @@ function openCameraScan() {
       async (barcode) => {
         await html5QrCode.stop();
         closeScan();
+        await new Promise(r => setTimeout(r, 350));
         await fetchByBarcode(barcode);
       },
       () => {}
@@ -2973,20 +3003,99 @@ async function handleBarcodeFile(input) {
   const code = prompt('Code-barres non détecté automatiquement.\nEntrez-le manuellement :');
   if(code && code.trim()) fetchByBarcode(code.trim());
 }
+// ── Scan Result Modal ─────────────────────────────────────
+function openSrm() {
+  document.getElementById('srm-overlay').classList.add('open');
+  requestAnimationFrame(() => {
+    document.getElementById('srm-sheet').classList.add('open');
+  });
+}
+function closeSrm() {
+  document.getElementById('srm-overlay').classList.remove('open');
+  document.getElementById('srm-sheet').classList.remove('open');
+}
+function showSrmLoading() {
+  document.getElementById('srm-title').textContent = 'Recherche…';
+  document.getElementById('srm-body').innerHTML =
+    '<div class="srm-loading-state"><div class="srm-spinner"></div><div style="font-size:14px;color:var(--text-muted)">Identification du produit…</div></div>';
+  openSrm();
+}
+function showSrmFound(product, barcode) {
+  const name = product.product_name || barcode;
+  const brand = product.brands || '';
+  const scored = scoreProduct(product);
+  document.getElementById('srm-title').textContent = 'Produit trouvé';
+  document.getElementById('srm-body').innerHTML =
+    '<div class="srm-found-name">' + name + '</div>'
+    + (brand ? '<div class="srm-found-brand">' + brand + '</div>' : '')
+    + '<div class="srm-score-row">'
+    +   '<div class="srm-score-badge" style="background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
+    +   '<div><div style="font-size:15px;font-weight:600;color:var(--text)">Score ' + scored.score + '/100</div>'
+    +      '<div class="srm-score-label">CrocScore estimé</div></div>'
+    + '</div>'
+    + '<button class="srm-btn-primary" onclick="closeSrm();displayProduct(_srmProduct,_srmBarcode)">Voir l\'analyse complète</button>'
+    + '<button class="srm-btn-secondary" onclick="closeSrm()">Fermer</button>';
+  window._srmProduct = product;
+  window._srmBarcode = barcode;
+}
+function showSrmNotFound(barcode) {
+  document.getElementById('srm-title').textContent = 'Produit inconnu';
+  document.getElementById('srm-body').innerHTML =
+    '<div class="srm-notfound-icon">🔍</div>'
+    + '<div class="srm-notfound-title">Produit non trouvé</div>'
+    + '<div class="srm-notfound-sub">Code-barres : ' + barcode + '<br>Renseignez les infos pour obtenir un score.</div>'
+    + '<div class="srm-field"><label>Nom du produit</label><input id="srm-name" type="text" placeholder="ex: Royal Canin Adult…"></div>'
+    + '<div class="srm-row3">'
+    +   '<div class="srm-field"><label>Protéines (g/100g)</label><input id="srm-prot" type="number" step="0.1" min="0" max="100" placeholder="ex: 30"></div>'
+    +   '<div class="srm-field"><label>Lipides (g/100g)</label><input id="srm-fat" type="number" step="0.1" min="0" max="100" placeholder="ex: 15"></div>'
+    +   '<div class="srm-field"><label>Glucides (g/100g)</label><input id="srm-carb" type="number" step="0.1" min="0" max="100" placeholder="ex: 35"></div>'
+    + '</div>'
+    + '<div class="srm-field"><label>Ingrédients (optionnel)</label><input id="srm-ingr" type="text" placeholder="ex: poulet, riz, maïs…"></div>'
+    + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px;cursor:pointer">'
+    +   '<input type="checkbox" id="srm-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil'
+    + '</label>'
+    + '<button class="srm-btn-primary" onclick="submitSrmForm(\'' + barcode.replace(/'/g,"\\'") + '\')">Analyser</button>'
+    + '<button class="srm-btn-secondary" onclick="closeSrm()">Annuler</button>';
+}
+function submitSrmForm(barcode) {
+  const name = (document.getElementById('srm-name').value || '').trim() || barcode;
+  const prot = parseFloat(document.getElementById('srm-prot').value) || 0;
+  const fat  = parseFloat(document.getElementById('srm-fat').value)  || 0;
+  const carb = parseFloat(document.getElementById('srm-carb').value) || 0;
+  const ingr = (document.getElementById('srm-ingr').value || '').trim();
+  const save = document.getElementById('srm-save').checked;
+  const product = {product_name:name, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
+  if (save && name) {
+    const custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    if (!custom.find(p => p.product_name.toLowerCase() === name.toLowerCase())) {
+      custom.push(product);
+      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
+    }
+  }
+  closeSrm();
+  displayProduct(product, name);
+}
+
 async function fetchByBarcode(barcode) {
-  document.getElementById('scan-loading').classList.add('open');
+  const inPanel = document.getElementById('analyser-overlay').style.display === 'flex';
+  if (inPanel) {
+    renderAnalyserLoading();
+  } else {
+    showSrmLoading();
+  }
   try {
     const res = await fetch(`https://world.openpetfoodfacts.org/api/v0/product/${barcode}.json`);
     const data = await res.json();
     if(data.status===1 && data.product) {
-      displayProduct(data.product, data.product.product_name||barcode);
+      if (inPanel) renderAnalyserResult(data.product, data.product.product_name||barcode);
+      else showSrmFound(data.product, data.product.product_name||barcode);
     } else {
-      showManualForm(barcode);
+      if (inPanel) renderAnalyserNotFound(barcode);
+      else showSrmNotFound(barcode);
     }
   } catch(e) {
-    showManualForm(barcode);
-  } finally {
-    document.getElementById('scan-loading').classList.remove('open');
+    if (inPanel) renderAnalyserNotFound(barcode);
+    else showSrmNotFound(barcode);
   }
 }
 function showTab(name,btn){
@@ -3162,6 +3271,17 @@ OneSignalDeferred.push(async function(OneSignal) {
   <div style="color:#fff;font-size:15px;font-family:'DM Sans',sans-serif">Analyse en cours...</div>
 </div>
 
+<!-- SCAN RESULT MODAL -->
+<div class="srm-overlay" id="srm-overlay" onclick="if(event.target===this)closeSrm()"></div>
+<div class="srm-sheet" id="srm-sheet">
+  <div class="srm-handle"></div>
+  <div class="srm-head">
+    <span class="srm-title" id="srm-title">Résultat du scan</span>
+    <button class="srm-close" onclick="closeSrm()">✕</button>
+  </div>
+  <div class="srm-body" id="srm-body"></div>
+</div>
+
 <!-- MODAL ALERTES -->
 <div class="alert-overlay" id="alert-overlay" onclick="if(event.target===this)closeAlertModal()">
   <div class="alert-modal">
@@ -3317,12 +3437,41 @@ OneSignalDeferred.push(async function(OneSignal) {
   </div>
 </div>
 
+<!-- ========== OVERLAY ANALYSER ========== -->
+<div id="analyser-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:800;background:var(--cream);flex-direction:column;overflow:hidden">
+
+  <!-- Header -->
+  <div style="background:var(--green-dark);padding:env(safe-area-inset-top,16px) 20px 0;flex-shrink:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 14px">
+      <button onclick="closeAnalyserPanel()" style="background:rgba(255,255,255,0.12);border:none;border-radius:10px;padding:7px 14px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Retour
+      </button>
+      <span style="font-family:'Fraunces',serif;font-size:18px;color:var(--cream);font-weight:500">Analyser</span>
+      <button onclick="openScan()" style="background:var(--green-bright);border:none;border-radius:10px;padding:7px 12px;color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 3l-4 4-4-4"/><circle cx="12" cy="14" r="3"/></svg> Scanner
+      </button>
+    </div>
+    <!-- Search bar -->
+    <div style="display:flex;gap:8px;padding-bottom:16px">
+      <input id="analyser-search-input" type="text" placeholder="Nom du produit, marque…"
+        style="flex:1;padding:11px 16px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:rgba(255,255,255,0.15);color:white;outline:none;min-width:0"
+        onkeydown="if(event.key==='Enter')doAnalyserSearch()"
+        oninput="this.style.color='white'"
+        placeholder-style="color:rgba(255,255,255,0.6)">
+      <button onclick="doAnalyserSearch()" style="flex-shrink:0;background:white;border:none;border-radius:12px;padding:11px 18px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--green-dark);cursor:pointer">Analyser</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div id="analyser-content" style="flex:1;overflow-y:auto;padding:20px;max-width:640px;margin:0 auto;width:100%;box-sizing:border-box"></div>
+</div>
+
 <div class="bottom-nav" role="navigation">
   <button class="bn-item active" id="bn-accueil" onclick="bnActivate('bn-accueil');window.scrollTo({top:0,behavior:'smooth'})">
     <span class="bn-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
     <span class="bn-label">Accueil</span>
   </button>
-  <button class="bn-item" id="bn-analyser" onclick="bnActivate('bn-analyser');document.getElementById('main-search').focus();document.getElementById('main-search').scrollIntoView({behavior:'smooth',block:'center'})">
+  <button class="bn-item" id="bn-analyser" onclick="bnActivate('bn-analyser');openAnalyserPanel()">
     <span class="bn-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
     <span class="bn-label">Analyser</span>
   </button>
@@ -3661,6 +3810,207 @@ function saveAnimal() {
   closeAddAnimal();
   ['animal-name','animal-breed','animal-age','animal-weight'].forEach(function(id){document.getElementById(id).value='';});
 }
+
+// ══════════════════════════════════════════════
+// INTERFACE ANALYSER
+// ══════════════════════════════════════════════
+
+function openAnalyserPanel() {
+  var el = document.getElementById('analyser-overlay');
+  el.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  renderAnalyserHistory();
+  setTimeout(function() {
+    var inp = document.getElementById('analyser-search-input');
+    if (inp) inp.focus();
+  }, 350);
+}
+
+function closeAnalyserPanel() {
+  document.getElementById('analyser-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+  bnActivate('bn-accueil');
+}
+
+function doAnalyserSearch() {
+  var val = (document.getElementById('analyser-search-input').value || '').trim();
+  if (!val) return;
+  var local = searchLocalDB(val);
+  if (local) { renderAnalyserResult(local, val); return; }
+  renderAnalyserLoading();
+  fetch('https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(val) + '&search_simple=1&action=process&json=1&page_size=1')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data.products && data.products.length > 0) {
+        renderAnalyserResult(data.products[0], val);
+      } else {
+        renderAnalyserNotFound(val);
+      }
+    })
+    .catch(function(){ renderAnalyserNotFound(val); });
+}
+
+function renderAnalyserLoading() {
+  document.getElementById('analyser-content').innerHTML =
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:72px 0">'
+    + '<div class="srm-spinner"></div>'
+    + '<div style="color:var(--text-muted);font-size:14px;font-family:\'DM Sans\',sans-serif">Recherche en cours…</div>'
+    + '</div>';
+}
+
+function renderAnalyserResult(p, name) {
+  var nutr = p.nutriments || {};
+  var scored = scoreProduct(p);
+  var ingr = (p.ingredients_text || '').toLowerCase();
+  var prot = Math.min(100, Math.round((nutr.proteins_100g || 0) * 2.5));
+  var fat  = Math.min(100, Math.round((nutr.fat_100g || 0) * 3));
+  var carb = Math.min(100, Math.round((nutr.carbohydrates_100g || 0) * 1.2));
+  var meatCount = ['poulet','boeuf','saumon','canard','agneau','dinde'].filter(function(m){ return ingr.includes(m); }).length;
+  var meat = Math.min(100, meatCount * 30);
+  var productName = p.product_name || name;
+  var brand = p.brands || '';
+
+  // Historique
+  var hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
+  hist = hist.filter(function(h){ return h.name !== productName; });
+  hist.unshift({name:productName, brand:brand, score:scored.score, letter:scored.letter, bg:scored.bg, color:scored.color, date:Date.now()});
+  if (hist.length > 50) hist.pop();
+  localStorage.setItem('croc_history', JSON.stringify(hist));
+
+  var bars = [
+    ['Matières grasses', fat, '#e8b84b'],
+    ['Glucides', carb, '#e87b4b'],
+    ['Fibres', 45, '#9b9b8e'],
+    ['Viande', meat, '#4a9422']
+  ];
+
+  var barsHtml = bars.map(function(b) {
+    return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+      + '<div style="width:110px;font-size:12px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif">' + b[0] + '</div>'
+      + '<div style="flex:1;height:6px;background:var(--cream-dark);border-radius:3px;overflow:hidden">'
+      + '<div style="width:' + b[1] + '%;height:100%;background:' + b[2] + ';border-radius:3px"></div>'
+      + '</div>'
+      + '<div style="width:30px;text-align:right;font-size:12px;font-weight:500;color:var(--text);font-family:\'DM Sans\',sans-serif">' + b[1] + '%</div>'
+      + '</div>';
+  }).join('');
+
+  var scoreVerdict = scored.score >= 80 ? 'Excellent choix pour votre animal' :
+                     scored.score >= 60 ? 'Bon produit dans l\'ensemble' :
+                     scored.score >= 40 ? 'Qualité moyenne, peut mieux faire' :
+                     'Qualité insuffisante';
+
+  document.getElementById('analyser-content').innerHTML =
+    // Score card
+    '<div style="background:var(--green-dark);border-radius:20px;padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:16px">'
+    + '<div style="width:72px;height:72px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:32px;font-weight:600;flex-shrink:0;background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
+    + '<div style="flex:1;min-width:0">'
+    + '<div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + productName + '</div>'
+    + (brand ? '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-bottom:6px">' + brand + '</div>' : '<div style="margin-bottom:6px"></div>')
+    + '<div style="display:flex;align-items:baseline;gap:4px">'
+    + '<span style="font-size:26px;font-weight:700;color:white;font-family:\'Fraunces\',serif">' + scored.score + '</span>'
+    + '<span style="font-size:13px;color:rgba(255,255,255,0.5)">/100</span>'
+    + '</div>'
+    + '</div>'
+    + '</div>'
+
+    // Verdict
+    + '<div style="background:var(--green-pale);border-radius:14px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--green-dark);font-family:\'DM Sans\',sans-serif;display:flex;align-items:center;gap:8px">'
+    + '<span style="font-size:18px">' + (scored.score >= 60 ? '✅' : scored.score >= 40 ? '⚠️' : '❌') + '</span>'
+    + scoreVerdict
+    + '</div>'
+
+    // Barres nutritionnelles
+    + '<div style="background:var(--white);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid rgba(26,58,15,0.07)">'
+    + '<div style="font-size:13px;font-weight:600;color:var(--text);font-family:\'DM Sans\',sans-serif;margin-bottom:14px">Composition</div>'
+    + barsHtml
+    + '</div>'
+
+    // Ingrédients
+    + (p.ingredients_text
+      ? '<div style="background:var(--white);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid rgba(26,58,15,0.07)">'
+        + '<div style="font-size:13px;font-weight:600;color:var(--text);font-family:\'DM Sans\',sans-serif;margin-bottom:8px">Ingrédients</div>'
+        + '<div style="font-size:13px;color:var(--text-muted);line-height:1.6;font-family:\'DM Sans\',sans-serif">' + p.ingredients_text + '</div>'
+        + '</div>'
+      : '')
+
+    // Bouton nouvelle recherche
+    + '<button onclick="renderAnalyserHistory();document.getElementById(\'analyser-search-input\').value=\'\'" style="width:100%;padding:13px;background:var(--cream-dark);color:var(--text);border:none;border-radius:12px;font-family:\'DM Sans\',sans-serif;font-size:14px;cursor:pointer;box-sizing:border-box">'
+    + '← Nouvelle analyse'
+    + '</button>'
+    + '<div style="height:20px"></div>';
+}
+
+function renderAnalyserNotFound(name) {
+  document.getElementById('analyser-content').innerHTML =
+    '<div style="text-align:center;padding:32px 0 20px;font-size:40px">🔍</div>'
+    + '<div style="font-size:16px;font-weight:600;color:var(--text);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:4px">Produit introuvable</div>'
+    + '<div style="font-size:13px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:24px">Renseignez les infos pour obtenir votre CrocScore.</div>'
+    + '<div style="background:var(--white);border-radius:16px;padding:20px;border:1px solid rgba(26,58,15,0.07)">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">'
+    + '<div><label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:4px;font-family:\'DM Sans\',sans-serif">Protéines (g/100g)</label>'
+    + '<input id="an-prot" type="number" step="0.1" min="0" max="100" placeholder="ex: 30" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
+    + '<div><label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:4px;font-family:\'DM Sans\',sans-serif">Lipides (g/100g)</label>'
+    + '<input id="an-fat" type="number" step="0.1" min="0" max="100" placeholder="ex: 15" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
+    + '<div><label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:4px;font-family:\'DM Sans\',sans-serif">Glucides (g/100g)</label>'
+    + '<input id="an-carb" type="number" step="0.1" min="0" max="100" placeholder="ex: 35" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
+    + '</div>'
+    + '<div style="margin-bottom:14px"><label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:4px;font-family:\'DM Sans\',sans-serif">Ingrédients (optionnel)</label>'
+    + '<input id="an-ingr" type="text" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
+    + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px;cursor:pointer;font-family:\'DM Sans\',sans-serif">'
+    + '<input type="checkbox" id="an-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil</label>'
+    + '<button onclick="submitAnalyserForm(\'' + name.replace(/'/g, "\\'") + '\')" style="width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:11px;font-family:\'DM Sans\',sans-serif;font-size:15px;font-weight:500;cursor:pointer;box-sizing:border-box">Analyser</button>'
+    + '</div>';
+}
+
+function submitAnalyserForm(productName) {
+  var prot = parseFloat(document.getElementById('an-prot').value) || 0;
+  var fat  = parseFloat(document.getElementById('an-fat').value)  || 0;
+  var carb = parseFloat(document.getElementById('an-carb').value) || 0;
+  var ingr = (document.getElementById('an-ingr').value || '').trim();
+  var save = document.getElementById('an-save').checked;
+  var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
+  if (save && productName) {
+    var custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    if (!custom.find(function(p){ return p.product_name.toLowerCase() === productName.toLowerCase(); })) {
+      custom.push(product);
+      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
+    }
+  }
+  renderAnalyserResult(product, productName);
+}
+
+function renderAnalyserHistory() {
+  var hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
+  if (!hist.length) {
+    document.getElementById('analyser-content').innerHTML =
+      '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center">'
+      + '<div style="font-size:52px;margin-bottom:16px">🐾</div>'
+      + '<div style="font-family:\'Fraunces\',serif;font-size:20px;font-weight:500;color:var(--text);margin-bottom:8px">Analysez un aliment</div>'
+      + '<div style="font-size:14px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif;line-height:1.5">Tapez un nom de produit ou scannez<br>le code-barres d\'une boîte.</div>'
+      + '</div>';
+    return;
+  }
+  var items = hist.slice(0, 15).map(function(h) {
+    var age = '';
+    if (h.date) {
+      var diff = Math.round((Date.now() - h.date) / 60000);
+      age = diff < 2 ? 'à l\'instant' : diff < 60 ? 'il y a ' + diff + ' min' :
+            diff < 1440 ? 'il y a ' + Math.round(diff/60) + 'h' : 'il y a ' + Math.round(diff/1440) + 'j';
+    }
+    return '<div style="background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid rgba(26,58,15,0.07)">'
+      + '<div style="width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;flex-shrink:0;background:' + (h.bg||'#e8f5d8') + ';color:' + (h.color||'#1a3a0f') + '">' + (h.letter||'?') + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:\'DM Sans\',sans-serif">' + (h.name||'Produit') + '</div>'
+      + '<div style="font-size:12px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif">' + (h.brand ? h.brand + ' · ' : '') + age + '</div>'
+      + '</div>'
+      + '<div style="font-size:16px;font-weight:700;color:var(--text);font-family:\'Fraunces\',serif">' + (h.score||'—') + '</div>'
+      + '</div>';
+  }).join('');
+  document.getElementById('analyser-content').innerHTML =
+    '<div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;font-family:\'DM Sans\',sans-serif">Analyses récentes</div>'
+    + items;
+}
+
 </script>
 
 </body>

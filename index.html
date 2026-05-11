@@ -882,94 +882,85 @@ footer{background:#0d1a08;padding:40px 5%}
 <div id="modal-confidentialite" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
   <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
     <button onclick="document.getElementById('modal-confidentialite').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">✕</button>
-    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:24px">Politique de confidentialité</h2>
-    <p style="font-size:13px;color:#6b6b5e;margin-bottom:16px"><strong>Dernière mise à jour :</strong> Mai 2026</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">1. Collecte des données</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore collecte uniquement les données strictement nécessaires au fonctionnement du service : adresse email lors de l'inscription, et les recherches de produits effectuées. Aucune donnée sensible n'est collectée.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">2. Utilisation des données</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Vos données sont utilisées uniquement pour fournir le service CrocScore. Elles ne sont jamais vendues, revendues ou transmises à des tiers à des fins commerciales.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">3. Cookies</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore utilise uniquement des cookies techniques nécessaires au bon fonctionnement de l'application. Aucun cookie publicitaire ou de tracking n'est utilisé.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">4. Vos droits (RGPD)</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Pour exercer ces droits, contactez-nous à contact@crocscore.fr</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">5. Hébergement</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est hébergé sur Vercel (États-Unis) dans le respect des réglementations européennes en vigueur (Standard Contractual Clauses). Les données Firebase sont hébergées en Europe.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">6. Tableau des cookies et traceurs</h3>
-    <div style="overflow-x:auto;margin-bottom:16px">
-      <table style="width:100%;border-collapse:collapse;font-size:12px;color:#6b6b5e">
+    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:8px">Politique de confidentialité</h2>
+    <p style="font-size:12px;color:#9b9b8e;margin-bottom:24px">Dernière mise à jour : mai 2026 — Conforme RGPD (UE) 2016/679</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">1. Responsable du traitement</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Le responsable du traitement de vos données personnelles est l'éditeur de CrocScore (auto-entreprise enregistrée en France — SIRET à compléter). Contact : <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a></p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">2. Données collectées et bases légales (Art. 6 RGPD)</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px">Nous collectons uniquement les données suivantes :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;padding-left:20px;margin-bottom:12px">
+      <li><strong>Adresse e-mail</strong> — lors de la création de compte. Base légale : exécution du contrat (Art. 6.1.b RGPD). Durée : jusqu'à suppression du compte + 30 jours.</li>
+      <li><strong>Historique d'analyses, animaux, préférences</strong> — stockés uniquement sur votre appareil (localStorage). Non transmis à nos serveurs. Base légale : intérêt légitime (Art. 6.1.f).</li>
+      <li><strong>Consentement cookies</strong> — horodatage et choix stockés localement. Base légale : obligation légale (Art. 6.1.c). Durée : 13 mois.</li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Nous ne collectons jamais : données de santé, données de paiement, données de localisation précise, ou tout autre donnée sensible au sens de l'Art. 9 RGPD.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">3. Sous-traitants et partenaires</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px">Nous faisons appel aux sous-traitants suivants, chacun lié par un accord de traitement conforme au RGPD :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;padding-left:20px;margin-bottom:12px">
+      <li><strong>Firebase Authentication (Google LLC)</strong> — gestion des comptes. Données stockées dans les datacenters Google. <a href="https://firebase.google.com/support/privacy" target="_blank" style="color:#4a9422">Politique Google →</a></li>
+      <li><strong>Vercel Inc.</strong> — hébergement de l'application. <a href="https://vercel.com/legal/privacy-policy" target="_blank" style="color:#4a9422">Politique Vercel →</a></li>
+      <li><strong>OneSignal Inc.</strong> (si accepté) — notifications push. <a href="https://onesignal.com/privacy_policy" target="_blank" style="color:#4a9422">Politique OneSignal →</a></li>
+      <li><strong>Open Pet Food Facts</strong> — API de données produits. Votre adresse IP peut être transmise lors des requêtes. <a href="https://world.openpetfoodfacts.org/privacy" target="_blank" style="color:#4a9422">Leur politique →</a></li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Vos données ne sont jamais vendues, louées ou transmises à des tiers à des fins commerciales.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">4. Transferts hors Union Européenne</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Firebase (Google) et Vercel sont établis aux États-Unis. Ces transferts sont encadrés par les <strong>Clauses Contractuelles Types (CCT)</strong> adoptées par la Commission Européenne (décision d'exécution 2021/914 du 4 juin 2021), conformément à l'Art. 46 RGPD. Le Privacy Shield ayant été invalidé par l'arrêt Schrems II (CJUE, 16 juillet 2020), nous nous appuyons exclusivement sur les CCT. OneSignal se conforme également aux CCT et au California Consumer Privacy Act (CCPA).</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">5. Durée de conservation</h3>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;padding-left:20px;margin-bottom:12px">
+      <li>Compte utilisateur et e-mail : durée d'activité du compte + 30 jours après suppression</li>
+      <li>Données locales (historique, animaux) : supprimées à la demande ou à la réinitialisation de l'appareil</li>
+      <li>Consentement cookies : 13 mois (renouvellement automatique)</li>
+      <li>Logs serveur Vercel : 30 jours maximum</li>
+    </ul>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">6. Vos droits (Art. 15 à 22 RGPD)</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px">Vous disposez des droits suivants, exercés par e-mail à <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a> (réponse sous 30 jours) :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;padding-left:20px;margin-bottom:12px">
+      <li><strong>Accès</strong> — obtenir une copie de vos données (Art. 15)</li>
+      <li><strong>Rectification</strong> — corriger des données inexactes (Art. 16)</li>
+      <li><strong>Suppression</strong> — demander l'effacement de vos données (Art. 17)</li>
+      <li><strong>Portabilité</strong> — recevoir vos données dans un format structuré (Art. 20)</li>
+      <li><strong>Opposition</strong> — vous opposer à certains traitements (Art. 21)</li>
+      <li><strong>Retrait du consentement</strong> — à tout moment via "🍪 Gérer mes cookies" en bas de page</li>
+      <li><strong>Réclamation CNIL</strong> — si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la CNIL : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" style="color:#4a9422">cnil.fr/fr/plaintes</a></li>
+    </ul>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">7. Cookies et traceurs</h3>
+    <div style="overflow-x:auto;margin-bottom:12px">
+      <table style="width:100%;border-collapse:collapse;font-size:11.5px;color:#6b6b5e">
         <thead>
           <tr style="background:#f0ece0;text-align:left">
-            <th style="padding:8px 10px;font-weight:600;color:#1a1a18;border-radius:8px 0 0 0">Nom</th>
+            <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Nom</th>
             <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Fournisseur</th>
             <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Finalité</th>
             <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Durée</th>
-            <th style="padding:8px 10px;font-weight:600;color:#1a1a18;border-radius:0 8px 0 0">Catégorie</th>
+            <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Catégorie</th>
           </tr>
         </thead>
         <tbody>
-          <tr style="border-bottom:1px solid #f0ece0">
-            <td style="padding:8px 10px">firebase:authUser</td>
-            <td style="padding:8px 10px">Google LLC (USA)</td>
-            <td style="padding:8px 10px">Session d'authentification</td>
-            <td style="padding:8px 10px">Session</td>
-            <td style="padding:8px 10px">Essentiel</td>
-          </tr>
-          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2">
-            <td style="padding:8px 10px">croc_history</td>
-            <td style="padding:8px 10px">CrocScore (local)</td>
-            <td style="padding:8px 10px">Historique des analyses</td>
-            <td style="padding:8px 10px">Permanent</td>
-            <td style="padding:8px 10px">Essentiel</td>
-          </tr>
-          <tr style="border-bottom:1px solid #f0ece0">
-            <td style="padding:8px 10px">croc_animals</td>
-            <td style="padding:8px 10px">CrocScore (local)</td>
-            <td style="padding:8px 10px">Profils animaux enregistrés</td>
-            <td style="padding:8px 10px">Permanent</td>
-            <td style="padding:8px 10px">Essentiel</td>
-          </tr>
-          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2">
-            <td style="padding:8px 10px">croc_consent_v1</td>
-            <td style="padding:8px 10px">CrocScore (local)</td>
-            <td style="padding:8px 10px">Mémorisation acceptation CGU</td>
-            <td style="padding:8px 10px">Permanent</td>
-            <td style="padding:8px 10px">Essentiel</td>
-          </tr>
-          <tr style="border-bottom:1px solid #f0ece0">
-            <td style="padding:8px 10px">croc_cookies_choice</td>
-            <td style="padding:8px 10px">CrocScore (local)</td>
-            <td style="padding:8px 10px">Préférences cookies (13 mois)</td>
-            <td style="padding:8px 10px">13 mois</td>
-            <td style="padding:8px 10px">Essentiel</td>
-          </tr>
-          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2">
-            <td style="padding:8px 10px">Service Worker (/sw.js)</td>
-            <td style="padding:8px 10px">CrocScore</td>
-            <td style="padding:8px 10px">Cache application hors-ligne</td>
-            <td style="padding:8px 10px">Jusqu'à révocation</td>
-            <td style="padding:8px 10px">Essentiel</td>
-          </tr>
-          <tr style="border-bottom:1px solid #f0ece0">
-            <td style="padding:8px 10px">OneSignal (identifiant push)</td>
-            <td style="padding:8px 10px">OneSignal Inc. (USA)</td>
-            <td style="padding:8px 10px">Envoi de notifications push</td>
-            <td style="padding:8px 10px">Jusqu'à révocation</td>
-            <td style="padding:8px 10px">Notifications (opt-in)</td>
-          </tr>
-          <tr style="background:#faf8f2">
-            <td style="padding:8px 10px">Vercel Analytics</td>
-            <td style="padding:8px 10px">Vercel Inc. (USA)</td>
-            <td style="padding:8px 10px">Métriques d'usage anonymes</td>
-            <td style="padding:8px 10px">90 jours</td>
-            <td style="padding:8px 10px">Performance (opt-in)</td>
-          </tr>
+          <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">firebase:authUser</td><td style="padding:7px 10px">Google LLC (USA)</td><td style="padding:7px 10px">Session d'authentification</td><td style="padding:7px 10px">Session</td><td style="padding:7px 10px">Essentiel</td></tr>
+          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px">croc_history</td><td style="padding:7px 10px">CrocScore (local)</td><td style="padding:7px 10px">Historique des analyses</td><td style="padding:7px 10px">Permanent</td><td style="padding:7px 10px">Essentiel</td></tr>
+          <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">croc_animals</td><td style="padding:7px 10px">CrocScore (local)</td><td style="padding:7px 10px">Profils animaux</td><td style="padding:7px 10px">Permanent</td><td style="padding:7px 10px">Essentiel</td></tr>
+          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px">croc_consent_v1</td><td style="padding:7px 10px">CrocScore (local)</td><td style="padding:7px 10px">Acceptation CGU</td><td style="padding:7px 10px">Permanent</td><td style="padding:7px 10px">Essentiel</td></tr>
+          <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">croc_cookies_choice</td><td style="padding:7px 10px">CrocScore (local)</td><td style="padding:7px 10px">Préférences cookies</td><td style="padding:7px 10px">13 mois</td><td style="padding:7px 10px">Essentiel</td></tr>
+          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px">Service Worker (/sw.js)</td><td style="padding:7px 10px">CrocScore</td><td style="padding:7px 10px">Cache hors-ligne</td><td style="padding:7px 10px">Révocation</td><td style="padding:7px 10px">Essentiel</td></tr>
+          <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">OneSignal SDK</td><td style="padding:7px 10px">OneSignal Inc. (USA)</td><td style="padding:7px 10px">Notifications push</td><td style="padding:7px 10px">Révocation</td><td style="padding:7px 10px">Push (opt-in)</td></tr>
+          <tr><td style="padding:7px 10px">Vercel Analytics</td><td style="padding:7px 10px">Vercel Inc. (USA)</td><td style="padding:7px 10px">Métriques anonymes</td><td style="padding:7px 10px">90 jours</td><td style="padding:7px 10px">Performance (opt-in)</td></tr>
         </tbody>
       </table>
     </div>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">7. Transferts hors UE</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Firebase (Google) et Vercel sont hébergés aux États-Unis. Ces transferts sont encadrés par les Clauses Contractuelles Types (CCT) de la Commission Européenne. OneSignal est soumis au Privacy Shield et aux CCT. Vous pouvez gérer vos choix via "🍪 Gérer mes cookies" en bas de page.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">8. Contact & DPO</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Pour toute question relative à la confidentialité, à l'exercice de vos droits RGPD ou pour contacter notre délégué à la protection des données : <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a></p>
+    <p style="font-size:12px;color:#9b9b8e;margin-bottom:12px">Gérez vos choix à tout moment via le lien "🍪 Gérer mes cookies" en bas de page.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">8. Modifications de la présente politique</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Toute modification substantielle de cette politique fera l'objet d'une notification aux utilisateurs connectés (via l'e-mail enregistré) au moins 15 jours avant son entrée en vigueur. La date de dernière mise à jour figure en haut de ce document.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">9. Contact</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Responsable du traitement : <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a><br>Pour toute réclamation auprès de l'autorité de contrôle française : <a href="https://www.cnil.fr" target="_blank" style="color:#4a9422">cnil.fr</a></p>
   </div>
 </div>
 
@@ -977,17 +968,52 @@ footer{background:#0d1a08;padding:40px 5%}
 <div id="modal-mentions" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
   <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
     <button onclick="document.getElementById('modal-mentions').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">✕</button>
-    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:24px">Mentions légales</h2>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Éditeur du site</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est édité par une auto-entreprise enregistrée en France. Contact : contact@crocscore.fr</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Limitation de responsabilité</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les informations fournies par CrocScore sont issues de la base de données collaborative Open Pet Food Facts. CrocScore ne garantit pas l'exactitude, l'exhaustivité ou l'actualité des informations affichées. L'utilisateur est seul responsable de l'utilisation qu'il fait de ces informations.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Avertissement santé animale</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est un outil d'information uniquement. Les scores et conseils affichés ne constituent en aucun cas un avis vétérinaire. Pour toute question relative à la santé de votre animal, consultez un vétérinaire qualifié. CrocScore ne saurait être tenu responsable de décisions prises sur la base des informations affichées.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Propriété intellectuelle</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'ensemble du contenu de CrocScore (design, textes, algorithme de scoring) est protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">Source des données</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Les données produits proviennent d'Open Pet Food Facts, base de données open source sous licence Open Database License (ODbL). CrocScore n'est pas affilié à Open Pet Food Facts.</p>
+    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:6px">Mentions légales</h2>
+    <p style="font-size:11px;color:#9b9b8e;margin-bottom:28px">Conformément à l'article 6 de la loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'Économie Numérique (LCEN) — Mise à jour : mai 2026</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">1. Éditeur du site</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Nom du service :</strong> CrocScore</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Forme juridique :</strong> Auto-entrepreneur (micro-entreprise) enregistré(e) en France</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>SIRET :</strong> En cours d'enregistrement (immatriculation en cours)</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Directeur de la publication :</strong> Le porteur du projet CrocScore</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Contact :</strong> <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a></p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">2. Hébergeur</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Vercel Inc.</strong></p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px">340 Pine Street, Suite 900<br>San Francisco, CA 94104 — États-Unis</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Site : <a href="https://vercel.com" target="_blank" style="color:#4a9422">vercel.com</a></p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">3. Propriété intellectuelle</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'ensemble des éléments constituant le site CrocScore — notamment le code source, le design, les textes, l'interface, l'algorithme de scoring nutritionnel et la sélection des données — est protégé par les dispositions du Code de la propriété intellectuelle français (articles L.111-1 et suivants).</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Toute reproduction, représentation, modification, publication, adaptation ou exploitation, partielle ou totale, par quelque procédé que ce soit, sans l'autorisation préalable et écrite de l'éditeur, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">4. Source des données produits</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les données nutritionnelles des produits proviennent de deux sources :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
+      <li><strong>Base locale CrocScore</strong> : base de données propriétaire constituée à partir de données publiques sur les aliments pour animaux.</li>
+      <li><strong>Open Pet Food Facts</strong> : base collaborative open source disponible sous licence <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" style="color:#4a9422">Open Database License (ODbL)</a>. Site : <a href="https://world.openpetfoodfacts.org" target="_blank" style="color:#4a9422">world.openpetfoodfacts.org</a></li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore n'est pas affilié à Open Pet Food Facts. L'exactitude, l'exhaustivité et l'actualité des données ne sont pas garanties, ces données étant issues de contributions collaboratives.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">5. Limitation de responsabilité</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore met tout en œuvre pour offrir des informations exactes et à jour. Toutefois, l'éditeur ne peut être tenu responsable :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
+      <li>des erreurs ou omissions dans les données produits issues de bases collaboratives ;</li>
+      <li>des dommages directs ou indirects résultant de l'utilisation ou de l'impossibilité d'utiliser le service ;</li>
+      <li>des interruptions de service, quelle qu'en soit la cause ;</li>
+      <li>du contenu des sites tiers vers lesquels des liens sont proposés ;</li>
+      <li>des décisions prises par l'utilisateur sur la base des scores ou informations affichés.</li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'utilisateur reconnaît utiliser CrocScore sous sa seule et entière responsabilité.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">6. Avertissement santé animale</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore est un <strong>outil d'information indicatif</strong>. Les scores nutritionnels fournis ne constituent en aucun cas un avis médical vétérinaire, un diagnostic ou une prescription. Pour toute question relative à la santé, l'alimentation ou le traitement de votre animal, consultez exclusivement un <strong>vétérinaire qualifié et diplômé</strong>. CrocScore décline toute responsabilité pour les décisions prises sur la seule base des informations affichées par l'application.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">7. Droit applicable et juridiction</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Les présentes mentions légales sont soumises au droit français. En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable, les tribunaux français du ressort compétent seront seuls compétents.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">8. Contact</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Pour toute question relative aux présentes mentions légales : <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a></p>
   </div>
 </div>
 
@@ -995,17 +1021,77 @@ footer{background:#0d1a08;padding:40px 5%}
 <div id="modal-cgu" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
   <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
     <button onclick="document.getElementById('modal-cgu').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">✕</button>
-    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:24px">Conditions Générales d'Utilisation</h2>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">1. Acceptation des CGU</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'utilisation de CrocScore implique l'acceptation pleine et entière des présentes conditions. CrocScore se réserve le droit de modifier ces conditions à tout moment.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">2. Description du service</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est un service d'information nutritionnelle pour animaux de compagnie. Le service fournit des scores indicatifs basés sur les données disponibles dans la base Open Pet Food Facts. Ces scores sont donnés à titre purement informatif.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">3. Abonnement Premium</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'abonnement Premium est sans engagement et résiliable à tout moment. Le prélèvement est mensuel. Aucun remboursement ne sera effectué pour un mois entamé.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">4. Limitation de responsabilité</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore ne peut être tenu responsable d'aucun dommage direct ou indirect résultant de l'utilisation du service ou de l'impossibilité d'y accéder. L'utilisateur utilise le service sous sa seule et entière responsabilité.</p>
-    <h3 style="font-size:15px;font-weight:500;color:#1a1a18;margin:20px 0 8px">5. Droit applicable</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Les présentes CGU sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
+    <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:6px">Conditions Générales d'Utilisation</h2>
+    <p style="font-size:11px;color:#9b9b8e;margin-bottom:28px">Version en vigueur au 1er mai 2026 — Tout changement vous sera notifié 15 jours à l'avance.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">1. Acceptation et opposabilité</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'accès et l'utilisation de CrocScore impliquent l'acceptation pleine et entière des présentes Conditions Générales d'Utilisation (CGU). Si vous n'acceptez pas ces conditions, vous devez cesser immédiatement d'utiliser le service.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'acceptation des CGU vaut également acceptation de la <a href="#" onclick="var m=document.getElementById('modal-confidentialite');m.style.display='block';m.style.zIndex='2000';return false" style="color:#4a9422">Politique de confidentialité</a> et des <a href="#" onclick="var m=document.getElementById('modal-mentions');m.style.display='block';m.style.zIndex='2000';return false" style="color:#4a9422">Mentions légales</a>.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">2. Âge minimum requis</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'utilisation de CrocScore est réservée aux personnes ayant atteint l'<strong>âge de 15 ans révolus</strong>, conformément à l'article 8 du Règlement (UE) 2016/679 (RGPD) et à la loi française n° 78-17 du 6 janvier 1978 modifiée.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Les mineurs de moins de 15 ans doivent obtenir le consentement de leur représentant légal avant d'utiliser le service. En accédant à CrocScore, vous déclarez avoir l'âge requis ou disposer de l'autorisation parentale nécessaire.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">3. Description du service</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est une application web d'information nutritionnelle pour animaux de compagnie (chiens et chats). Elle fournit :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
+      <li>des scores nutritionnels indicatifs sur les aliments pour animaux ;</li>
+      <li>une recherche par nom de produit ou scan de code-barres ;</li>
+      <li>un historique local des produits analysés ;</li>
+      <li>des fiches d'information sur les animaux enregistrés.</li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Ces fonctionnalités sont fournies <strong>à titre purement informatif</strong> et ne constituent en aucun cas un avis médical, vétérinaire, nutritionnel ou diététique professionnel.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">4. Abonnement et droit de rétractation</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Abonnement Premium :</strong> L'abonnement est souscrit sans engagement de durée. Le prélèvement est mensuel, à date anniversaire de souscription. La résiliation peut intervenir à tout moment depuis l'espace personnel, avec prise d'effet à la fin de la période mensuelle en cours.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Droit de rétractation :</strong> Conformément à l'article L.221-18 du Code de la consommation et à la Directive européenne 2011/83/UE, vous disposez d'un droit de rétractation de <strong>14 jours calendaires</strong> à compter de la souscription, sans avoir à justifier de motif. Pour exercer ce droit, adressez un courrier électronique à <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a> en indiquant votre demande de rétractation.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Exception :</strong> Conformément à l'article L.221-28 du Code de la consommation, si vous avez expressément demandé l'exécution immédiate du service et que celui-ci a été pleinement exécuté, le droit de rétractation ne peut être exercé. Le remboursement éventuel sera effectué dans un délai de 14 jours suivant l'exercice du droit de rétractation.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">5. Utilisations autorisées et interdites</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:10px">CrocScore est mis à disposition pour un usage personnel, non commercial. Sont notamment interdits :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
+      <li>toute extraction automatisée des données (scraping, crawling) ;</li>
+      <li>l'utilisation à des fins commerciales sans autorisation écrite préalable ;</li>
+      <li>toute tentative de contournement des mesures techniques de protection ;</li>
+      <li>la reproduction ou diffusion du contenu protégé par droits d'auteur ;</li>
+      <li>la soumission d'informations inexactes, mensongères ou portant atteinte à des tiers ;</li>
+      <li>toute utilisation susceptible de surcharger ou de perturber les serveurs du service.</li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Le non-respect de ces interdictions peut entraîner la suspension ou la résiliation immédiate de l'accès au service, sans préjudice de toute action en justice.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">6. Limitation de responsabilité</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Dans les limites autorisées par la loi applicable, CrocScore ne pourra être tenu responsable de :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
+      <li>tout dommage direct, indirect, accessoire, spécial ou consécutif lié à l'utilisation ou l'impossibilité d'utiliser le service ;</li>
+      <li>l'inexactitude ou l'incomplétude des données nutritionnelles issues de bases collaboratives tierces ;</li>
+      <li>toute décision prise par l'utilisateur sur la base des scores ou informations affichés ;</li>
+      <li>toute perte de données résultant d'une suppression volontaire ou involontaire du stockage local ;</li>
+      <li>les interruptions, pannes ou indisponibilités du service, quelle qu'en soit la cause.</li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">En tout état de cause, la responsabilité de CrocScore ne saurait excéder le montant des sommes effectivement versées par l'utilisateur au titre de son abonnement au cours des trois derniers mois précédant le fait générateur du dommage.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">7. Force majeure</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore ne pourra être tenu responsable de tout retard ou inexécution résultant d'un événement de force majeure au sens de l'article 1218 du Code civil, incluant notamment : catastrophe naturelle, attaque informatique de grande ampleur, panne de l'hébergeur, défaillance d'un prestataire tiers essentiel, ou décision administrative ou judiciaire. En cas de force majeure, CrocScore informera les utilisateurs dès que possible et s'efforcera de rétablir le service dans les meilleurs délais.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">8. Modification des CGU</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore se réserve le droit de modifier les présentes CGU à tout moment. Toute modification substantielle vous sera notifiée par <strong>message dans l'application</strong> au moins <strong>15 jours avant son entrée en vigueur</strong>.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Si vous n'acceptez pas les nouvelles conditions, vous disposez de ce délai pour résilier votre compte. La poursuite de l'utilisation du service après l'entrée en vigueur des nouvelles CGU vaut acceptation de celles-ci.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">9. Suspension et résiliation</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore se réserve le droit de suspendre ou résilier l'accès d'un utilisateur, sans préavis ni indemnité, en cas de :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
+      <li>violation des présentes CGU ;</li>
+      <li>utilisation abusive ou frauduleuse du service ;</li>
+      <li>comportement susceptible de nuire à CrocScore ou à des tiers.</li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'utilisateur peut à tout moment supprimer son compte et ses données depuis l'application ou en contactant <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a>.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">10. Droit applicable et juridiction compétente</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les présentes CGU sont régies par le <strong>droit français</strong>. En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable dans un délai de 30 jours à compter de la notification écrite du différend, les <strong>tribunaux français compétents</strong> seront saisis.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Conformément aux articles L.611-1 et suivants du Code de la consommation, les consommateurs résidant dans l'Union européenne peuvent recourir à une procédure de médiation de la consommation. La Commission européenne met à disposition une plateforme de règlement en ligne des litiges (RLL) : <a href="https://ec.europa.eu/consumers/odr" target="_blank" style="color:#4a9422">ec.europa.eu/consumers/odr</a>.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">11. Contact</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Pour toute question relative aux présentes CGU : <a href="mailto:contact@crocscore.fr" style="color:#4a9422">contact@crocscore.fr</a></p>
   </div>
 </div>
 

@@ -3083,7 +3083,11 @@ async function fetchByBarcode(barcode) {
     const res = await fetch(`https://world.openpetfoodfacts.org/api/v0/product/${barcode}.json`);
     const data = await res.json();
     if (data.status === 1 && data.product) {
-      renderAnalyserResult(data.product, data.product.product_name || barcode);
+      const apiProduct = data.product;
+      const name = apiProduct.product_name || barcode;
+      // Priorité LOCAL_DB
+      const local = searchLocalDB(name);
+      renderAnalyserResult(local || apiProduct, name);
     } else {
       renderAnalyserNotFound(barcode);
     }

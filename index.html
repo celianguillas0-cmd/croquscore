@@ -925,19 +925,68 @@ footer{background:#0d1a08;padding:40px 5%}
 </div>
 
 <!-- BANNIÈRE COOKIES -->
-<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1900;background:var(--white);border-top:1px solid rgba(26,58,15,0.12);box-shadow:0 -4px 24px rgba(0,0,0,0.1);padding:16px 20px 24px;max-width:100%">
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1900;background:var(--white);border-top:1px solid rgba(26,58,15,0.12);box-shadow:0 -4px 24px rgba(0,0,0,0.1);padding:16px 20px 20px">
   <div style="max-width:640px;margin:0 auto">
-    <div style="font-size:14px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif;margin-bottom:6px">🍪 Gestion des cookies</div>
+    <div style="font-size:14px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif;margin-bottom:5px">🍪 Gestion des cookies</div>
     <div style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">
-      Nous utilisons des cookies <strong>techniques obligatoires</strong> (authentification Firebase) et des cookies <strong>optionnels</strong> de notifications push (OneSignal). Sans les cookies optionnels, les alertes produits ne fonctionneront pas.
+      Nous utilisons des cookies essentiels au fonctionnement du site et des cookies optionnels pour les notifications push.
+      <a href="#" onclick="var m=document.getElementById('modal-confidentialite');m.style.display='block';m.style.zIndex='3000';return false" style="color:var(--green-bright);text-decoration:underline">Lire la politique complète de confidentialité →</a>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <button onclick="acceptAllCookies()" style="padding:12px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Tout accepter</button>
-      <button onclick="acceptEssentialCookies()" style="padding:11px;background:var(--cream-dark);color:var(--text);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer">Cookies essentiels uniquement</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <button onclick="acceptAllCookies()" style="flex:1;min-width:120px;padding:11px 8px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Tout accepter</button>
+      <button onclick="rejectAllCookies()" style="flex:1;min-width:120px;padding:11px 8px;background:var(--cream-dark);color:var(--text);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer">Tout refuser</button>
+      <button onclick="openCookieSettings()" style="flex:1;min-width:120px;padding:11px 8px;background:var(--cream-dark);color:var(--green-dark);border:1.5px solid rgba(26,58,15,0.2);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Paramétrer</button>
     </div>
-    <div style="margin-top:10px;text-align:center">
-      <a href="#" onclick="document.getElementById('modal-confidentialite').style.display='block';document.getElementById('modal-confidentialite').style.zIndex='3000';return false" style="font-size:11px;color:var(--text-muted);text-decoration:underline">En savoir plus</a>
+  </div>
+</div>
+
+<!-- PANNEAU PARAMÉTRAGE COOKIES -->
+<div id="cookie-settings" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1950;background:var(--white);border-top:1px solid rgba(26,58,15,0.12);box-shadow:0 -4px 32px rgba(0,0,0,0.15);padding:20px 20px 28px;max-height:80vh;overflow-y:auto">
+  <div style="max-width:640px;margin:0 auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif">Paramétrer mes cookies</div>
+      <button onclick="closeCookieSettings()" style="background:var(--cream-dark);border:none;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--text-muted)">← Retour</button>
     </div>
+
+    <!-- Essentiel -->
+    <div style="background:var(--cream);border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(26,58,15,0.08)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif">Cookies essentiels</div>
+        <span style="font-size:11px;background:rgba(74,148,34,0.12);color:var(--green-dark);padding:3px 10px;border-radius:20px;font-weight:500">Toujours actifs</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.6">Nécessaires au fonctionnement du site : authentification Firebase (connexion à votre compte), préférences locales (historique, animaux). Impossible de les désactiver.</div>
+    </div>
+
+    <!-- Notifications push -->
+    <div style="background:var(--cream);border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(26,58,15,0.08)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif">Notifications push</div>
+        <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
+          <input type="checkbox" id="cookie-toggle-push" style="opacity:0;width:0;height:0" checked>
+          <span onclick="this.previousElementSibling.click()" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#ccc;border-radius:24px;transition:0.3s" id="cookie-toggle-push-track"></span>
+          <span onclick="this.parentElement.querySelector('input').click()" style="position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)" id="cookie-toggle-push-thumb"></span>
+        </label>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.6">Utilisé par OneSignal pour vous envoyer des alertes sur les nouveaux produits analysés. Si désactivé, vous ne recevrez plus aucune notification.</div>
+    </div>
+
+    <!-- Analytique -->
+    <div style="background:var(--cream);border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1px solid rgba(26,58,15,0.08)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif">Analytique</div>
+        <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
+          <input type="checkbox" id="cookie-toggle-analytics" style="opacity:0;width:0;height:0">
+          <span onclick="this.previousElementSibling.click()" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#ccc;border-radius:24px;transition:0.3s" id="cookie-toggle-analytics-track"></span>
+          <span onclick="this.parentElement.querySelector('input').click()" style="position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)" id="cookie-toggle-analytics-thumb"></span>
+        </label>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.6">Mesure d'audience anonyme pour améliorer l'application. Aucune donnée personnelle identifiable n'est collectée. Actuellement non activé.</div>
+    </div>
+
+    <div style="margin-bottom:12px;text-align:center">
+      <a href="#" onclick="var m=document.getElementById('modal-confidentialite');m.style.display='block';m.style.zIndex='3000';return false" style="font-size:11px;color:var(--text-muted);text-decoration:underline">Politique complète de confidentialité</a>
+    </div>
+    <button onclick="saveCookieSettings()" style="width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;box-sizing:border-box">Enregistrer mes choix</button>
   </div>
 </div>
 
@@ -3870,14 +3919,52 @@ function acceptConsent() {
   }
 }
 function acceptAllCookies() {
-  localStorage.setItem('croc_cookies_choice', 'all');
+  localStorage.setItem('croc_cookies_choice', JSON.stringify({push:true, analytics:true}));
   document.getElementById('cookie-banner').style.display = 'none';
+  document.getElementById('cookie-settings').style.display = 'none';
 }
-function acceptEssentialCookies() {
-  localStorage.setItem('croc_cookies_choice', 'essential');
+function rejectAllCookies() {
+  localStorage.setItem('croc_cookies_choice', JSON.stringify({push:false, analytics:false}));
   document.getElementById('cookie-banner').style.display = 'none';
-  // Désactive OneSignal si refus cookies optionnels
   if (typeof OneSignalDeferred !== 'undefined') {
+    OneSignalDeferred.push(function(OneSignal) {
+      OneSignal.User.PushSubscription.optOut().catch(function(){});
+    });
+  }
+}
+function openCookieSettings() {
+  document.getElementById('cookie-banner').style.display = 'none';
+  var settings = document.getElementById('cookie-settings');
+  settings.style.display = 'block';
+  // Pré-remplir les toggles selon choix précédent
+  var saved = localStorage.getItem('croc_cookies_choice');
+  var prefs = saved ? JSON.parse(saved) : {push:true, analytics:false};
+  var pushToggle = document.getElementById('cookie-toggle-push');
+  var analyticsToggle = document.getElementById('cookie-toggle-analytics');
+  pushToggle.checked = prefs.push !== false;
+  analyticsToggle.checked = prefs.analytics === true;
+  updateToggleStyle('push');
+  updateToggleStyle('analytics');
+  pushToggle.onchange = function() { updateToggleStyle('push'); };
+  analyticsToggle.onchange = function() { updateToggleStyle('analytics'); };
+}
+function closeCookieSettings() {
+  document.getElementById('cookie-settings').style.display = 'none';
+  document.getElementById('cookie-banner').style.display = 'block';
+}
+function updateToggleStyle(name) {
+  var checked = document.getElementById('cookie-toggle-' + name).checked;
+  var track = document.getElementById('cookie-toggle-' + name + '-track');
+  var thumb = document.getElementById('cookie-toggle-' + name + '-thumb');
+  track.style.background = checked ? 'var(--green-bright)' : '#ccc';
+  thumb.style.left = checked ? '21px' : '3px';
+}
+function saveCookieSettings() {
+  var push = document.getElementById('cookie-toggle-push').checked;
+  var analytics = document.getElementById('cookie-toggle-analytics').checked;
+  localStorage.setItem('croc_cookies_choice', JSON.stringify({push:push, analytics:analytics}));
+  document.getElementById('cookie-settings').style.display = 'none';
+  if (!push && typeof OneSignalDeferred !== 'undefined') {
     OneSignalDeferred.push(function(OneSignal) {
       OneSignal.User.PushSubscription.optOut().catch(function(){});
     });

@@ -1450,7 +1450,7 @@ auth.onAuthStateChanged(user => {
   const bnIcon = document.getElementById('bn-compte-icon');
   if(user) {
     const initial = (user.displayName || user.email || '?')[0].toUpperCase();
-    if(btn) btn.innerHTML = `<div class="nav-avatar">${initial}</div>`;
+    if(btn) btn.innerHTML = `<div class="nav-avatar">${escapeHtml(initial)}</div>`;
     if(bnIcon) bnIcon.textContent = initial;
   } else {
     if(btn) btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
@@ -1647,6 +1647,22 @@ function exportMyData() {
   alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, suivi du poids, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
 }
 
+// -- Sécurité : échappement HTML pour prévenir XSS (données utilisateur + API tierce non sanitisée) --
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+// Échappement spécifique pour valeurs placées dans onclick="..." (attribut JS)
+function escapeJsArg(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
+}
+
 // -- Scoring ----------------------------------------------
 function scoreProduct(p) {
   let score = 50;
@@ -1754,7 +1770,7 @@ function showManualForm(productName) {
     +'</div>'
     +'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:3px">Ingrédients (optionnel)</label><input id="mf-ingr" type="text" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>'
     +'<div style="display:flex;gap:10px;align-items:center">'
-    +'<button onclick="submitManualForm(\''+( (productName||'').replace(/'/g,"\\'") )+'\')" style="padding:10px 20px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer">Analyser</button>'
+    +'<button onclick="submitManualForm(\''+escapeJsArg(productName||'')+'\')" style="padding:10px 20px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer">Analyser</button>'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer"><input type="checkbox" id="mf-save" checked style="accent-color:var(--green-bright)"> Enregistrer pour la prochaine fois</label>'
     +'</div>';
   var scoreCard = rs.querySelector('.result-score-card');
@@ -1882,8 +1898,8 @@ function showSrmFound(product, barcode) {
   const scored = scoreProduct(product);
   document.getElementById('srm-title').textContent = 'Produit trouvé';
   document.getElementById('srm-body').innerHTML =
-    '<div class="srm-found-name">' + name + '</div>'
-    + (brand ? '<div class="srm-found-brand">' + brand + '</div>' : '')
+    '<div class="srm-found-name">' + escapeHtml(name) + '</div>'
+    + (brand ? '<div class="srm-found-brand">' + escapeHtml(brand) + '</div>' : '')
     + '<div class="srm-score-row">'
     +   '<div class="srm-score-badge" style="background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
     +   '<div><div style="font-size:15px;font-weight:600;color:var(--text)">Score ' + scored.score + '/100</div>'
@@ -1899,7 +1915,7 @@ function showSrmNotFound(barcode) {
   document.getElementById('srm-body').innerHTML =
     '<div class="srm-notfound-icon">??</div>'
     + '<div class="srm-notfound-title">Produit non trouvé</div>'
-    + '<div class="srm-notfound-sub">Code-barres : ' + barcode + '<br>Renseignez les infos pour obtenir un score.</div>'
+    + '<div class="srm-notfound-sub">Code-barres : ' + escapeHtml(barcode) + '<br>Renseignez les infos pour obtenir un score.</div>'
     + '<div class="srm-field"><label>Nom du produit</label><input id="srm-name" type="text" placeholder="ex: Royal Canin Adult…"></div>'
     + '<div class="srm-row3">'
     +   '<div class="srm-field"><label>Protéines (g/100g)</label><input id="srm-prot" type="number" step="0.1" min="0" max="100" placeholder="ex: 30"></div>'
@@ -1910,7 +1926,7 @@ function showSrmNotFound(barcode) {
     + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px;cursor:pointer">'
     +   '<input type="checkbox" id="srm-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil'
     + '</label>'
-    + '<button class="srm-btn-primary" onclick="submitSrmForm(\'' + barcode.replace(/'/g,"\\'") + '\')">Analyser</button>'
+    + '<button class="srm-btn-primary" onclick="submitSrmForm(\'' + escapeJsArg(barcode) + '\')">Analyser</button>'
     + '<button class="srm-btn-secondary" onclick="closeSrm()">Annuler</button>';
 }
 function submitSrmForm(barcode) {
@@ -2432,7 +2448,7 @@ function renderStatsTabs() {
   if (!animals.length) { tabsEl.innerHTML = ''; return; }
   tabsEl.innerHTML = animals.map(function(a) {
     var active = a.name === _statsAnimal;
-    return '<button onclick="selectStatsAnimal(\'' + a.name + '\')" style="flex-shrink:0;padding:8px 18px;border-radius:10px 10px 0 0;border:none;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:' + (active?'600':'400') + ';cursor:pointer;background:' + (active?'var(--cream)':'rgba(255,255,255,0.15)') + ';color:' + (active?'var(--green-dark)':'rgba(250,248,242,0.7)') + ';transition:all 0.18s">' + a.name + '</button>';
+    return '<button onclick="selectStatsAnimal(\'' + escapeJsArg(a.name) + '\')" style="flex-shrink:0;padding:8px 18px;border-radius:10px 10px 0 0;border:none;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:' + (active?'600':'400') + ';cursor:pointer;background:' + (active?'var(--cream)':'rgba(255,255,255,0.15)') + ';color:' + (active?'var(--green-dark)':'rgba(250,248,242,0.7)') + ';transition:all 0.18s">' + escapeHtml(a.name) + '</button>';
   }).join('');
 }
 function selectStatsAnimal(name) {
@@ -2484,13 +2500,13 @@ function renderStats() {
   // Fiche animal
   html += '<div style="background:var(--green-dark);border-radius:20px;padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:20px">';
   html += '<div style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="8" r="2"/><circle cx="9.5" cy="5.5" r="2"/><circle cx="14.5" cy="5.5" r="2"/><circle cx="19" cy="8" r="2"/><path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z"/></svg></div>';
-  html += '<div style="flex:1"><div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500">' + a.name + '</div>';
-  html += '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-top:2px">' + (a.type ? a.type.charAt(0).toUpperCase()+a.type.slice(1) : '') + (a.breed?' · '+a.breed:'') + '</div>';
+  html += '<div style="flex:1"><div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500">' + escapeHtml(a.name) + '</div>';
+  html += '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-top:2px">' + (a.type ? escapeHtml(a.type.charAt(0).toUpperCase()+a.type.slice(1)) : '') + (a.breed?' · '+escapeHtml(a.breed):'') + '</div>';
   html += '<div style="display:flex;gap:16px;margin-top:10px">';
   if (a.age) html += '<div style="text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:15px;color:var(--cream)">' + a.age + ' an' + (a.age>1?'s':'') + '</div><div style="font-size:10px;color:rgba(250,248,242,0.5)">Âge</div></div>';
   if (a.weight) html += '<div style="text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:15px;color:var(--cream)">' + a.weight + ' kg</div><div style="font-size:10px;color:rgba(250,248,242,0.5)">Poids</div></div>';
   html += '</div></div>';
-  html += '<button onclick="deleteAnimal(\'' + a.name + '\')" style="background:rgba(255,255,255,0.1);border:none;border-radius:8px;padding:6px 10px;color:rgba(250,248,242,0.5);font-family:\'DM Sans\',sans-serif;font-size:11px;cursor:pointer">Supprimer</button>';
+  html += '<button onclick="deleteAnimal(\'' + escapeJsArg(a.name) + '\')" style="background:rgba(255,255,255,0.1);border:none;border-radius:8px;padding:6px 10px;color:rgba(250,248,242,0.5);font-family:\'DM Sans\',sans-serif;font-size:11px;cursor:pointer">Supprimer</button>';
   html += '</div>';
 
   // Graphique évolution du score
@@ -2530,7 +2546,7 @@ function renderStats() {
   html += '<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">';
   html += '<div style="flex:1;min-width:80px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Poids (kg)</label><input id="weight-input-val" type="number" step="0.1" min="0" placeholder="4.5" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>';
   html += '<div style="flex:1.5;min-width:110px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Date</label><input id="weight-input-date" type="date" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>';
-  html += '<button onclick="saveWeight(\'' + a.name + '\')" style="padding:9px 16px;background:var(--green-dark);color:var(--cream);border:none;border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0">Enregistrer</button>';
+  html += '<button onclick="saveWeight(\'' + escapeJsArg(a.name) + '\')" style="padding:9px 16px;background:var(--green-dark);color:var(--cream);border:none;border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0">Enregistrer</button>';
   html += '</div></div>';
   if (weights.length < 2) {
     html += '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Enregistrez au moins 2 mesures pour voir l\'évolution.</div>';
@@ -2550,8 +2566,8 @@ function renderStats() {
       var border = i > 0 ? 'border-top:1px solid rgba(26,58,15,0.06);' : '';
       html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;' + border + '">';
       html += '<div style="width:32px;height:32px;border-radius:8px;background:' + col + ';display:flex;align-items:center;justify-content:center;color:white;font-family:\'Fraunces\',serif;font-size:14px;font-weight:700;flex-shrink:0">' + lt + '</div>';
-      html += '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (h.name||'Produit') + '</div>';
-      if (h.date) html += '<div style="font-size:11px;color:var(--text-muted);margin-top:1px">' + h.date + '</div>';
+      html += '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(h.name||'Produit') + '</div>';
+      if (h.date) html += '<div style="font-size:11px;color:var(--text-muted);margin-top:1px">' + escapeHtml(h.date) + '</div>';
       html += '</div>';
       html += '<div style="font-weight:700;color:' + col + ';font-size:14px;flex-shrink:0">' + sc + '<span style="font-size:10px;font-weight:400;color:var(--text-muted)">/100</span></div>';
       html += '</div>';
@@ -2930,8 +2946,8 @@ function renderAnalyserResult(p, name) {
     '<div style="background:var(--green-dark);border-radius:20px;padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:16px">'
     + '<div style="width:72px;height:72px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:32px;font-weight:600;flex-shrink:0;background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
     + '<div style="flex:1;min-width:0">'
-    + '<div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + productName + '</div>'
-    + (brand ? '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-bottom:6px">' + brand + '</div>' : '<div style="margin-bottom:6px"></div>')
+    + '<div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(productName) + '</div>'
+    + (brand ? '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-bottom:6px">' + escapeHtml(brand) + '</div>' : '<div style="margin-bottom:6px"></div>')
     + '<div style="display:flex;align-items:baseline;gap:4px">'
     + '<span style="font-size:26px;font-weight:700;color:white;font-family:\'Fraunces\',serif">' + scored.score + '</span>'
     + '<span style="font-size:13px;color:rgba(255,255,255,0.5)">/100</span>'
@@ -2955,7 +2971,7 @@ function renderAnalyserResult(p, name) {
     + (p.ingredients_text
       ? '<div style="background:var(--white);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid rgba(26,58,15,0.07)">'
         + '<div style="font-size:13px;font-weight:600;color:var(--text);font-family:\'DM Sans\',sans-serif;margin-bottom:8px">Ingrédients</div>'
-        + '<div style="font-size:13px;color:var(--text-muted);line-height:1.6;font-family:\'DM Sans\',sans-serif">' + p.ingredients_text + '</div>'
+        + '<div style="font-size:13px;color:var(--text-muted);line-height:1.6;font-family:\'DM Sans\',sans-serif">' + escapeHtml(p.ingredients_text) + '</div>'
         + '</div>'
       : '')
 
@@ -3009,7 +3025,7 @@ function renderAnalyserNotFound(name) {
   document.getElementById('analyser-content').innerHTML =
     '<div style="text-align:center;padding:32px 0 20px;font-size:40px">??</div>'
     + '<div style="font-size:16px;font-weight:600;color:var(--text);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:4px">Produit introuvable</div>'
-    + (name ? '<div style="font-size:11px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:6px;font-family:monospace;background:var(--cream-dark);display:inline-block;padding:2px 10px;border-radius:6px;margin:0 auto 12px;display:block">Code scanné : ' + name + '</div>' : '')
+    + (name ? '<div style="font-size:11px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:6px;font-family:monospace;background:var(--cream-dark);display:inline-block;padding:2px 10px;border-radius:6px;margin:0 auto 12px;display:block">Code scanné : ' + escapeHtml(name) + '</div>' : '')
     + '<div style="font-size:13px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:24px">Renseignez les infos pour obtenir votre CrocScore.</div>'
     + '<div style="background:var(--white);border-radius:16px;padding:20px;border:1px solid rgba(26,58,15,0.07)">'
     + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">'
@@ -3025,7 +3041,7 @@ function renderAnalyserNotFound(name) {
     + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:12px;cursor:pointer;font-family:\'DM Sans\',sans-serif">'
     + '<input type="checkbox" id="an-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil (localStorage uniquement — non transmis)</label>'
     + '<div style="font-size:10px;color:var(--text-light);line-height:1.5;margin-bottom:12px;padding:8px 10px;background:var(--cream);border-radius:8px">?? Score calculé à partir des valeurs saisies. Résultat purement indicatif, non contractuel. Ne remplace pas l\'avis d\'un vétérinaire qualifié. Données stockées uniquement sur votre appareil (RGPD Art. 5.1.c).</div>'
-    + '<button onclick="submitAnalyserForm(\'' + name.replace(/'/g, "\\'") + '\')" style="width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:11px;font-family:\'DM Sans\',sans-serif;font-size:15px;font-weight:500;cursor:pointer;box-sizing:border-box">Analyser</button>'
+    + '<button onclick="submitAnalyserForm(\'' + escapeJsArg(name) + '\')" style="width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:11px;font-family:\'DM Sans\',sans-serif;font-size:15px;font-weight:500;cursor:pointer;box-sizing:border-box">Analyser</button>'
     + '</div>';
 }
 
@@ -3065,10 +3081,10 @@ function renderAnalyserHistory() {
             diff < 1440 ? 'il y a ' + Math.round(diff/60) + 'h' : 'il y a ' + Math.round(diff/1440) + 'j';
     }
     return '<div style="background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid rgba(26,58,15,0.07)">'
-      + '<div style="width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;flex-shrink:0;background:' + (h.bg||'#e8f5d8') + ';color:' + (h.color||'#1a3a0f') + '">' + (h.letter||'?') + '</div>'
+      + '<div style="width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;flex-shrink:0;background:' + escapeHtml(h.bg||'#e8f5d8') + ';color:' + escapeHtml(h.color||'#1a3a0f') + '">' + escapeHtml(h.letter||'?') + '</div>'
       + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:\'DM Sans\',sans-serif">' + (h.name||'Produit') + '</div>'
-      + '<div style="font-size:12px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif">' + (h.brand ? h.brand + ' · ' : '') + age + '</div>'
+      + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:\'DM Sans\',sans-serif">' + escapeHtml(h.name||'Produit') + '</div>'
+      + '<div style="font-size:12px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif">' + (h.brand ? escapeHtml(h.brand) + ' · ' : '') + escapeHtml(age) + '</div>'
       + '</div>'
       + '<div style="font-size:16px;font-weight:700;color:var(--text);font-family:\'Fraunces\',serif">' + (h.score||'—') + '</div>'
       + '</div>';

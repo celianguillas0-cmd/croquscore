@@ -1,0 +1,14 @@
+{
+  "name": "crocscore",
+  "version": "1.0.0",
+  "description": "Analyseur indicatif de composition pour aliments chiens et chats — outil informatif, ne remplace pas l'avis vétérinaire",
+  "private": true,
+  "scripts": {
+    "prepare": "node setup-hooks.js",
+    "check": "node check-encoding.js",
+    "deploy": "node check-encoding.js && vercel deploy --prod"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

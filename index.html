@@ -1535,10 +1535,10 @@ async function signUp() {
     const cred = await auth.createUserWithEmailAndPassword(email, pw);
     if(name) await cred.user.updateProfile({displayName: name.substring(0, 50)});
     // Enregistrement horodaté du consentement CGU lors de la création de compte (Art. 7 RGPD)
-    localStorage.setItem('croc_account_consent', JSON.stringify({
+    safeSet('croc_account_consent', {
       version: '1.1', date: Date.now(), dateISO: new Date().toISOString(),
       ageConfirmed: true, cguAccepted: true, email: email
-    }));
+    });
     closeAuth();
   } catch(e) {
     console.error('[CrocScore Auth]', e.code);
@@ -1647,6 +1647,17 @@ function exportMyData() {
   alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, suivi du poids, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
 }
 
+// -- Robustesse : écriture localStorage sécurisée (gère QuotaExceededError + mode privé Safari) --
+function safeSet(key, value) {
+  try {
+    localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+    return true;
+  } catch(e) {
+    // QuotaExceededError, SecurityError (mode privé Safari), etc.
+    return false;
+  }
+}
+
 // -- Robustesse : lecture localStorage sécurisée (évite crash si JSON corrompu) --
 function safeParse(key, fallback) {
   try {
@@ -1737,7 +1748,7 @@ function displayProduct(p, fallbackName) {
   var _curAnimal = _statsAnimal || (_animals.length ? _animals[0].name : null);
   var _hist = safeParse('croc_history', []);
   _hist.push({name: p.product_name||fallbackName, score: scored.score, date: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
-  localStorage.setItem('croc_history', JSON.stringify(_hist));
+  safeSet('croc_history', _hist);
 }
 
 // -- Base de données locale (définie dans localdb.js) ---------------
@@ -1803,7 +1814,7 @@ function submitManualForm(productName) {
     var custom = safeParse('croc_custom_products', []);
     if (!custom.find(function(p){ return p.product_name.toLowerCase()===productName.toLowerCase(); })) {
       custom.push(product);
-      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
+      safeSet('croc_custom_products', custom);
     }
   }
   var block = document.getElementById('manual-form-block');
@@ -1954,7 +1965,7 @@ function submitSrmForm(barcode) {
     const custom = safeParse('croc_custom_products', []);
     if (!custom.find(p => p.product_name.toLowerCase() === name.toLowerCase())) {
       custom.push(product);
-      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
+      safeSet('croc_custom_products', custom);
     }
   }
   closeSrm();
@@ -2686,7 +2697,7 @@ function renderStats() {
 function deleteAnimal(name) {
   if (!confirm('Supprimer ' + name + ' ?')) return;
   var animals = safeParse('croc_animals', []);
-  localStorage.setItem('croc_animals', JSON.stringify(animals.filter(function(a){return a.name!==name})));
+  safeSet('croc_animals', animals.filter(function(a){return a.name!==name}));
   var remaining = safeParse('croc_animals', []);
   _statsAnimal = remaining.length ? remaining[0].name : null;
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
@@ -2706,7 +2717,7 @@ function saveWeight(animalName) {
   var ws = safeParse('croc_weights', []);
   ws.push({ animal: animalName, weight: parseFloat(val), date: dateLabel, isoDate: isoDate });
   ws.sort(function(a,b){ return a.isoDate.localeCompare(b.isoDate); });
-  localStorage.setItem('croc_weights', JSON.stringify(ws));
+  safeSet('croc_weights', ws);
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
   renderStats();
 }
@@ -2731,7 +2742,7 @@ function saveAnimal() {
     age: document.getElementById('animal-age').value,
     weight: document.getElementById('animal-weight').value
   });
-  localStorage.setItem('croc_animals', JSON.stringify(animals));
+  safeSet('croc_animals', animals);
   closeAddAnimal();
   ['animal-name','animal-breed','animal-age','animal-weight'].forEach(function(id){document.getElementById(id).value='';});
 }
@@ -2775,7 +2786,7 @@ function acceptConsent() {
     cguVersion: '2026-05-16',
     scoreDisclaimerRead: true
   };
-  localStorage.setItem('croc_consent_v1', JSON.stringify(consentRecord));
+  safeSet('croc_consent_v1', consentRecord);
   // Persistance Firebase si connecté — preuve de consentement durable (Art. 7 RGPD)
   try {
     var u = auth && auth.currentUser;
@@ -2802,7 +2813,7 @@ function acceptConsentChecked() {
 }
 function _cookieSave(prefs) {
   prefs.date = Date.now();
-  localStorage.setItem('croc_cookies_choice', JSON.stringify(prefs));
+  safeSet('croc_cookies_choice', prefs);
 }
 function _cookieApply(prefs) {
   if (prefs.push) {
@@ -2930,7 +2941,7 @@ function renderAnalyserResult(p, name) {
   hist = hist.filter(function(h){ return h.name !== productName; });
   hist.unshift({name:productName, brand:brand, score:scored.score, letter:scored.letter, bg:scored.bg, color:scored.color, date:Date.now()});
   if (hist.length > 50) hist.pop();
-  localStorage.setItem('croc_history', JSON.stringify(hist));
+  safeSet('croc_history', hist);
 
   var bars = [
     ['Protéines', prot, '#4a9422'],
@@ -3069,7 +3080,7 @@ function submitAnalyserForm(productName) {
     var custom = safeParse('croc_custom_products', []);
     if (!custom.find(function(p){ return p.product_name.toLowerCase() === productName.toLowerCase(); })) {
       custom.push(product);
-      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
+      safeSet('croc_custom_products', custom);
     }
   }
   renderAnalyserResult(product, productName);

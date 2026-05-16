@@ -2489,7 +2489,8 @@ function selectStatsAnimal(name) {
   renderStatsTabs();
   renderStats();
 }
-function scoreColor(s) { return s >= 70 ? '#4a9422' : s >= 40 ? '#e08a00' : '#c44020'; }
+// Seuils alignés sur scoreProduct() et scoreLetter() — A/B = vert, C = orange, D/E = rouge
+function scoreColor(s) { return s >= 60 ? '#4a9422' : s >= 40 ? '#e08a00' : '#c44020'; }
 function scoreLetter(s) { return s >= 80 ? 'A' : s >= 60 ? 'B' : s >= 40 ? 'C' : s >= 20 ? 'D' : 'E'; }
 function renderStats() {
   var animals = safeParse('croc_animals', []);
@@ -2526,7 +2527,7 @@ function renderStats() {
   html += '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;color:' + gaugeColor + ';line-height:1">' + (avgScore !== null ? avgScore : '—') + '</div><div style="font-size:10px;color:var(--text-muted)">/100</div></div></div>';
   html += '<div style="flex:1">';
   html += '<div style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:' + gaugeColor + ';color:white;font-family:\'Fraunces\',serif;font-size:22px;font-weight:700;margin-bottom:10px">' + letter + '</div>';
-  html += '<div style="font-size:13px;color:var(--text-muted);line-height:1.5">' + (avgScore === null ? 'Aucune analyse pour cet animal.' : avgScore >= 70 ? 'Score moyen élevé selon notre algorithme indicatif.' : avgScore >= 40 ? 'Score moyen correct selon notre algorithme indicatif.' : 'Score moyen faible selon notre algorithme indicatif — consultez un vétérinaire.') + '</div>';
+  html += '<div style="font-size:13px;color:var(--text-muted);line-height:1.5">' + (avgScore === null ? 'Aucune analyse pour cet animal.' : avgScore >= 80 ? 'Score moyen élevé selon notre algorithme indicatif.' : avgScore >= 60 ? 'Score moyen correct selon notre algorithme indicatif.' : avgScore >= 40 ? 'Score moyen selon notre algorithme indicatif.' : 'Score moyen faible selon notre algorithme indicatif — consultez un vétérinaire.') + '</div>';
   html += '</div></div></div>';
 
   // Fiche animal

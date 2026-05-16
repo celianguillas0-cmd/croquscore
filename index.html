@@ -1749,8 +1749,13 @@ function displayProduct(p, fallbackName) {
   setTimeout(() => rs.scrollIntoView({behavior:'smooth', block:'start'}), 100);
   var _animals = safeParse('croc_animals', []);
   var _curAnimal = _statsAnimal || (_animals.length ? _animals[0].name : null);
+  var _histName = p.product_name || fallbackName;
   var _hist = safeParse('croc_history', []);
-  _hist.push({name: p.product_name||fallbackName, score: scored.score, date: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
+  // Déduplication par nom — cohérent avec renderAnalyserResult, évite le bloat localStorage
+  _hist = _hist.filter(function(h){ return h.name !== _histName; });
+  _hist.push({name: _histName, score: scored.score, date: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
+  // Limite à 50 entrées (cohérent avec renderAnalyserResult)
+  if (_hist.length > 50) _hist = _hist.slice(-50);
   safeSet('croc_history', _hist);
 }
 

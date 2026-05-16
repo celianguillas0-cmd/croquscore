@@ -885,7 +885,7 @@ footer{background:#0d1a08;padding:40px 5%}
         <div class="suivi-card-body">
           <div class="suivi-score-row">
             <span class="suivi-score-label">Score indicatif ce mois</span>
-            <span class="suivi-score-val score-b">B+</span>
+            <span class="suivi-score-val" style="background:#d4f0a0;color:#2d6016">B+</span>
           </div>
           <div class="suivi-progress-section">
             <div class="suivi-progress-label">Évolution sur 3 mois</div>
@@ -2394,11 +2394,9 @@ OneSignalDeferred.push(async function(OneSignal) {
     </div>
     <!-- Search bar -->
     <div style="display:flex;gap:8px;padding-bottom:16px">
-      <input id="analyser-search-input" type="text" placeholder="Nom du produit, marque…"
-        style="flex:1;padding:11px 16px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:rgba(255,255,255,0.15);color:white;outline:none;min-width:0"
-        onkeydown="if(event.key==='Enter')doAnalyserSearch()"
-        oninput="this.style.color='white'"
-        placeholder-style="color:rgba(255,255,255,0.6)">
+      <input id="analyser-search-input" type="text" placeholder="Nom du produit, marque…" aria-label="Rechercher un aliment pour animal"
+        style="flex:1;padding:11px 16px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:white;background:rgba(255,255,255,0.15);outline:none;min-width:0"
+        onkeydown="if(event.key==='Enter')doAnalyserSearch()">
       <button onclick="doAnalyserSearch()" style="flex-shrink:0;background:white;border:none;border-radius:12px;padding:11px 18px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--green-dark);cursor:pointer">Analyser</button>
     </div>
   </div>

@@ -1753,7 +1753,7 @@ function displayProduct(p, fallbackName) {
   var _hist = safeParse('croc_history', []);
   // Déduplication par nom — cohérent avec renderAnalyserResult, évite le bloat localStorage
   _hist = _hist.filter(function(h){ return h.name !== _histName; });
-  _hist.push({name: _histName, score: scored.score, date: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
+  _hist.push({name: _histName, score: scored.score, date: Date.now(), dateLabel: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
   // Limite à 50 entrées (cohérent avec renderAnalyserResult)
   if (_hist.length > 50) _hist = _hist.slice(-50);
   safeSet('croc_history', _hist);
@@ -2599,7 +2599,9 @@ function renderStats() {
       html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;' + border + '">';
       html += '<div style="width:32px;height:32px;border-radius:8px;background:' + col + ';display:flex;align-items:center;justify-content:center;color:white;font-family:\'Fraunces\',serif;font-size:14px;font-weight:700;flex-shrink:0">' + lt + '</div>';
       html += '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(h.name||'Produit') + '</div>';
-      if (h.date) html += '<div style="font-size:11px;color:var(--text-muted);margin-top:1px">' + escapeHtml(h.date) + '</div>';
+      // Affichage date — supporte timestamp (Date.now()), chaîne fr-FR, ou dateLabel
+      var dLabel = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date);
+      if (dLabel) html += '<div style="font-size:11px;color:var(--text-muted);margin-top:1px">' + escapeHtml(dLabel) + '</div>';
       html += '</div>';
       html += '<div style="font-weight:700;color:' + col + ';font-size:14px;flex-shrink:0">' + sc + '<span style="font-size:10px;font-weight:400;color:var(--text-muted)">/100</span></div>';
       html += '</div>';
@@ -2613,7 +2615,7 @@ function renderStats() {
   if (analyses.length >= 2 && typeof Chart !== 'undefined') {
     var canvas = document.getElementById('stats-chart');
     if (canvas) {
-      var labels = analyses.map(function(h,i){ return h.date || ('Analyse '+(i+1)); });
+      var labels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date); return d || ('Analyse '+(i+1)); });
       var scores = analyses.map(function(h){ return h.score || 0; });
       _statsCharts.push(new Chart(canvas, {
         type: 'line',
@@ -2649,7 +2651,7 @@ function renderStats() {
   if (hasNutrData && analyses.length >= 2 && typeof Chart !== 'undefined') {
     var nutrCanvas = document.getElementById('stats-nutr-chart');
     if (nutrCanvas) {
-      var nutrLabels = analyses.map(function(h,i){ return h.date || ('Analyse '+(i+1)); });
+      var nutrLabels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date); return d || ('Analyse '+(i+1)); });
       _statsCharts.push(new Chart(nutrCanvas, {
         type: 'line',
         data: {
@@ -3120,10 +3122,14 @@ function renderAnalyserHistory() {
   }
   var items = hist.slice(0, 15).map(function(h) {
     var age = '';
-    if (h.date) {
-      var diff = Math.round((Date.now() - h.date) / 60000);
+    // Supporte timestamp numérique OU chaîne fr-FR (ancien format de displayProduct)
+    var ts = typeof h.date === 'number' ? h.date : null;
+    if (ts) {
+      var diff = Math.round((Date.now() - ts) / 60000);
       age = diff < 2 ? 'à l\'instant' : diff < 60 ? 'il y a ' + diff + ' min' :
             diff < 1440 ? 'il y a ' + Math.round(diff/60) + 'h' : 'il y a ' + Math.round(diff/1440) + 'j';
+    } else if (h.dateLabel || (typeof h.date === 'string')) {
+      age = h.dateLabel || h.date;
     }
     return '<div style="background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid rgba(26,58,15,0.07)">'
       + '<div style="width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;flex-shrink:0;background:' + escapeHtml(h.bg||'#e8f5d8') + ';color:' + escapeHtml(h.color||'#1a3a0f') + '">' + escapeHtml(h.letter||'?') + '</div>'

@@ -1,15 +1,25 @@
 // ============================================================================
-// CrocScore — Base de données nutritionnelle locale
+// CrocScore — Base de données locale de compositions d'aliments pour animaux
 // © 2026 CrocScore. Tous droits réservés.
 // Auteur : CrocScore (celianguillas0@gmail.com)
 // Licence : Usage interne uniquement — reproduction interdite sans autorisation
 // ----------------------------------------------------------------------------
-// NATURE DES DONNÉES : Les valeurs nutritionnelles (protéines, lipides, glucides
-// en %) sont des données factuelles non protégeables par le droit d'auteur
-// (CJUE, arrêts Fixtures Marketing, 2004 ; directive 96/9/CE sur les bases de
-// données). Elles sont compilées à partir d'étiquettes officielles et sites
-// fabricants accessibles publiquement.
-// Les noms de marques sont cités à titre référentiel uniquement (Dir. 2006/114/CE).
+// NATURE DES DONNÉES :
+//   - Environ 12 900 produits (chiens et chats)
+//   - Listes d'ingrédients compilées manuellement à partir d'informations
+//     publiques légalement obligatoires (étiquettes fabricants, sites officiels,
+//     fiches revendeurs) — conformément au règlement (CE) n° 767/2009, art. 17.
+//   - AUCUNE valeur nutritionnelle chiffrée (protéines, lipides, glucides)
+//     n'est stockée dans cette base depuis le 16 mai 2026. nutriments:{}
+//   - Les listes d'ingrédients ne sont pas protégeables par le droit d'auteur :
+//     leur forme et leur ordre sont imposés par la réglementation européenne
+//     (pas d'expression créative — CJCE, Infopaq, C-5/08).
+//   - Aucune extraction substantielle d'une base de données propriétaire unique
+//     n'a été réalisée (CJCE, Fixtures Marketing, 9 nov. 2004, C-444/02).
+// ----------------------------------------------------------------------------
+// SOURCE COMPLÈTE : voir fichier SOURCES.md à la racine du projet.
+// CORRECTIONS : crocscore.help@gmail.com
+// MARQUES : citées à titre référentiel uniquement (art. L713-6 CPI).
 // Les textes d'ingrédients sont des reformulations factuelles, non copiés verbatim.
 // ----------------------------------------------------------------------------
 // Sources primaires : royalcanin.com/fr, purina.fr, hillspet.fr, acana.com,

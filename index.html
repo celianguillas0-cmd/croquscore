@@ -1766,20 +1766,20 @@ if (typeof MORE_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, MORE_DB);
 function searchLocalDB(query) {
   if (!query || query.length < 2) return null;
   var q = query.toLowerCase().trim();
-  var exact = LOCAL_DB.find(function(p){ return p.product_name.toLowerCase() === q; });
+  var exact = LOCAL_DB.find(function(p){ return (p.product_name||'').toLowerCase() === q; });
   if (exact) return exact;
   var words = q.split(/\s+/).filter(function(w){ return w.length > 1; });
   var match = LOCAL_DB.find(function(p){
-    var n = p.product_name.toLowerCase(), b = (p.brands||'').toLowerCase();
+    var n = (p.product_name||'').toLowerCase(), b = (p.brands||'').toLowerCase();
     return words.every(function(w){ return n.includes(w) || b.includes(w); });
   });
   if (match) return match;
   // Recherche dans les produits custom de l'utilisateur
   var custom = safeParse('croc_custom_products', []);
-  var customExact = custom.find(function(p){ return p.product_name.toLowerCase() === q; });
+  var customExact = custom.find(function(p){ return (p.product_name||'').toLowerCase() === q; });
   if (customExact) return customExact;
   return custom.find(function(p){
-    var n = p.product_name.toLowerCase();
+    var n = (p.product_name||'').toLowerCase();
     return words.every(function(w){ return n.includes(w); });
   }) || null;
 }
@@ -1820,7 +1820,7 @@ function submitManualForm(productName) {
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
     var custom = safeParse('croc_custom_products', []);
-    if (!custom.find(function(p){ return p.product_name.toLowerCase()===productName.toLowerCase(); })) {
+    if (!custom.find(function(p){ return (p.product_name||'').toLowerCase()===productName.toLowerCase(); })) {
       custom.push(product);
       safeSet('croc_custom_products', custom);
     }
@@ -1971,7 +1971,7 @@ function submitSrmForm(barcode) {
   const product = {product_name:name, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && name) {
     const custom = safeParse('croc_custom_products', []);
-    if (!custom.find(p => p.product_name.toLowerCase() === name.toLowerCase())) {
+    if (!custom.find(p => (p.product_name||'').toLowerCase() === name.toLowerCase())) {
       custom.push(product);
       safeSet('croc_custom_products', custom);
     }
@@ -3101,7 +3101,7 @@ function submitAnalyserForm(productName) {
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
     var custom = safeParse('croc_custom_products', []);
-    if (!custom.find(function(p){ return p.product_name.toLowerCase() === productName.toLowerCase(); })) {
+    if (!custom.find(function(p){ return (p.product_name||'').toLowerCase() === productName.toLowerCase(); })) {
       custom.push(product);
       safeSet('croc_custom_products', custom);
     }

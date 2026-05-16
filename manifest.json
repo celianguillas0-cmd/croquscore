@@ -1,22 +1,39 @@
 {
-  "name": "CrocScore",
+  "name": "CrocScore — Analyseur de croquettes",
   "short_name": "CrocScore",
-  "description": "Analyseur de croquettes pour chiens et chats",
+  "description": "Analysez la composition des aliments pour chiens et chats. Scores indicatifs basés sur les ingrédients déclarés — outil informatif uniquement.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#faf8f2",
   "theme_color": "#1a3a0f",
   "orientation": "portrait",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["lifestyle", "health", "utilities"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Analyser un produit",
+      "short_name": "Analyser",
+      "description": "Rechercher ou scanner un aliment pour animal",
+      "url": "/?action=search",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -1628,12 +1628,12 @@ function exportMyData() {
     exportDate: new Date().toISOString(),
     exportedBy: 'CrocScore — Droit à la portabilité Art. 20 RGPD',
     userEmail: auth.currentUser ? auth.currentUser.email : 'non connecté',
-    history: JSON.parse(localStorage.getItem('croc_history') || '[]'),
-    animals: JSON.parse(localStorage.getItem('croc_animals') || '[]'),
-    customProducts: JSON.parse(localStorage.getItem('croc_custom_products') || '[]'),
-    weightHistory: JSON.parse(localStorage.getItem('croc_weights') || '[]'),
-    cookiesChoice: JSON.parse(localStorage.getItem('croc_cookies_choice') || 'null'),
-    consentRecord: JSON.parse(localStorage.getItem('croc_consent_v1') || 'null')
+    history: safeParse('croc_history', []),
+    animals: safeParse('croc_animals', []),
+    customProducts: safeParse('croc_custom_products', []),
+    weightHistory: safeParse('croc_weights', []),
+    cookiesChoice: safeParse('croc_cookies_choice', null),
+    consentRecord: safeParse('croc_consent_v1', null)
   };
   var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
   var url = URL.createObjectURL(blob);
@@ -1645,6 +1645,19 @@ function exportMyData() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, suivi du poids, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
+}
+
+// -- Robustesse : lecture localStorage sécurisée (évite crash si JSON corrompu) --
+function safeParse(key, fallback) {
+  try {
+    var raw = localStorage.getItem(key);
+    if (raw === null || raw === undefined) return fallback;
+    var v = JSON.parse(raw);
+    return (v === null || v === undefined) ? fallback : v;
+  } catch(e) {
+    // JSON corrompu (manipulation DevTools, ancien format, plantage écriture) — on retourne le défaut
+    return fallback;
+  }
 }
 
 // -- Sécurité : échappement HTML pour prévenir XSS (données utilisateur + API tierce non sanitisée) --
@@ -1720,9 +1733,9 @@ function displayProduct(p, fallbackName) {
   const rs = document.getElementById('result-section');
   rs.classList.add('visible');
   setTimeout(() => rs.scrollIntoView({behavior:'smooth', block:'start'}), 100);
-  var _animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  var _animals = safeParse('croc_animals', []);
   var _curAnimal = _statsAnimal || (_animals.length ? _animals[0].name : null);
-  var _hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
+  var _hist = safeParse('croc_history', []);
   _hist.push({name: p.product_name||fallbackName, score: scored.score, date: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
   localStorage.setItem('croc_history', JSON.stringify(_hist));
 }
@@ -1743,7 +1756,7 @@ function searchLocalDB(query) {
   });
   if (match) return match;
   // Recherche dans les produits custom de l'utilisateur
-  var custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+  var custom = safeParse('croc_custom_products', []);
   var customExact = custom.find(function(p){ return p.product_name.toLowerCase() === q; });
   if (customExact) return customExact;
   return custom.find(function(p){
@@ -1787,7 +1800,7 @@ function submitManualForm(productName) {
   var save = document.getElementById('mf-save').checked;
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
-    var custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    var custom = safeParse('croc_custom_products', []);
     if (!custom.find(function(p){ return p.product_name.toLowerCase()===productName.toLowerCase(); })) {
       custom.push(product);
       localStorage.setItem('croc_custom_products', JSON.stringify(custom));
@@ -1938,7 +1951,7 @@ function submitSrmForm(barcode) {
   const save = document.getElementById('srm-save').checked;
   const product = {product_name:name, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && name) {
-    const custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    const custom = safeParse('croc_custom_products', []);
     if (!custom.find(p => p.product_name.toLowerCase() === name.toLowerCase())) {
       custom.push(product);
       localStorage.setItem('croc_custom_products', JSON.stringify(custom));
@@ -2432,7 +2445,7 @@ var _statsAnimal = null;
 function openStatsPanel() {
   document.getElementById('stats-overlay').style.display = 'flex';
   document.body.style.overflow = 'hidden';
-  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  var animals = safeParse('croc_animals', []);
   _statsAnimal = animals.length ? animals[0].name : null;
   renderStatsTabs();
   renderStats();
@@ -2443,7 +2456,7 @@ function closeStatsPanel() {
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
 }
 function renderStatsTabs() {
-  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  var animals = safeParse('croc_animals', []);
   var tabsEl = document.getElementById('stats-animal-tabs');
   if (!animals.length) { tabsEl.innerHTML = ''; return; }
   tabsEl.innerHTML = animals.map(function(a) {
@@ -2460,8 +2473,8 @@ function selectStatsAnimal(name) {
 function scoreColor(s) { return s >= 70 ? '#4a9422' : s >= 40 ? '#e08a00' : '#c44020'; }
 function scoreLetter(s) { return s >= 80 ? 'A' : s >= 60 ? 'B' : s >= 40 ? 'C' : s >= 20 ? 'D' : 'E'; }
 function renderStats() {
-  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
-  var allAnalyses = JSON.parse(localStorage.getItem('croc_history') || '[]');
+  var animals = safeParse('croc_animals', []);
+  var allAnalyses = safeParse('croc_history', []);
   var el = document.getElementById('stats-content');
   if (!animals.length) {
     el.innerHTML = '<div style="text-align:center;padding:60px 20px"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--green-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:20px"><circle cx="5" cy="8" r="2"/><circle cx="9.5" cy="5.5" r="2"/><circle cx="14.5" cy="5.5" r="2"/><circle cx="19" cy="8" r="2"/><path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z"/></svg><div style="font-family:\'Fraunces\',serif;font-size:20px;color:var(--green-dark);margin-bottom:8px">Aucun animal</div><div style="font-size:14px;color:var(--text-muted);margin-bottom:28px;line-height:1.6">Ajoutez votre animal pour suivre<br>l\'évolution de son alimentation.</div><button onclick="closeStatsPanel();openAddAnimal()" style="padding:13px 32px;background:var(--green-dark);color:var(--cream);border:none;border-radius:12px;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer">+ Ajouter un animal</button></div>';
@@ -2536,7 +2549,7 @@ function renderStats() {
   html += '</div>';
 
   // Graphique évolution du poids
-  var weights = JSON.parse(localStorage.getItem('croc_weights') || '[]').filter(function(w){ return w.animal === a.name; });
+  var weights = safeParse('croc_weights', []).filter(function(w){ return w.animal === a.name; });
   html += '<div style="background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.08);padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(26,58,15,0.06)">';
   html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">';
   html += '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted)">Évolution du poids</div>';
@@ -2672,9 +2685,9 @@ function renderStats() {
 }
 function deleteAnimal(name) {
   if (!confirm('Supprimer ' + name + ' ?')) return;
-  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  var animals = safeParse('croc_animals', []);
   localStorage.setItem('croc_animals', JSON.stringify(animals.filter(function(a){return a.name!==name})));
-  var remaining = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  var remaining = safeParse('croc_animals', []);
   _statsAnimal = remaining.length ? remaining[0].name : null;
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
   renderStatsTabs();
@@ -2690,7 +2703,7 @@ function saveWeight(animalName) {
   if (!val || isNaN(parseFloat(val))) return;
   var dateLabel = dateInput ? new Date(dateInput).toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
   var isoDate = dateInput || new Date().toISOString().split('T')[0];
-  var ws = JSON.parse(localStorage.getItem('croc_weights') || '[]');
+  var ws = safeParse('croc_weights', []);
   ws.push({ animal: animalName, weight: parseFloat(val), date: dateLabel, isoDate: isoDate });
   ws.sort(function(a,b){ return a.isoDate.localeCompare(b.isoDate); });
   localStorage.setItem('croc_weights', JSON.stringify(ws));
@@ -2710,7 +2723,7 @@ function closeAddAnimal() {
 function saveAnimal() {
   var name = document.getElementById('animal-name').value.trim();
   if (!name) { document.getElementById('animal-name').focus(); return; }
-  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  var animals = safeParse('croc_animals', []);
   animals.push({
     name: name,
     type: document.getElementById('animal-type').value,
@@ -2913,7 +2926,7 @@ function renderAnalyserResult(p, name) {
   var isCustom = !!p._custom;
 
   // Historique
-  var hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
+  var hist = safeParse('croc_history', []);
   hist = hist.filter(function(h){ return h.name !== productName; });
   hist.unshift({name:productName, brand:brand, score:scored.score, letter:scored.letter, bg:scored.bg, color:scored.color, date:Date.now()});
   if (hist.length > 50) hist.pop();
@@ -3053,7 +3066,7 @@ function submitAnalyserForm(productName) {
   var save = document.getElementById('an-save').checked;
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
-    var custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    var custom = safeParse('croc_custom_products', []);
     if (!custom.find(function(p){ return p.product_name.toLowerCase() === productName.toLowerCase(); })) {
       custom.push(product);
       localStorage.setItem('croc_custom_products', JSON.stringify(custom));
@@ -3063,7 +3076,7 @@ function submitAnalyserForm(productName) {
 }
 
 function renderAnalyserHistory() {
-  var hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
+  var hist = safeParse('croc_history', []);
   if (!hist.length) {
     document.getElementById('analyser-content').innerHTML =
       '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center">'

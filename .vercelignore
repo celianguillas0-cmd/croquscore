@@ -23,6 +23,11 @@ extra_products.js
 
 # Archives et fichiers projet (Node only — pas pour le runtime web)
 files.zip
+# Backups d'anciennes versions — ne doivent pas être servis publiquement
+crocscore-app.html
+crocscore-app (2).html
+*.html.bak
+*.html.old
 package.json
 package-lock.json
 node_modules/

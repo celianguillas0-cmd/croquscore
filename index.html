@@ -598,7 +598,7 @@ footer{background:#0d1a08;padding:40px 5%}
     </div>
 
     <div class="showcase-cta">
-      <button class="showcase-cta-btn" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Plan gratuit — ou Premium à 1,99€ TTC le 1er mois</button>
+      <button class="showcase-cta-btn" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Plan gratuit — Premium offert pendant la bêta</button>
       <div class="showcase-cta-sub">Sans carte bancaire pour le plan gratuit</div>
     </div>
   </div>
@@ -713,8 +713,8 @@ footer{background:#0d1a08;padding:40px 5%}
         <div style="text-align:center;padding:24px;background:var(--green-pale);border-radius:12px">
           <div style="font-size:16px;font-weight:500;color:var(--green-dark);margin-bottom:8px">Historique d'alimentation Premium</div>
           <div style="font-size:14px;color:var(--green-mid);margin-bottom:20px;line-height:1.6">Consultez l'historique des scores indicatifs de votre animal au fil du temps — à titre informatif uniquement, ne remplace pas l'avis d'un vétérinaire.</div>
-          <button class="btn-pro" style="padding:12px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none">Essayer 7 jours gratuit</button>
-          <div style="font-size:12px;color:var(--green-mid);margin-top:10px;opacity:0.7">1,99€ le 1er mois, puis 2,99€/mois — sans engagement</div>
+          <button class="btn-pro" style="padding:12px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none" onclick="openAuth()">Accès gratuit — créer un compte</button>
+          <div style="font-size:12px;color:var(--green-mid);margin-top:10px;opacity:0.8">🚀 Gratuit pendant la bêta — aucune carte bancaire requise</div>
         </div>
       </div>
     </div>
@@ -822,7 +822,7 @@ footer{background:#0d1a08;padding:40px 5%}
           </div>
         </div>
       </div>
-      <button class="plan-btn btn-pro" style="max-width:280px;margin-top:28px" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Essayer 7 jours gratuit ?</button>
+      <button class="plan-btn btn-pro" style="max-width:280px;margin-top:28px" onclick="openAuth()">Accès gratuit — bêta ouverte</button>
     </div>
     <div class="suivi-right">
       <div class="suivi-card">
@@ -877,7 +877,7 @@ footer{background:#0d1a08;padding:40px 5%}
   <div class="pricing-inner">
     <div class="section-label" style="color:var(--green-mid)">Tarifs</div>
     <h2>Commencez gratuitement</h2>
-    <p class="pricing-sub">Analysez vos premières croquettes sans carte bancaire. Passez en Premium quand vous voulez.</p>
+    <p class="pricing-sub">Analysez vos premières croquettes sans carte bancaire. Le Premium est <strong>gratuit pendant la bêta</strong> — aucun prélèvement actif.</p>
     <div class="pricing-cards">
       <div class="pricing-card">
         <div class="plan-name">Gratuit</div>
@@ -892,10 +892,10 @@ footer{background:#0d1a08;padding:40px 5%}
         <button class="plan-btn btn-free">Commencer gratuitement</button>
       </div>
       <div class="pricing-card pricing-card-pro">
-        <div class="pricing-popular">Fonctionnalités avancées</div>
+        <div class="pricing-popular">🚀 Bêta — actuellement gratuit</div>
         <div class="plan-name">Premium</div>
-        <div class="plan-price" style="color:var(--cream)">1,99€</div>
-        <div class="plan-period">1,99€ TTC le 1er mois, puis 2,99€ TTC/mois — sans engagement</div>
+        <div class="plan-price" style="color:var(--cream);font-size:22px;line-height:1.2">Gratuit<br><span style="font-size:13px;opacity:0.65;font-weight:400">pendant la bêta</span></div>
+        <div class="plan-period" style="margin-top:4px">Tarif prévisionnel au lancement : à partir de 1,99€ TTC/mois — aucun prélèvement actuellement</div>
         <ul class="plan-features">
           <li><div class="feat-dot">?</div> Historique mensuel d'alimentation (indicatif)</li>
           <li><div class="feat-dot">?</div> Profil animal personnalisé</li>
@@ -903,25 +903,23 @@ footer{background:#0d1a08;padding:40px 5%}
           <li><div class="feat-dot">?</div> Alternatives par gamme de prix <span style="font-size:10px;opacity:0.7">(non contractuel — en dév.)</span></li>
           <li><div class="feat-dot">?</div> Support prioritaire par email</li>
         </ul>
-        <button class="plan-btn btn-pro">Essayer 7 jours gratuit</button>
+        <button class="plan-btn btn-pro" onclick="openAuth()">Accès gratuit — créer un compte</button>
         <div style="margin-top:14px;padding:12px;background:rgba(255,255,255,0.08);border-radius:10px;border:1px solid rgba(255,255,255,0.12)">
-          <div style="font-size:10px;color:rgba(250,248,242,0.55);line-height:1.6">
-            <strong style="color:rgba(250,248,242,0.75);display:block;margin-bottom:4px">Informations importantes :</strong>
-            · Essai gratuit 7 jours, puis facturation automatique de 1,99€ TTC le 1er mois<br>
-            · Renouvellement mensuel automatique à 2,99€ TTC/mois à date anniversaire<br>
-            · Résiliation possible à tout moment depuis votre compte, sans frais<br>
-            · <strong style="color:rgba(250,248,242,0.75)">Droit de rétractation 14 jours</strong> (L.221-18 Code conso) — <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-light)">crocscore.help@gmail.com</a><br>
-            · Aucun remboursement pour mois entamé après expiry du délai de rétractation<br>
-            · Paiement sécurisé — données bancaires non stockées par CrocScore<br>
-            · Prix TTC (TVA applicable selon votre pays de résidence UE)
+          <div style="font-size:10px;color:rgba(250,248,242,0.65);line-height:1.6">
+            <strong style="color:rgba(250,248,242,0.85);display:block;margin-bottom:4px">⚠️ Information bêta :</strong>
+            · Le paiement n'est pas encore actif — aucune carte bancaire demandée<br>
+            · Toutes les fonctionnalités sont gratuites pendant la période bêta<br>
+            · Vous serez notifié avant toute mise en place de la facturation<br>
+            · Le tarif indiqué est prévisionnel et peut évoluer avant le lancement<br>
+            · Droit de rétractation 14 jours prévu au lancement (art. L.221-18 Code conso)
           </div>
         </div>
       </div>
     </div>
     <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:20px;line-height:1.7">
       Scores indicatifs à titre informatif uniquement — données Open Pet Food Facts (ODbL) &amp; base CrocScore. Exactitude non garantie.<br>
-      Ne remplace pas l'avis d'un vétérinaire qualifié. · Résiliation sans motif · Support : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a><br>
-      Conformément au Code de la consommation (art. L.221-18 et s.) — Plateforme RLL UE : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener" style="color:var(--green-bright)">ec.europa.eu/consumers/odr</a>
+      Ne remplace pas l'avis d'un vétérinaire qualifié. · Aucune facturation active pendant la bêta · Support : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a><br>
+      Plateforme RLL UE : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener" style="color:var(--green-bright)">ec.europa.eu/consumers/odr</a> · Médiation : en cours de désignation
     </p>
   </div>
 </section>
@@ -944,7 +942,7 @@ footer{background:#0d1a08;padding:40px 5%}
     <p style="font-size:12px;color:#9b9b8e;margin-bottom:24px">Dernière mise à jour : mai 2026 — Conforme RGPD (UE) 2016/679</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">1. Responsable du traitement</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Le responsable du traitement de vos données personnelles est l'éditeur de CrocScore (auto-entreprise enregistrée en France — SIRET à compléter). Contact : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Le responsable du traitement de vos données personnelles est l'éditeur de CrocScore (auto-entreprise enregistrée en France — immatriculation en cours, SIRET communiqué dès obtention). Contact : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">2. Données collectées et bases légales (Art. 6 RGPD)</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px">Nous collectons uniquement les données suivantes :</p>
@@ -968,7 +966,7 @@ footer{background:#0d1a08;padding:40px 5%}
         </tr></thead>
         <tbody>
           <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px"><strong>Google LLC</strong> (Firebase Auth)</td><td style="padding:7px 10px">USA</td><td style="padding:7px 10px">Authentification</td><td style="padding:7px 10px">E-mail, UID</td><td style="padding:7px 10px">CCT (2021/914) + Data Privacy Framework</td></tr>
-          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px"><strong>Vercel Inc.</strong></td><td style="padding:7px 10px">USA</td><td style="padding:7px 10px">Hébergement</td><td style="padding:7px 10px">Logs IP (anonymisés)</td><td style="padding:7px 10px">CCT (2021/914)</td></tr>
+          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px"><strong>Vercel Inc.</strong></td><td style="padding:7px 10px">USA</td><td style="padding:7px 10px">Hébergement + analytics sans cookie</td><td style="padding:7px 10px">Logs IP anonymisés</td><td style="padding:7px 10px">CCT (2021/914) — intérêt légitime Art. 6.1.f</td></tr>
           <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px"><strong>OneSignal Inc.</strong> (opt-in)</td><td style="padding:7px 10px">USA</td><td style="padding:7px 10px">Notifications push</td><td style="padding:7px 10px">Token push, consentement</td><td style="padding:7px 10px">Consentement Art. 6.1.a + CCT</td></tr>
           <tr><td style="padding:7px 10px"><strong>Open Pet Food Facts</strong></td><td style="padding:7px 10px">France</td><td style="padding:7px 10px">API produits</td><td style="padding:7px 10px">IP lors des requêtes</td><td style="padding:7px 10px">Intérêt légitime Art. 6.1.f</td></tr>
         </tbody>
@@ -1019,7 +1017,7 @@ footer{background:#0d1a08;padding:40px 5%}
           <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">croc_cookies_choice</td><td style="padding:7px 10px">CrocScore (local)</td><td style="padding:7px 10px">Préférences cookies</td><td style="padding:7px 10px">13 mois</td><td style="padding:7px 10px">Essentiel</td></tr>
           <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px">Service Worker (/sw.js)</td><td style="padding:7px 10px">CrocScore</td><td style="padding:7px 10px">Cache hors-ligne</td><td style="padding:7px 10px">Révocation</td><td style="padding:7px 10px">Essentiel</td></tr>
           <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">OneSignal SDK</td><td style="padding:7px 10px">OneSignal Inc. (USA)</td><td style="padding:7px 10px">Notifications push</td><td style="padding:7px 10px">Révocation</td><td style="padding:7px 10px">Push (opt-in)</td></tr>
-          <tr><td style="padding:7px 10px">Vercel Analytics</td><td style="padding:7px 10px">Vercel Inc. (USA)</td><td style="padding:7px 10px">Métriques anonymes</td><td style="padding:7px 10px">90 jours</td><td style="padding:7px 10px">Performance (opt-in)</td></tr>
+          <tr><td style="padding:7px 10px">Vercel Analytics</td><td style="padding:7px 10px">Vercel Inc. (USA)</td><td style="padding:7px 10px">Métriques anonymes (sans cookie, IP anonymisée)</td><td style="padding:7px 10px">90 jours (agrégé)</td><td style="padding:7px 10px">Intérêt légitime Art. 6.1.f — sans cookie</td></tr>
         </tbody>
       </table>
     </div>
@@ -1072,7 +1070,7 @@ footer{background:#0d1a08;padding:40px 5%}
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Nom du service :</strong> CrocScore</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Forme juridique :</strong> Auto-entrepreneur (micro-entreprise) enregistré(e) en France</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>SIRET :</strong> En cours d'enregistrement (immatriculation en cours)</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Directeur de la publication :</strong> Le porteur du projet CrocScore</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Directeur de la publication :</strong> Le porteur du projet CrocScore (nom complet communiqué sur demande à crocscore.help@gmail.com — immatriculation en cours)</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Contact :</strong> <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">2. Hébergeur</h3>
@@ -1171,9 +1169,10 @@ footer{background:#0d1a08;padding:40px 5%}
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Données produits et marques :</strong> Les noms de marques sont mentionnés à des fins d'identification uniquement, conformément à l'article L713-6 du Code de la propriété intellectuelle. Les listes d'ingrédients sont issues de données publiques réglementaires et peuvent ne pas refléter la formulation actuelle. Toute marque peut demander la correction ou le retrait de ses données en contactant <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> (délai de traitement : 30 jours).</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">4. Abonnement et droit de rétractation</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Abonnement Premium :</strong> L'abonnement est souscrit sans engagement de durée. Le prélèvement est mensuel, à date anniversaire de souscription. La résiliation peut intervenir à tout moment depuis l'espace personnel, avec prise d'effet à la fin de la période mensuelle en cours.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Droit de rétractation :</strong> Conformément à l'article L.221-18 du Code de la consommation et à la Directive européenne 2011/83/UE, vous disposez d'un droit de rétractation de <strong>14 jours calendaires</strong> à compter de la souscription, sans avoir à justifier de motif. Pour exercer ce droit, adressez un courrier électronique à <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> en indiquant votre demande de rétractation.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Exception :</strong> Conformément à l'article L.221-28 du Code de la consommation, si vous avez expressément demandé l'exécution immédiate du service et que celui-ci a été pleinement exécuté, le droit de rétractation ne peut être exercé. Le remboursement éventuel sera effectué dans un délai de 14 jours suivant l'exercice du droit de rétractation.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>⚠️ Période bêta — aucune facturation active :</strong> CrocScore est actuellement en phase bêta. Aucun prélèvement n'est effectué. Toutes les fonctionnalités, y compris celles listées comme "Premium", sont accessibles gratuitement pendant cette période. L'utilisateur sera informé, avec un préavis de <strong>30 jours minimum</strong>, avant toute mise en place d'une facturation. À ce moment, les présentes conditions d'abonnement entreront en vigueur.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Abonnement Premium (conditions futures) :</strong> Au lancement commercial, l'abonnement sera souscrit sans engagement de durée. Le prélèvement sera mensuel, à date anniversaire de souscription. La résiliation pourra intervenir à tout moment depuis l'espace personnel, avec prise d'effet à la fin de la période mensuelle en cours.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Droit de rétractation (au lancement) :</strong> Conformément à l'article L.221-18 du Code de la consommation et à la Directive européenne 2011/83/UE, vous disposerez d'un droit de rétractation de <strong>14 jours calendaires</strong> à compter de la souscription, sans avoir à justifier de motif. Pour exercer ce droit : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a>.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Exception :</strong> Conformément à l'article L.221-28 du Code de la consommation, si vous avez expressément demandé l'exécution immédiate du service et que celui-ci a été pleinement exécuté, le droit de rétractation ne peut être exercé. Le remboursement éventuel sera effectué dans les 14 jours suivant l'exercice du droit.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">5. Utilisations autorisées et interdites</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:10px">CrocScore est mis à disposition pour un usage personnel, non commercial. Sont notamment interdits :</p>
@@ -1572,8 +1571,8 @@ async function deleteAccount() {
   }
 }
 function cancelSubscription() {
-  if(!confirm('Résilier votre abonnement Premium ?\n\nVotre accès Premium restera actif jusqu\'à la fin de la période mensuelle en cours. Aucun remboursement pour la période entamée (sauf exercice du droit de rétractation sous 14 jours — Art. L.221-18 Code conso).')) return;
-  alert('Résiliation prise en compte. Votre Premium reste actif jusqu\'à la fin de la période en cours.\n\nPour toute question : crocscore.help@gmail.com');
+  // Aucune facturation active pendant la bêta — cette fonction est non opérationnelle
+  alert('CrocScore est actuellement en bêta gratuite.\n\nAucun abonnement payant n\'est actif — vous ne serez jamais prélevé sans en être informé au préalable.\n\nContact : crocscore.help@gmail.com');
 }
 // Exportation des données locales — Art. 20 RGPD (droit à la portabilité)
 function exportMyData() {
@@ -2168,10 +2167,10 @@ OneSignalDeferred.push(async function(OneSignal) {
       </div>
       <div class="prem-price-block">
         <div>
-          <div class="prem-price-main"><span class="prem-price-num">1,99€</span><span class="prem-price-period"> TTC le 1er mois</span></div>
-          <div class="prem-price-then">puis 2,99€ TTC/mois · sans engagement · résiliable en 1 clic</div>
+          <div class="prem-price-main"><span class="prem-price-num" style="font-size:22px">Gratuit</span><span class="prem-price-period"> pendant la bêta</span></div>
+          <div class="prem-price-then">Tarif prévisionnel : à partir de 1,99€ TTC/mois · aucun prélèvement actuellement</div>
         </div>
-        <div class="prem-trial">7 jours gratuits</div>
+        <div class="prem-trial" style="background:rgba(74,148,34,0.25);border-color:rgba(74,148,34,0.4);color:#a8d878">🚀 Bêta</div>
       </div>
     </div>
     <div class="prem-modal-body">
@@ -2214,14 +2213,14 @@ OneSignalDeferred.push(async function(OneSignal) {
         <strong>&#9888;&#xFE0F; Fonctionnalités en cours de développement :</strong> Les alertes rappels produits, les alternatives par gamme de prix et la comparaison côte à côte sont des fonctionnalités non contractuelles, actuellement en cours de développement. Leur disponibilité n'est pas garantie dans les délais mentionnés. L'abonnement Premium vous donne accès aux fonctionnalités disponibles — conformément à l'art. L.217-3 Code conso.
       </div>
       <div class="prem-cta">
-        <button class="prem-cta-btn" onclick="closePremModal();document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Commencer l'essai gratuit de 7 jours ?</button>
+        <button class="prem-cta-btn" onclick="closePremModal();openAuth()">Créer mon compte — accès gratuit bêta</button>
         <div class="prem-cta-notes">
           <span class="prem-cta-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sans carte bancaire</span>
           <span class="prem-cta-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sans engagement</span>
           <span class="prem-cta-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Résiliation en 1 clic</span>
         </div>
         <div style="margin-top:12px;padding:10px 12px;background:#f0ece0;border-radius:10px;font-size:10px;color:#6b6b5e;line-height:1.6;text-align:left">
-          <strong>Informations légales :</strong> Après l'essai gratuit, facturation automatique de 1,99€ TTC le 1er mois puis 2,99€ TTC/mois à date anniversaire. <strong>Droit de rétractation 14 jours</strong> (art. L.221-18 Code conso). Résiliation sans frais ni motif depuis votre compte. Aucun remboursement pour mois entamé après expiry du délai légal. Paiement sécurisé — données bancaires non conservées par CrocScore. Scores indicatifs uniquement — ne remplace pas un vétérinaire. Contact : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a>
+          <strong>⚠️ Bêta — aucune facturation active :</strong> Le paiement n'est pas encore disponible. Toutes les fonctionnalités sont gratuites pendant la bêta. Vous serez informé avant toute mise en place d'une facturation. Le tarif prévisionnel (à partir de 1,99€ TTC/mois) n'est qu'indicatif et peut évoluer. Scores indicatifs uniquement — ne remplace pas un vétérinaire. Contact : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a>
         </div>
       </div>
     </div>

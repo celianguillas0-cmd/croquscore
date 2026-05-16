@@ -1,0 +1,23 @@
+# CrocScore — Politique de divulgation responsable des vulnérabilités
+# Conformément au standard RFC 9116 (security.txt)
+
+Contact: mailto:crocscore.help@gmail.com
+Expires: 2027-05-14T00:00:00.000Z
+Preferred-Languages: fr, en
+Canonical: https://crocscore.vercel.app/.well-known/security.txt
+
+# Politique
+# Si vous découvrez une vulnérabilité de sécurité affectant CrocScore,
+# merci de nous en informer de manière responsable à l'adresse ci-dessus
+# avant toute divulgation publique. Nous nous engageons à traiter toute
+# signalement dans un délai de 72 heures et à corriger les failles critiques
+# dans un délai de 7 jours ouvrables.
+
+# Périmètre concerné
+# - https://crocscore.vercel.app (application principale)
+# - Toutes les données utilisateurs stockées via Firebase
+
+# Hors périmètre
+# - Services tiers (Vercel, Firebase, OneSignal, Open Pet Food Facts)
+# - Attaques nécessitant un accès physique à l'appareil de l'utilisateur
+# - Attaques d'ingénierie sociale ciblant l'éditeur ou les utilisateurs

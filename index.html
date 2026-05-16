@@ -663,7 +663,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <div class="arrow-down">?</div>
       <div class="sol-block">
         <div class="sol-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>La solution</div>
-        <div class="sol-stat">1,99€<span style="font-size:14px;font-weight:400"> le 1er mois</span></div>
+        <div class="sol-stat">Gratuit<span style="font-size:14px;font-weight:400"> pendant la bêta</span></div>
         <div class="sol-desc">CrocScore analyse la composition des ingrédients de vos croquettes et vous donne un score indicatif — à titre informatif uniquement, ne remplace pas un avis vétérinaire.</div>
       </div>
     </div>
@@ -881,7 +881,7 @@ footer{background:#0d1a08;padding:40px 5%}
         </div>
         <div class="suivi-card-body">
           <div class="suivi-score-row">
-            <span class="suivi-score-label">Score nutritionnel ce mois</span>
+            <span class="suivi-score-label">Score indicatif ce mois</span>
             <span class="suivi-score-val score-b">B+</span>
           </div>
           <div class="suivi-progress-section">
@@ -1082,7 +1082,7 @@ footer{background:#0d1a08;padding:40px 5%}
     <strong>Limitation de traitement (Art. 18 RGPD) :</strong> Vous pouvez demander la limitation du traitement de vos données pendant l'examen d'une contestation.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">10. Décisions automatisées et profilage</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore calcule des scores nutritionnels de manière automatisée à partir de données produits. Ces calculs <strong>n'ont aucun effet juridique</strong> sur vous et ne constituent pas un profilage au sens de l'Art. 22 RGPD. Ils sont fournis à titre purement indicatif et informatif.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore calcule des scores indicatifs de composition de manière automatisée à partir de données produits. Ces calculs <strong>n'ont aucun effet juridique</strong> sur vous et ne constituent pas un profilage au sens de l'Art. 22 RGPD. Ils sont fournis à titre purement indicatif et informatif.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">11. Sécurité des données</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données :<br>
@@ -1536,7 +1536,7 @@ async function signUp() {
     if(name) await cred.user.updateProfile({displayName: name.substring(0, 50)});
     // Enregistrement horodaté du consentement CGU lors de la création de compte (Art. 7 RGPD)
     localStorage.setItem('croc_account_consent', JSON.stringify({
-      version: '1.0', date: Date.now(), dateISO: new Date().toISOString(),
+      version: '1.1', date: Date.now(), dateISO: new Date().toISOString(),
       ageConfirmed: true, cguAccepted: true, email: email
     }));
     closeAuth();
@@ -2067,8 +2067,8 @@ OneSignalDeferred.push(async function(OneSignal) {
       <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Créer un compte</button>
     </div>
     <div id="form-signin">
-      <div class="auth-field"><label>Email</label><input type="email" id="signin-email" placeholder="votre@email.com"/></div>
-      <div class="auth-field"><label>Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signin-password" placeholder="Votre mot de passe"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signin-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="signin-email" placeholder="votre@email.com" autocomplete="email"/></div>
+      <div class="auth-field"><label>Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signin-password" placeholder="Votre mot de passe" autocomplete="current-password"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signin-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
       <span class="auth-forgot" onclick="forgotPassword()">Mot de passe oublié ?</span>
       <button class="auth-btn" id="signin-btn" onclick="signIn()">Se connecter</button>
       <div class="auth-error" id="signin-error"></div>
@@ -2082,7 +2082,7 @@ OneSignalDeferred.push(async function(OneSignal) {
       <div style="background:var(--cream-dark);border-radius:10px;padding:12px 14px;margin-bottom:14px">
         <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-bottom:8px">
           <input type="checkbox" id="signup-age-check" style="margin-top:2px;accent-color:var(--green-dark);flex-shrink:0">
-          <span style="font-size:11px;color:var(--text);line-height:1.5;display:block;background:#fffbe6;border:1.5px solid #f0c030;border-radius:8px;padding:8px 10px;margin-top:4px">?? <strong>Je certifie avoir 15 ans ou plus.</strong> Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — loi française n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17). n°78-17). n°78-17). n°78-17).</span>
+          <span style="font-size:11px;color:var(--text);line-height:1.5;display:block;background:#fffbe6;border:1.5px solid #f0c030;border-radius:8px;padding:8px 10px;margin-top:4px">&#9888;&#xFE0F; <strong>Je certifie avoir 15 ans ou plus.</strong> Si mineur(e), consentement du représentant légal requis (art. 8 RGPD &mdash; loi française n&deg;78-17).</span>
         </label>
         <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
           <input type="checkbox" id="signup-cgu-check" style="margin-top:2px;accent-color:var(--green-dark);flex-shrink:0">

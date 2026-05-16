@@ -105,6 +105,16 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script>
+  // Application du thème AVANT le rendu (évite le flash blanc en mode sombre)
+  (function() {
+    try {
+      var saved = localStorage.getItem('croc_theme');
+      var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    } catch(e) {}
+  })();
+</script>
+<script>
   // OneSignal chargé uniquement si l'utilisateur a accepté les cookies push
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   window._oneSignalLoaded = false;
@@ -127,12 +137,164 @@
   }
 </script>
 <style>
-:root{--green-dark:#1a3a0f;--green-mid:#2d6016;--green-bright:#4a9422;--green-light:#a8d878;--green-pale:#e8f5d8;--cream:#faf8f2;--cream-dark:#f0ece0;--text:#1a1a18;--text-muted:#6b6b5e;--text-light:#9b9b8e;--white:#ffffff}
+:root{--green-dark:#1a3a0f;--green-mid:#2d6016;--green-bright:#4a9422;--green-light:#a8d878;--green-pale:#e8f5d8;--cream:#faf8f2;--cream-dark:#f0ece0;--text:#1a1a18;--text-muted:#6b6b5e;--text-light:#9b9b8e;--white:#ffffff;color-scheme:light}
+
+/* ==========================================================================
+   MODE SOMBRE — actif si [data-theme="dark"] sur <html>
+   Définit la palette inversée et override les couleurs hex hardcodées dans
+   les styles inline des modals légaux, cards, tables.
+   ========================================================================== */
+:root[data-theme="dark"]{
+  --green-dark:#a8d878; --green-mid:#7acc4e; --green-bright:#5aaa2e;
+  --green-light:#4a9422; --green-pale:#1f3a1a;
+  --cream:#14181a; --cream-dark:#1e2326; --white:#252b30;
+  --text:#e8e8e2; --text-muted:#a8a8a0; --text-light:#777770;
+  color-scheme:dark;
+}
+/* Backgrounds des modals (inline style="background:#faf8f2") */
+:root[data-theme="dark"] [style*="background:#faf8f2"],
+:root[data-theme="dark"] [style*="background:rgba(0,0,0,0.5)"] > div[style*="background:#faf8f2"]{
+  background:#1e2326 !important;
+}
+:root[data-theme="dark"] [style*="background:#f0ece0"]{ background:#2a3036 !important; }
+:root[data-theme="dark"] [style*="background:#faf8f2"]:not(table):not(thead){ color:#e8e8e2 !important; }
+/* Tables dans les modals : alternance de lignes */
+:root[data-theme="dark"] tr[style*="background:#faf8f2"]{ background:#2a3036 !important; }
+:root[data-theme="dark"] thead tr[style*="background:#f0ece0"]{ background:#2f363c !important; }
+/* Headings et labels (color:#1a3a0f → green-light) */
+:root[data-theme="dark"] [style*="color:#1a3a0f"]{ color:#a8d878 !important; }
+:root[data-theme="dark"] [style*="color:#1a1a18"]{ color:#e8e8e2 !important; }
+:root[data-theme="dark"] [style*="color:#6b6b5e"]{ color:#a8a8a0 !important; }
+:root[data-theme="dark"] [style*="color:#9b9b8e"]{ color:#777770 !important; }
+:root[data-theme="dark"] [style*="color:#4a9422"]{ color:#7acc4e !important; }
+/* Cards blanches (background:var(--white)) — variable déjà overridée, OK */
+/* Backgrounds clairs des disclaimers/bannières */
+:root[data-theme="dark"] [style*="background:#fffbe6"]{ background:#3a3520 !important; color:#f0e8c0 !important; }
+:root[data-theme="dark"] [style*="background:#fff8ee"]{ background:#3a2e20 !important; color:#f0d8a0 !important; }
+:root[data-theme="dark"] [style*="background:#fff3cd"]{ background:#3a3220 !important; color:#f0e0a0 !important; }
+:root[data-theme="dark"] [style*="background:#fff0ee"]{ background:#3a2222 !important; color:#f0c0c0 !important; }
+:root[data-theme="dark"] [style*="background:#fff8e6"]{ background:#3a3520 !important; color:#e8d090 !important; }
+:root[data-theme="dark"] [style*="background:#f0f7e8"]{ background:#1f2e1a !important; color:#c0d8a0 !important; }
+:root[data-theme="dark"] [style*="background:#f0f4ff"]{ background:#1f2438 !important; color:#a8b8e0 !important; }
+:root[data-theme="dark"] [style*="background:#f0fce8"]{ background:#1f2e1a !important; }
+:root[data-theme="dark"] [style*="background:#fff8e1"]{ background:#3a3520 !important; color:#e8d090 !important; }
+:root[data-theme="dark"] [style*="background:#e8f5d8"]{ background:#1f3a1a !important; }
+/* Inputs en mode sombre */
+:root[data-theme="dark"] input[type="text"],
+:root[data-theme="dark"] input[type="email"],
+:root[data-theme="dark"] input[type="password"],
+:root[data-theme="dark"] input[type="number"],
+:root[data-theme="dark"] input[type="date"],
+:root[data-theme="dark"] select{
+  background:#1e2326 !important; color:#e8e8e2 !important; border-color:rgba(168,216,120,0.25) !important;
+}
+:root[data-theme="dark"] input::placeholder{ color:#777770 !important; }
+/* Overrides pour classes CSS avec backgrounds hardcodés (warnings/disclaimers) */
+:root[data-theme="dark"] .arrow-down{ background:#2a3036 !important; color:#777770 !important; }
+:root[data-theme="dark"] .prob-block{ background:#3a2e20 !important; }
+:root[data-theme="dark"] .prob-stat,
+:root[data-theme="dark"] .prob-label{ color:#f0c890 !important; }
+:root[data-theme="dark"] .prob-desc,
+:root[data-theme="dark"] .sol-desc{ color:#c0c0b8 !important; }
+:root[data-theme="dark"] .sol-block{ background:#1f2e1a !important; }
+:root[data-theme="dark"] .sol-stat,
+:root[data-theme="dark"] .sol-label{ color:#a8d878 !important; }
+:root[data-theme="dark"] .auth-error{ background:#3a2222 !important; color:#f0a0a0 !important; }
+:root[data-theme="dark"] .alert-badge-wait{ background:#3a3220 !important; color:#e8c060 !important; }
+:root[data-theme="dark"] .suivi-alert{ background:#3a2e20 !important; color:#e8b070 !important; }
+:root[data-theme="dark"] .card-advice,
+:root[data-theme="dark"] .advice2,
+:root[data-theme="dark"] .suivi-conseil{ background:#1f3a1a !important; color:#a8d878 !important; }
+:root[data-theme="dark"] .advice2-title,
+:root[data-theme="dark"] .suivi-conseil-title{ color:#c0e88a !important; }
+/* Sections sombres (showcase, how, cta-section, footer) — déjà sombres en clair, OK
+   On garde leurs couleurs forcées en mode sombre */
+:root[data-theme="dark"] .showcase,
+:root[data-theme="dark"] .how,
+:root[data-theme="dark"] .cta-section{ background:#0a1208 !important; }
+:root[data-theme="dark"] footer{ background:#050a04 !important; }
+/* Hero — couleurs textes dark */
+:root[data-theme="dark"] .hero h1{ color:var(--green-dark) !important; }
+:root[data-theme="dark"] .scores-section h2,
+:root[data-theme="dark"] .why-section h2,
+:root[data-theme="dark"] .pricing h2{ color:var(--green-dark) !important; }
+/* Pricing card free — fond white devient cream dark */
+:root[data-theme="dark"] .pricing-card:not(.pricing-card-pro){ background:#252b30 !important; }
+:root[data-theme="dark"] .pricing-card .plan-price{ color:#a8d878 !important; }
+/* Cookie banner & settings */
+:root[data-theme="dark"] #cookie-banner,
+:root[data-theme="dark"] #cookie-settings{ background:#1e2326 !important; border-color:rgba(168,216,120,0.15) !important; }
+/* Auth + account modals */
+:root[data-theme="dark"] .auth-box,
+:root[data-theme="dark"] .account-panel{ background:#1e2326 !important; }
+:root[data-theme="dark"] .account-item{ background:#252b30 !important; color:#e8e8e2 !important; }
+:root[data-theme="dark"] .account-item:hover{ background:#2f363c !important; }
+:root[data-theme="dark"] .account-plan-card.free{ background:#252b30 !important; }
+:root[data-theme="dark"] .account-plan-card.free .account-plan-name{ color:#a8d878 !important; }
+:root[data-theme="dark"] .account-plan-card.free .account-plan-action{ background:#5aaa2e !important; color:#14181a !important; }
+:root[data-theme="dark"] .auth-tabs{ border-bottom-color:#2a3036 !important; }
+:root[data-theme="dark"] .auth-tab.active{ color:#a8d878 !important; border-bottom-color:#a8d878 !important; }
+/* SRM result modal */
+:root[data-theme="dark"] .srm-sheet{ background:#1e2326 !important; }
+:root[data-theme="dark"] .srm-handle{ background:rgba(255,255,255,0.18) !important; }
+:root[data-theme="dark"] .srm-score-row{ background:#1f3a1a !important; }
+:root[data-theme="dark"] .srm-btn-secondary{ background:#2a3036 !important; color:#e8e8e2 !important; }
+/* Premium modal */
+:root[data-theme="dark"] .prem-modal{ background:#1e2326 !important; }
+:root[data-theme="dark"] .prem-feat{ background:#252b30 !important; border-color:rgba(168,216,120,0.1) !important; }
+/* Alert modal */
+:root[data-theme="dark"] .alert-modal{ background:#1e2326 !important; }
+:root[data-theme="dark"] .alert-type{ background:#252b30 !important; border-color:rgba(168,216,120,0.1) !important; }
+/* Score letter cards (ca-ce) — gardent leurs couleurs vives, OK */
+/* Borders génériques */
+:root[data-theme="dark"] [style*="border:1px solid rgba(26,58,15"],
+:root[data-theme="dark"] [style*="border-top:1px solid rgba(26,58,15"],
+:root[data-theme="dark"] [style*="border-bottom:1px solid rgba(26,58,15"]{ border-color:rgba(168,216,120,0.12) !important; }
+/* Boutons & cards qui restent verts foncés en mode sombre (pour préserver le branding) */
+:root[data-theme="dark"] .nav-avatar,
+:root[data-theme="dark"] .account-avatar-big,
+:root[data-theme="dark"] .pricing-card-pro,
+:root[data-theme="dark"] .srm-btn-primary,
+:root[data-theme="dark"] .prem-modal-header,
+:root[data-theme="dark"] .alert-cta-on,
+:root[data-theme="dark"] .tab.active,
+:root[data-theme="dark"] .nav-cta,
+:root[data-theme="dark"] .alert-cta-on:hover{
+  background:#1a3a0f !important; color:#faf8f2 !important;
+}
+:root[data-theme="dark"] .pricing-card-pro .plan-name{ color:#a8d878 !important; }
+:root[data-theme="dark"] .pricing-card-pro .plan-price{ color:#faf8f2 !important; }
+:root[data-theme="dark"] .pricing-card-pro .plan-features li{ color:#e8e8e2 !important; }
+:root[data-theme="dark"] .account-plan-card.premium{ background:#1a3a0f !important; }
+/* Bordure cookie toggle off/on */
+:root[data-theme="dark"] .auth-field input,
+:root[data-theme="dark"] .srm-field input{ background:#1e2326 !important; border-color:rgba(168,216,120,0.25) !important; color:#e8e8e2 !important; }
+/* Result section card */
+:root[data-theme="dark"] .result-card{ background:#252b30 !important; }
+:root[data-theme="dark"] .tab{ border-color:rgba(168,216,120,0.2) !important; color:#a8a8a0 !important; }
+:root[data-theme="dark"] .crit-track,
+:root[data-theme="dark"] .crit-track2{ background:#2a3036 !important; }
+/* Showcase search input */
+:root[data-theme="dark"] .showcase-search input{ color:#faf8f2 !important; }
+/* Hero card main */
+:root[data-theme="dark"] .hero-card-main{ background:#252b30 !important; }
+/* Suivi card */
+:root[data-theme="dark"] .suivi-card{ background:#252b30 !important; }
+:root[data-theme="dark"] .suivi-card-header{ border-bottom-color:rgba(168,216,120,0.1) !important; }
+/* Score cards (A-E) gardent leurs couleurs vives en mode sombre — pas d'override */
+/* Why cards */
+:root[data-theme="dark"] .why-card{ background:#252b30 !important; }
+/* Bouton toggle — toujours visible */
+.theme-toggle{position:fixed;bottom:80px;right:14px;width:44px;height:44px;border-radius:50%;background:var(--white);border:1.5px solid rgba(74,148,34,0.25);box-shadow:0 4px 14px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;color:var(--green-dark);transition:all 0.25s ease;padding:0}
+.theme-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,0,0,0.22)}
+.theme-toggle svg{width:20px;height:20px}
+:root[data-theme="dark"] .theme-toggle{ background:#252b30; border-color:rgba(168,216,120,0.35); color:#a8d878; }
+@media(max-width:480px){ .theme-toggle{bottom:76px;right:10px;width:40px;height:40px} .theme-toggle svg{width:18px;height:18px} }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6;padding-bottom:72px}
 @media(min-width:1024px){.top-nav{display:block !important}}
-nav{position:sticky;top:0;z-index:100;background:rgba(250,248,242,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,148,34,0.12);padding:0 5%}
+nav{position:sticky;top:0;z-index:100;background:var(--cream);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,148,34,0.12);padding:0 5%}
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-logo-icon{width:36px;height:36px;background:var(--green-pale);border-radius:10px;display:flex;align-items:center;justify-content:center}
@@ -336,7 +498,7 @@ footer{background:#0d1a08;padding:40px 5%}
 .footer-links a{font-size:13px;color:rgba(250,248,242,0.4);text-decoration:none;transition:color 0.2s}
 .footer-links a:hover{color:rgba(250,248,242,0.7)}
 .footer-disc{font-size:11px;color:rgba(250,248,242,0.25);text-align:center;margin-top:20px;max-width:1100px;margin-left:auto;margin-right:auto;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:#faf8f2;border-top:1px solid rgba(74,148,34,0.12);display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:200}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--cream);border-top:1px solid rgba(74,148,34,0.12);display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:200}
 .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;border-radius:12px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;transition:all 0.18s;flex:1;min-width:0}
 .bn-item:hover{background:var(--green-pale)}
 .bn-item.active{background:var(--green-pale)}
@@ -1674,6 +1836,43 @@ function safeParse(key, fallback) {
   }
 }
 
+// -- Thème clair/sombre ---------------------------------------------------
+function getCurrentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+function applyTheme(theme) {
+  if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+  // Mise à jour de la meta theme-color (barre adresse mobile)
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'dark' ? '#14181a' : '#1a3a0f');
+  // Affichage icône appropriée (lune en mode clair pour basculer vers sombre, soleil en mode sombre)
+  var sun = document.getElementById('theme-icon-sun');
+  var moon = document.getElementById('theme-icon-moon');
+  if (sun && moon) {
+    sun.style.display = theme === 'dark' ? 'block' : 'none';
+    moon.style.display = theme === 'dark' ? 'none' : 'block';
+  }
+}
+function toggleTheme() {
+  var next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  safeSet('croc_theme', next);
+}
+// Init icône au chargement (le thème lui-même est déjà appliqué dans le <head> avant le rendu)
+window.addEventListener('DOMContentLoaded', function() {
+  applyTheme(getCurrentTheme());
+});
+// Suit les changements système si l'utilisateur n'a pas fait de choix manuel
+if (window.matchMedia) {
+  var mql = window.matchMedia('(prefers-color-scheme: dark)');
+  var listener = function(e) {
+    if (!localStorage.getItem('croc_theme')) applyTheme(e.matches ? 'dark' : 'light');
+  };
+  if (mql.addEventListener) mql.addEventListener('change', listener);
+  else if (mql.addListener) mql.addListener(listener);
+}
+
 // -- Sécurité : échappement HTML pour prévenir XSS (données utilisateur + API tierce non sanitisée) --
 function escapeHtml(s) {
   if (s === null || s === undefined) return '';
@@ -2409,6 +2608,12 @@ OneSignalDeferred.push(async function(OneSignal) {
   <!-- Content -->
   <div id="analyser-content" style="flex:1;overflow-y:auto;padding:20px;max-width:640px;margin:0 auto;width:100%;box-sizing:border-box"></div>
 </div>
+
+<!-- Bouton bascule thème clair/sombre -->
+<button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Basculer entre mode clair et mode sombre" title="Mode clair / sombre">
+  <svg id="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  <svg id="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
 
 <div class="bottom-nav" role="navigation">
   <button class="bn-item active" id="bn-accueil" onclick="bnActivate('bn-accueil');window.scrollTo({top:0,behavior:'smooth'})">

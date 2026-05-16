@@ -528,7 +528,7 @@ footer{background:#0d1a08;padding:40px 5%}
   <div class="showcase-inner">
     <div class="showcase-top">
       <h2>Tout ce que CrocScore<br>fait pour <em>votre animal</em></h2>
-      <p>De l'analyse indicative au résumé mensuel — une seule app pour mieux comprendre la qualité nutritionnelle de l'alimentation de votre chien ou chat (scores indicatifs, données non garanties).</p>
+      <p>De l'analyse indicative au résumé mensuel — une seule app pour mieux comprendre la composition des aliments de votre chien ou chat (scores indicatifs basés sur les ingrédients, données à titre informatif).</p>
       <div class="showcase-search">
         <input type="text" placeholder="Recherchez une croquette..." oninput="document.getElementById('main-search').value=this.value" onkeydown="if(event.key==='Enter'){doSearch()}"/>
         <button onclick="document.getElementById('main-search').value=this.previousElementSibling.value;doSearch();window.scrollTo({top:document.getElementById('main-search').offsetTop-100,behavior:'smooth'})">Analyser ?</button>
@@ -546,7 +546,7 @@ footer{background:#0d1a08;padding:40px 5%}
         <div class="sc-feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a8d878" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
         <div class="sc-feat-badge free">Gratuit</div>
         <div class="sc-feat-title">Score A à E</div>
-        <div class="sc-feat-desc">Score indicatif basé sur les macronutriments (protéines, lipides, glucides) et la présence de viande identifiée.</div>
+        <div class="sc-feat-desc">Score indicatif basé sur l'analyse des ingrédients déclarés — premier ingrédient, présence de céréales, diversité des protéines animales.</div>
       </div>
       <div class="sc-feat">
         <div class="sc-feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a8d878" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
@@ -619,7 +619,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <div class="sol-block">
         <div class="sol-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>La solution</div>
         <div class="sol-stat">1,99€<span style="font-size:14px;font-weight:400"> le 1er mois</span></div>
-        <div class="sol-desc">CrocScore analyse vos croquettes et vous donne un score indicatif sur leur qualité nutritionnelle — à titre informatif uniquement.</div>
+        <div class="sol-desc">CrocScore analyse la composition des ingrédients de vos croquettes et vous donne un score indicatif — à titre informatif uniquement, ne remplace pas un avis vétérinaire.</div>
       </div>
     </div>
     <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
@@ -726,8 +726,8 @@ footer{background:#0d1a08;padding:40px 5%}
     <div class="section-label">Comment ça marche</div>
     <h2>Analysez les croquettes de votre animal en 3 étapes</h2>
     <div class="how-steps">
-      <div class="how-step"><div class="step-num">01</div><div class="step-title">Recherchez ou scannez</div><div class="step-desc">Tapez le nom du produit ou scannez le code-barres depuis votre téléphone. CrocScore dispose d'une base de plus de 1 500 références et interroge Open Pet Food Facts (ODbL).</div></div>
-      <div class="how-step"><div class="step-num">02</div><div class="step-title">Obtenez le score</div><div class="step-desc">Notre algorithme calcule un score indicatif de A à E basé sur les macronutriments (protéines, lipides, glucides) et la présence de viande identifiée — ne remplace pas l'avis d'un vétérinaire.</div></div>
+      <div class="how-step"><div class="step-num">01</div><div class="step-title">Recherchez ou scannez</div><div class="step-desc">Tapez le nom du produit ou scannez le code-barres depuis votre téléphone. CrocScore dispose d'une base de plus de 15 000 références et interroge Open Pet Food Facts (ODbL).</div></div>
+      <div class="how-step"><div class="step-num">02</div><div class="step-title">Obtenez le score</div><div class="step-desc">Notre algorithme calcule un score indicatif de A à E basé sur l'analyse de la liste des ingrédients déclarés (premier ingrédient, céréales, diversité des protéines animales) — ne remplace pas l'avis d'un vétérinaire.</div></div>
       <div class="how-step"><div class="step-num">03</div><div class="step-title">Suivez votre animal</div><div class="step-desc">Avec le suivi Premium, consultez l'évolution du score nutritionnel indicatif de votre chien ou votre chat au fil du temps.</div></div>
     </div>
   </div>
@@ -755,7 +755,7 @@ footer{background:#0d1a08;padding:40px 5%}
         </svg>
       </div>
       <div class="why-title">Mieux comprendre ce que mange votre animal</div>
-      <div class="why-desc">La composition des aliments pour animaux peut être complexe à lire. CrocScore calcule un score indicatif basé sur les macronutriments pour vous aider à comparer — à titre informatif uniquement, ne remplace pas l'avis d'un vétérinaire.</div>
+      <div class="why-desc">La composition des aliments pour animaux peut être complexe à lire. CrocScore analyse la liste des ingrédients déclarés pour vous aider à comparer — score indicatif non réglementaire, à titre informatif uniquement, ne remplace pas l'avis d'un vétérinaire.</div>
     </div>
     <div class="why-card">
       <div class="why-icon">
@@ -1070,25 +1070,28 @@ footer{background:#0d1a08;padding:40px 5%}
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Site : <a href="https://vercel.com" target="_blank" style="color:#4a9422">vercel.com</a></p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">3. Propriété intellectuelle</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'ensemble des éléments constituant le site CrocScore — notamment le code source, le design, les textes, l'interface, l'algorithme de scoring nutritionnel et la sélection des données — est protégé par les dispositions du Code de la propriété intellectuelle français (articles L.111-1 et suivants).</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'ensemble des éléments constituant le site CrocScore — notamment le code source, le design, les textes, l'interface, l'algorithme de scoring de composition et la sélection des données — est protégé par les dispositions du Code de la propriété intellectuelle français (articles L.111-1 et suivants).</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Toute reproduction, représentation, modification, publication, adaptation ou exploitation, partielle ou totale, par quelque procédé que ce soit, sans l'autorisation préalable et écrite de l'éditeur, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">4. Source des données produits</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les données nutritionnelles des produits proviennent de deux sources :</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les données produits utilisées par CrocScore proviennent de trois sources distinctes :</p>
     <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
-      <li><strong>Base locale CrocScore</strong> : base de données propriétaire constituée à partir de données publiques sur les aliments pour animaux.</li>
-      <li><strong>Open Pet Food Facts</strong> : base collaborative open source disponible sous licence <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" style="color:#4a9422">Open Database License (ODbL)</a>. Site : <a href="https://world.openpetfoodfacts.org" target="_blank" style="color:#4a9422">world.openpetfoodfacts.org</a></li>
+      <li><strong>Base locale CrocScore (localdb.js — ~12 900 produits)</strong> : compositions des ingrédients issues d'informations publiques légalement obligatoires (étiquettes fabricants, conformément au règlement CE 767/2009). <em>Aucune valeur nutritionnelle chiffrée (protéines, lipides, glucides) n'est associée à ces produits.</em> Le score est calculé exclusivement sur l'analyse de la liste des ingrédients déclarés.</li>
+      <li><strong>Open Pet Food Facts — OPFF_DB (~632 produits)</strong> : base collaborative open source sous licence <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" style="color:#4a9422">Open Database License (ODbL) v1.0</a>. Attribution : <a href="https://world.openpetfoodfacts.org" target="_blank" style="color:#4a9422">world.openpetfoodfacts.org</a>. Les données nutritionnelles de cette source sont réelles et issues des étiquettes.</li>
+      <li><strong>Open Pet Food Facts / Open Food Facts — MORE_DB (~1 460 produits)</strong> : données nutritionnelles réelles issues des bases ODbL d'Open Pet Food Facts et d'Open Food Facts. Attribution obligatoire ODbL : <a href="https://world.openfoodfacts.org" target="_blank" style="color:#4a9422">world.openfoodfacts.org</a> et <a href="https://world.openpetfoodfacts.org" target="_blank" style="color:#4a9422">world.openpetfoodfacts.org</a>.</li>
     </ul>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore n'est pas affilié à Open Pet Food Facts. L'exactitude, l'exhaustivité et l'actualité des données ne sont pas garanties, ces données étant issues de contributions collaboratives.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Conformité ODbL :</strong> CrocScore utilise les données ODbL dans le cadre d'une application non commerciale (accès gratuit, sans API publique exposant la base brute). L'attribution est assurée par ces mentions légales et dans l'interface de l'application. CrocScore n'est pas affilié à Open Pet Food Facts ou Open Food Facts.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'exactitude, l'exhaustivité et l'actualité des données ne sont pas garanties. Les formulations des produits peuvent évoluer sans que CrocScore en soit informé. Toute correction peut être demandée à <a href="mailto:correction@crocscore.fr" style="color:#4a9422">correction@crocscore.fr</a>.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">5. Utilisation des marques déposées</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore mentionne des noms de marques commerciales (Royal Canin, Purina, Hill's, Orijen, Pedigree, etc.) <strong>à des fins d'identification des produits uniquement</strong>, conformément à l'usage légal permettant la désignation d'un produit par son nom commercial.</p>
     <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
       <li>CrocScore n'est ni affilié, ni partenaire, ni approuvé par aucune de ces marques ;</li>
-      <li>Les scores affichés sont <strong>purement algorithmiques</strong>, basés exclusivement sur les macronutriments (protéines, lipides, glucides) et la composition déclarée — ils ne constituent pas un jugement de valeur sur la marque, sa politique qualité ou ses pratiques commerciales ;</li>
-      <li>Les données nutritionnelles utilisées sont issues de sources publiques et peuvent ne pas refléter la formulation actuelle des produits ;</li>
-      <li>CrocScore ne prétend pas que les produits obtenant un score faible sont dangereux ou de mauvaise qualité — le score reflète uniquement le ratio macronutriments selon la méthodologie CrocScore ;</li>
-      <li>Toute marque souhaitant signaler une inexactitude ou demander la correction de données peut contacter : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></li>
+      <li>Les scores affichés sont <strong>purement algorithmiques</strong>, basés exclusivement sur l'analyse de la composition déclarée (liste des ingrédients telle qu'affichée sur l'étiquette légale) — ils ne constituent pas un jugement de valeur sur la marque, sa politique qualité ou ses pratiques commerciales ;</li>
+      <li>CrocScore n'est <strong>pas un label officiel</strong> et n'est homologué par aucun organisme réglementaire (DGAL, ANSES, AFNOR ou équivalent) ;</li>
+      <li>Les listes d'ingrédients utilisées sont issues d'informations publiques réglementaires et peuvent ne pas refléter la formulation actuelle des produits ;</li>
+      <li>CrocScore ne prétend pas que les produits obtenant un score faible sont dangereux ou de mauvaise qualité — le score reflète uniquement l'analyse de la composition des ingrédients selon la méthodologie CrocScore, sans prétention à l'exhaustivité nutritionnelle ;</li>
+      <li><strong>Droit de correction :</strong> toute marque souhaitant signaler une inexactitude sur la liste des ingrédients d'un de ses produits ou demander la mise à jour de données peut contacter : <a href="mailto:correction@crocscore.fr" style="color:#4a9422">correction@crocscore.fr</a> — les corrections signalées sont traitées dans un délai de 30 jours.</li>
     </ul>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Les marques citées restent la propriété de leurs titulaires respectifs. Leur mention ne constitue en aucun cas un acte de dénigrement commercial au sens de l'article 1240 du Code civil.</p>
 
@@ -1104,13 +1107,28 @@ footer{background:#0d1a08;padding:40px 5%}
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'utilisateur reconnaît utiliser CrocScore sous sa seule et entière responsabilité.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">7. Avertissement santé animale</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore est un <strong>outil d'information indicatif</strong>. Les scores nutritionnels fournis ne constituent en aucun cas un avis médical vétérinaire, un diagnostic ou une prescription. Pour toute question relative à la santé, l'alimentation ou le traitement de votre animal, consultez exclusivement un <strong>vétérinaire qualifié et diplômé</strong>. CrocScore décline toute responsabilité pour les décisions prises sur la seule base des informations affichées par l'application.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore est un <strong>outil d'information indicatif</strong>. Les scores de composition des ingrédients fournis ne constituent en aucun cas un avis médical vétérinaire, un diagnostic ou une prescription alimentaire. Ils ne sauraient remplacer l'évaluation d'un professionnel de la nutrition animale ou vétérinaire. Pour toute question relative à la santé, l'alimentation ou le traitement de votre animal, consultez exclusivement un <strong>vétérinaire qualifié et diplômé</strong>. CrocScore décline toute responsabilité pour les décisions prises sur la seule base des informations affichées par l'application.</p>
 
-    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">8. Droit applicable et juridiction</h3>
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">8. Méthodologie de scoring — transparence algorithmique</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:10px">Conformément au principe de transparence algorithmique, CrocScore publie ici les règles exactes de calcul du score de composition (A à E) :</p>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;margin-bottom:12px;padding-left:20px">
+      <li><strong>Score de départ :</strong> 50 points</li>
+      <li><strong>Données nutritionnelles disponibles (sources ODbL uniquement) :</strong> protéines ≥ 30g/100g → +20 pts ; ≥ 20g → +10 pts ; lipides entre 10–20g → +5 pts ; lipides > 25g → −5 pts ; glucides > 40g → −15 pts ; glucides < 20g → +10 pts</li>
+      <li><strong>Premier ingrédient = viande nommée</strong> (poulet, bœuf, saumon, canard, agneau, thon, dinde, veau, poisson) : +15 pts</li>
+      <li><strong>Premier ingrédient = céréale ou sous-produit</strong> (maïs, blé, farine de céréales, sous-produits, dérivés) : −15 pts</li>
+      <li><strong>Céréales dans la composition</strong> (maïs, blé, céréales, amidon, gluten) : −5 pts par occurrence</li>
+      <li><strong>Au moins 2 viandes nommées dans la composition :</strong> +10 pts</li>
+      <li><strong>Score final :</strong> plafonné entre 5 et 99 — A (≥80), B (≥60), C (≥40), D (≥20), E (&lt;20)</li>
+    </ul>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px">Pour les ~12 900 produits de la base locale CrocScore, <strong>seuls les critères liés aux ingrédients</strong> (premier ingrédient, présence de céréales, diversité des protéines animales) sont appliqués — aucune valeur nutritionnelle chiffrée n'est utilisée ni affichée pour ces produits.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Cette méthodologie est indicative, non réglementaire, et ne prétend pas refléter l'intégralité de la valeur nutritionnelle d'un aliment pour animal. Elle vise uniquement à faciliter la comparaison relative de la composition déclarée.</p>
+
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">9. Droit applicable et juridiction</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Les présentes mentions légales sont soumises au droit français. En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable, les tribunaux français du ressort compétent seront seuls compétents.</p>
 
-    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">9. Contact</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Pour toute question relative aux présentes mentions légales : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">10. Contact</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px">Pour toute question relative aux présentes mentions légales : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7"><strong>Signalement d'erreur de composition (fabricants) :</strong> <a href="mailto:correction@crocscore.fr" style="color:#4a9422">correction@crocscore.fr</a> — délai de traitement : 30 jours ouvrés.</p>
   </div>
 </div>
 
@@ -1138,8 +1156,8 @@ footer{background:#0d1a08;padding:40px 5%}
       <li>des fiches d'information sur les animaux enregistrés.</li>
     </ul>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Ces fonctionnalités sont fournies <strong>à titre purement informatif</strong> et ne constituent en aucun cas un avis médical, vétérinaire, nutritionnel ou diététique professionnel.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px"><strong>Méthodologie de scoring :</strong> Les scores sont calculés de manière <strong>purement algorithmique</strong> à partir des macronutriments déclarés (protéines, lipides, glucides) et de la composition en ingrédients. Ils ne reflètent pas la position des fabricants, ne constituent pas un jugement de valeur sur la qualité globale du produit, et ne prennent pas en compte d'autres critères pertinents (palatabilité, digestibilité, besoins spécifiques de l'animal, etc.).</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Données produits et marques :</strong> Les noms de marques sont mentionnés à des fins d'identification uniquement. Les données nutritionnelles sont issues de sources publiques et peuvent être approximatives ou ne pas refléter la formulation actuelle. Toute marque peut demander la correction ou le retrait de ses données en contactant <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a>.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px"><strong>Méthodologie de scoring :</strong> Les scores sont calculés de manière <strong>purement algorithmique</strong> à partir de l'analyse de la liste des ingrédients déclarés (premier ingrédient, présence de céréales, diversité des protéines animales). CrocScore n'est pas un label officiel homologué. Les scores ne reflètent pas la position des fabricants, ne constituent pas un jugement de valeur sur la qualité globale du produit, et ne prennent pas en compte d'autres critères pertinents (palatabilité, digestibilité, besoins spécifiques de l'animal, etc.). La méthodologie complète est disponible dans les mentions légales, section 8.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Données produits et marques :</strong> Les noms de marques sont mentionnés à des fins d'identification uniquement, conformément à l'article L713-6 du Code de la propriété intellectuelle. Les listes d'ingrédients sont issues de données publiques réglementaires et peuvent ne pas refléter la formulation actuelle. Toute marque peut demander la correction ou le retrait de ses données en contactant <a href="mailto:correction@crocscore.fr" style="color:#4a9422">correction@crocscore.fr</a> (délai de traitement : 30 jours).</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">4. Abonnement et droit de rétractation</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Abonnement Premium :</strong> L'abonnement est souscrit sans engagement de durée. Le prélèvement est mensuel, à date anniversaire de souscription. La résiliation peut intervenir à tout moment depuis l'espace personnel, avec prise d'effet à la fin de la période mensuelle en cours.</p>
@@ -2273,7 +2291,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
   <!-- Bandeau méthodologie -->
   <div style="background:#f0f7e8;border-bottom:1px solid rgba(74,148,34,0.15);padding:7px 20px;flex-shrink:0;text-align:center">
-    <span style="font-size:10px;color:#4a7a20;font-family:'DM Sans',sans-serif;line-height:1.4">Scores <strong>indicatifs et non contractuels</strong> — basés sur macronutriments uniquement. Données approximatives. <a href="mailto:crocscore.help@gmail.com" style="color:#4a7a20;text-decoration:underline">Signaler une erreur</a></span>
+    <span style="font-size:10px;color:#4a7a20;font-family:'DM Sans',sans-serif;line-height:1.4">Scores <strong>indicatifs et non contractuels</strong> — basés sur l'analyse des ingrédients déclarés. Données à titre informatif. <a href="mailto:correction@crocscore.fr" style="color:#4a7a20;text-decoration:underline">Signaler une erreur de composition</a></span>
   </div>
 
   <!-- Content -->

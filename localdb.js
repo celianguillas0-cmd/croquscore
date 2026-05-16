@@ -1,7 +1,7 @@
 // ============================================================================
 // CrocScore — Base de données locale de compositions d'aliments pour animaux
 // © 2026 CrocScore. Tous droits réservés.
-// Auteur : CrocScore (celianguillas0@gmail.com)
+// Contact : crocscore.help@gmail.com
 // Licence : Usage interne uniquement — reproduction interdite sans autorisation
 // ----------------------------------------------------------------------------
 // NATURE DES DONNÉES :

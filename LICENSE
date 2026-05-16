@@ -1,31 +1,48 @@
-MIT License
+CrocScore — Notice de licence
+==============================
 
-Copyright (c) 2026 CrocScore — auto-entreprise enregistrée en France
+Copyright (c) 2026 CrocScore — auto-entreprise enregistrée en France.
+Tous droits réservés.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+------------------------------------------------------------------------
+1. CODE SOURCE, DESIGN, ALGORITHME DE SCORING
+------------------------------------------------------------------------
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+L'ensemble du code source, de l'interface utilisateur, des textes éditoriaux,
+de l'algorithme de calcul de score et de la sélection / organisation des
+données est protégé par le droit d'auteur (Code de la propriété intellectuelle
+français, articles L.111-1 et suivants).
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Toute reproduction, représentation, modification, adaptation, publication,
+traduction, distribution, exploitation commerciale ou non, partielle ou
+totale, par quelque procédé que ce soit, sans l'autorisation préalable et
+écrite de l'éditeur, est strictement interdite et constituerait une
+contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la
+propriété intellectuelle.
 
----
+Contact pour toute demande d'autorisation : crocscore.help@gmail.com
 
-NOTE ON DATA:
-- localdb.js: lists of ingredients compiled from mandatory public regulatory
-  data (Regulation (EC) No 767/2009, Art. 17). Not subject to copyright
-  (no creative authorship -- CJEU Infopaq C-5/08). See SOURCES.md.
-- opff_db.js and more_products.js: Open Database License (ODbL) v1.0.
-  Source: Open Pet Food Facts / Open Food Facts (openpetfoodfacts.org).
-  Attribution required per ODbL terms.
+------------------------------------------------------------------------
+2. NOTICE SUR LES DONNÉES
+------------------------------------------------------------------------
+
+- localdb.js : listes d'ingrédients compilées à partir d'informations
+  publiques légalement obligatoires (Règlement (CE) n° 767/2009, art. 17).
+  Non protégeables par le droit d'auteur (absence d'originalité — CJUE
+  Infopaq C-5/08). Voir SOURCES.md.
+
+- opff_db.js et more_products.js : données sous Open Database License
+  (ODbL) v1.0. Source : Open Pet Food Facts / Open Food Facts
+  (openpetfoodfacts.org / openfoodfacts.org). Attribution obligatoire
+  conformément aux termes de l'ODbL.
+
+------------------------------------------------------------------------
+3. AVERTISSEMENT
+------------------------------------------------------------------------
+
+LE LOGICIEL ET LES DONNÉES SONT FOURNIS "EN L'ÉTAT", SANS AUCUNE GARANTIE
+EXPRESSE OU IMPLICITE, NOTAMMENT QUANT À LEUR QUALITÉ, EXACTITUDE,
+EXHAUSTIVITÉ OU APTITUDE À UN USAGE PARTICULIER. L'ÉDITEUR DÉCLINE TOUTE
+RESPONSABILITÉ POUR LES DÉCISIONS PRISES SUR LA BASE DES INFORMATIONS
+FOURNIES PAR CET OUTIL. CROCSCORE EST UN OUTIL D'INFORMATION INDICATIVE
+QUI NE REMPLACE EN AUCUN CAS L'AVIS D'UN VÉTÉRINAIRE QUALIFIÉ.

@@ -1,0 +1,15 @@
+/* TEAM */
+Creator: CrocScore
+Contact: crocscore.help@gmail.com
+Location: France
+
+/* THANKS */
+Open Pet Food Facts — world.openpetfoodfacts.org (ODbL)
+Open Food Facts — world.openfoodfacts.org (ODbL)
+
+/* SITE */
+Last update: 2026/05/16
+Language: French
+Doctype: HTML5
+IDE: VS Code
+Standards: PWA, WCAG 2.1 AA (effort)

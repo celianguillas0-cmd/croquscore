@@ -7,6 +7,7 @@ Allow: /
 Allow: /index.html
 Allow: /manifest.json
 Allow: /sitemap.xml
+Allow: /humans.txt
 
 # Bases de données propriétaires — extraction interdite (Dir. 96/9/CE droit sui generis)
 Disallow: /localdb.js

@@ -74,7 +74,28 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="CrocScore">
+<meta name="format-detection" content="telephone=no">
+<!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://crocscore.vercel.app/">
+<meta property="og:title" content="CrocScore — Analyseur de croquettes pour chiens et chats">
+<meta property="og:description" content="Analysez la composition des croquettes de votre animal en quelques secondes. Score indicatif A à E basé sur les ingrédients déclarés — gratuit, sans inscription.">
+<meta property="og:image" content="https://crocscore.vercel.app/icon-512.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="CrocScore">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CrocScore — Analyseur de croquettes">
+<meta name="twitter:description" content="Score indicatif A à E sur les aliments pour chiens et chats, basé sur la composition des ingrédients. Gratuit et sans inscription.">
+<meta name="twitter:image" content="https://crocscore.vercel.app/icon-512.png">
+<!-- Preconnects performance -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://world.openpetfoodfacts.org">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -508,6 +529,7 @@ footer{background:#0d1a08;padding:40px 5%}
 </style>
 </head>
 <body>
+<noscript><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#1a3a0f;color:#faf8f2;text-align:center;padding:16px;font-family:sans-serif;font-size:14px">CrocScore nécessite JavaScript pour fonctionner. Veuillez activer JavaScript dans les paramètres de votre navigateur.</div></noscript>
 
 <nav class="top-nav" id="top-nav" style="display:none">
   <div class="nav-inner">
@@ -1581,16 +1603,19 @@ async function signOut() {
   closeAccount();
 }
 async function deleteAccount() {
-  if(!confirm('Supprimer définitivement votre compte CrocScore ?\n\nConformément à l\'Art. 17 RGPD (droit à l\'effacement), votre compte Firebase et vos données d\'authentification seront supprimés. Vos données locales (historique, animaux) resteront sur cet appareil jusqu\'à ce que vous les effaciez manuellement depuis les paramètres navigateur.\n\nCette action est irréversible.')) return;
+  if(!confirm('Supprimer définitivement votre compte CrocScore ?\n\nConformément à l\'Art. 17 RGPD (droit à l\'effacement) :\n· Votre compte Firebase et vos données d\'authentification seront supprimés\n· Toutes vos données locales (historique, animaux, préférences) seront effacées de cet appareil\n\nCette action est irréversible.')) return;
   try {
-    // Suppression des données locales liées au compte
-    localStorage.removeItem('croc_consent_v1');
-    localStorage.removeItem('croc_account_consent');
+    // Suppression complète de toutes les données locales CrocScore (Art. 17 RGPD)
+    [
+      'croc_consent_v1', 'croc_account_consent', 'croc_cookies_choice',
+      'croc_history', 'croc_animals', 'croc_custom_products',
+      'croc_premium', 'croc_prefs', 'croc_scan_history'
+    ].forEach(function(k) { localStorage.removeItem(k); });
     await auth.currentUser.delete();
     closeAccount();
-    alert('Votre compte a été supprimé. Conformément au RGPD, vos données d\'authentification ont été effacées.');
+    alert('Votre compte et toutes vos données ont été supprimés de cet appareil.\n\nConformément au RGPD (Art. 17), vos données d\'authentification Firebase ont également été effacées.\n\nSi vous avez des questions : crocscore.help@gmail.com');
   } catch(e) {
-    alert('Pour supprimer votre compte, vous devez vous reconnecter récemment. Déconnectez-vous, reconnectez-vous, puis réessayez.\n\nOu contactez : crocscore.help@gmail.com (réponse sous 30 jours — Art. 12 RGPD).');
+    alert('Pour supprimer votre compte, vous devez vous être connecté récemment.\nDéconnectez-vous, reconnectez-vous, puis réessayez.\n\nOu contactez : crocscore.help@gmail.com (réponse sous 30 jours — Art. 12 RGPD).');
   }
 }
 function cancelSubscription() {
@@ -1947,8 +1972,8 @@ if('serviceWorker' in navigator){
   });
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
-      .then(reg => { reg.update(); console.log('SW enregistré'); })
-      .catch(err => console.log('SW erreur:', err));
+      .then(reg => { reg.update(); })
+      .catch(() => {});
   });
 }
 

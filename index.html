@@ -145,8 +145,8 @@
    les styles inline des modals légaux, cards, tables.
    ========================================================================== */
 :root[data-theme="dark"]{
-  --green-dark:#a8d878; --green-mid:#7acc4e; --green-bright:#5aaa2e;
-  --green-light:#4a9422; --green-pale:#1f3a1a;
+  --green-dark:#1a3a0f; --green-mid:#2d6016; --green-bright:#4a9422;
+  --green-light:#a8d878; --green-pale:#1f3a1a;
   --cream:#14181a; --cream-dark:#1e2326; --white:#252b30;
   --text:#e8e8e2; --text-muted:#a8a8a0; --text-light:#777770;
   color-scheme:dark;
@@ -213,11 +213,25 @@
 :root[data-theme="dark"] .how,
 :root[data-theme="dark"] .cta-section{ background:#0a1208 !important; }
 :root[data-theme="dark"] footer{ background:#050a04 !important; }
-/* Hero — couleurs textes dark */
-:root[data-theme="dark"] .hero h1{ color:var(--green-dark) !important; }
+/* Éléments utilisant --green-dark comme couleur de TEXTE : doivent rester lisibles sur fond sombre */
+:root[data-theme="dark"] .hero h1,
+:root[data-theme="dark"] .hero-stat-num,
 :root[data-theme="dark"] .scores-section h2,
 :root[data-theme="dark"] .why-section h2,
-:root[data-theme="dark"] .pricing h2{ color:var(--green-dark) !important; }
+:root[data-theme="dark"] .pricing h2,
+:root[data-theme="dark"] .nav-logo-text,
+:root[data-theme="dark"] .auth-logo,
+:root[data-theme="dark"] .account-panel-title,
+:root[data-theme="dark"] .srm-title,
+:root[data-theme="dark"] .srm-score-label,
+:root[data-theme="dark"] .alert-modal-title,
+:root[data-theme="dark"] .bn-item.active .bn-icon,
+:root[data-theme="dark"] .bn-item.active .bn-label,
+:root[data-theme="dark"] .mini-step-icon,
+:root[data-theme="dark"] .feat-dot,
+:root[data-theme="dark"] .tag-dog2{ color:#a8d878 !important; }
+/* Boutons inline style="background:var(--green-dark)" — texte forcé clair */
+:root[data-theme="dark"] [style*="background:var(--green-dark)"]{ color:#faf8f2 !important; }
 /* Pricing card free — fond white devient cream dark */
 :root[data-theme="dark"] .pricing-card:not(.pricing-card-pro){ background:#252b30 !important; }
 :root[data-theme="dark"] .pricing-card .plan-price{ color:#a8d878 !important; }
@@ -250,22 +264,17 @@
 :root[data-theme="dark"] [style*="border:1px solid rgba(26,58,15"],
 :root[data-theme="dark"] [style*="border-top:1px solid rgba(26,58,15"],
 :root[data-theme="dark"] [style*="border-bottom:1px solid rgba(26,58,15"]{ border-color:rgba(168,216,120,0.12) !important; }
-/* Boutons & cards qui restent verts foncés en mode sombre (pour préserver le branding) */
+/* Texte sur fond vert foncé (var(--green-dark) = #1a3a0f) : forcer crème clair */
 :root[data-theme="dark"] .nav-avatar,
 :root[data-theme="dark"] .account-avatar-big,
-:root[data-theme="dark"] .pricing-card-pro,
-:root[data-theme="dark"] .srm-btn-primary,
-:root[data-theme="dark"] .prem-modal-header,
-:root[data-theme="dark"] .alert-cta-on,
 :root[data-theme="dark"] .tab.active,
-:root[data-theme="dark"] .nav-cta,
-:root[data-theme="dark"] .alert-cta-on:hover{
-  background:#1a3a0f !important; color:#faf8f2 !important;
-}
+:root[data-theme="dark"] .srm-btn-primary,
+:root[data-theme="dark"] .alert-cta-on,
+:root[data-theme="dark"] .alert-cta-on:hover,
+:root[data-theme="dark"] .nav-cta{ color:#faf8f2 !important; }
 :root[data-theme="dark"] .pricing-card-pro .plan-name{ color:#a8d878 !important; }
 :root[data-theme="dark"] .pricing-card-pro .plan-price{ color:#faf8f2 !important; }
 :root[data-theme="dark"] .pricing-card-pro .plan-features li{ color:#e8e8e2 !important; }
-:root[data-theme="dark"] .account-plan-card.premium{ background:#1a3a0f !important; }
 /* Bordure cookie toggle off/on */
 :root[data-theme="dark"] .auth-field input,
 :root[data-theme="dark"] .srm-field input{ background:#1e2326 !important; border-color:rgba(168,216,120,0.25) !important; color:#e8e8e2 !important; }

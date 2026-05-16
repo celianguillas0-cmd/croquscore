@@ -1,0 +1,36 @@
+# Fichiers exclus du déploiement Vercel
+# Ces fichiers ne doivent pas être accessibles publiquement
+
+# Scripts de génération — exposent la logique métier (gen-localdb1.js à gen-localdb74.js)
+gen-localdb*.js
+generate-localdb.js
+
+# Scripts de fetch — exposent les méthodes de collecte
+fetch-opff.js
+fetch-more.js
+
+# Scripts de nettoyage / vérification internes
+clean-localdb*.js
+check-encoding.js
+check-remaining.js
+count-products.js
+verify-clean.js
+update-index-*.js
+setup-hooks.js
+
+# Base de données estimée non utilisée — données _estimated:true non vérifiées
+extra_products.js
+
+# Archives et fichiers projet (Node only — pas pour le runtime web)
+files.zip
+package.json
+package-lock.json
+node_modules/
+.editorconfig
+.git/
+.gitignore
+.vercelignore
+
+# Documentation interne (non publique)
+SOURCES.md
+LICENSE

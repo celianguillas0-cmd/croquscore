@@ -1609,7 +1609,7 @@ async function deleteAccount() {
     [
       'croc_consent_v1', 'croc_account_consent', 'croc_cookies_choice',
       'croc_history', 'croc_animals', 'croc_custom_products',
-      'croc_premium', 'croc_prefs', 'croc_scan_history'
+      'croc_premium', 'croc_prefs', 'croc_scan_history', 'croc_weights'
     ].forEach(function(k) { localStorage.removeItem(k); });
     await auth.currentUser.delete();
     closeAccount();
@@ -1631,6 +1631,7 @@ function exportMyData() {
     history: JSON.parse(localStorage.getItem('croc_history') || '[]'),
     animals: JSON.parse(localStorage.getItem('croc_animals') || '[]'),
     customProducts: JSON.parse(localStorage.getItem('croc_custom_products') || '[]'),
+    weightHistory: JSON.parse(localStorage.getItem('croc_weights') || '[]'),
     cookiesChoice: JSON.parse(localStorage.getItem('croc_cookies_choice') || 'null'),
     consentRecord: JSON.parse(localStorage.getItem('croc_consent_v1') || 'null')
   };
@@ -1643,7 +1644,7 @@ function exportMyData() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
+  alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, suivi du poids, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
 }
 
 // -- Scoring ----------------------------------------------

@@ -1704,13 +1704,15 @@ function scoreProduct(p) {
     if(fat >= 10 && fat <= 20) score += 5; else if(fat > 25) score -= 5;
     if(carbs > 40) score -= 15; else if(carbs < 20) score += 10;
   }
+  // Normalisation : remplace la ligature 'œ' par 'oe' pour matcher 'bœuf' / 'boeuf' indifféremment
+  const ingrNorm = ingr.replace(/œ/g, 'oe').replace(/æ/g, 'ae');
   const goodMeat = ['poulet','boeuf','poisson','saumon','canard','agneau','thon','dinde','veau'];
-  const firstIngr = ingr.split(',')[0] || '';
+  const firstIngr = ingrNorm.split(',')[0] || '';
   if(goodMeat.some(g => firstIngr.includes(g))) score += 15;
   if(['maïs','blé','farine de céréales','sous-produits','dérivés'].some(b => firstIngr.includes(b))) score -= 15;
-  const cerealCount = (ingr.match(/maïs|blé|céréales|amidon|gluten/g)||[]).length;
+  const cerealCount = (ingrNorm.match(/maïs|blé|céréales|amidon|gluten/g)||[]).length;
   score -= cerealCount * 5;
-  if(goodMeat.filter(m => ingr.includes(m)).length >= 2) score += 10;
+  if(goodMeat.filter(m => ingrNorm.includes(m)).length >= 2) score += 10;
   score = Math.max(5, Math.min(99, Math.round(score)));
   let letter, bg, color;
   if(score>=80){letter='A';bg='#e8f5d8';color='#1a3a0f';}

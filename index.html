@@ -1753,7 +1753,7 @@ function displayProduct(p, fallbackName) {
   var _hist = safeParse('croc_history', []);
   // Déduplication par nom — cohérent avec renderAnalyserResult, évite le bloat localStorage
   _hist = _hist.filter(function(h){ return h.name !== _histName; });
-  _hist.push({name: _histName, score: scored.score, date: Date.now(), dateLabel: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
+  _hist.push({name: _histName, brand: p.brands||'', score: scored.score, letter: scored.letter, bg: scored.bg, color: scored.color, date: Date.now(), dateLabel: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
   // Limite à 50 entrées (cohérent avec renderAnalyserResult)
   if (_hist.length > 50) _hist = _hist.slice(-50);
   safeSet('croc_history', _hist);

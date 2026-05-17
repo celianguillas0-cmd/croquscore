@@ -2307,7 +2307,8 @@ function submitSrmForm(barcode) {
   const fat  = parseFloat(document.getElementById('srm-fat').value)  || 0;
   const carb = parseFloat(document.getElementById('srm-carb').value) || 0;
   const ingr = (document.getElementById('srm-ingr').value || '').trim();
-  const save = document.getElementById('srm-save').checked;
+  var _srmSave = document.getElementById('srm-save');
+  const save = _srmSave ? _srmSave.checked : false;
   const product = {product_name:name, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && name) {
     const custom = safeParse('croc_custom_products', []);
@@ -2369,18 +2370,19 @@ if('serviceWorker' in navigator){
 }
 
 function openAlertModal() {
-  document.getElementById('alert-overlay').classList.add('open');
+  var _ao = document.getElementById('alert-overlay'); if (_ao) _ao.classList.add('open');
   document.body.style.overflow = 'hidden';
   refreshAlertModalState();
 }
 function closeAlertModal() {
-  document.getElementById('alert-overlay').classList.remove('open');
+  var _ao = document.getElementById('alert-overlay'); if (_ao) _ao.classList.remove('open');
   document.body.style.overflow = '';
 }
 function refreshAlertModalState() {
   const badge = document.getElementById('alert-status-badge');
-  const btn = document.getElementById('alert-toggle-btn');
-  const note = document.getElementById('alert-note');
+  const btn   = document.getElementById('alert-toggle-btn');
+  const note  = document.getElementById('alert-note');
+  if (!badge || !btn || !note) return;
   if(!('Notification' in window)) {
     badge.textContent = 'Non supporté';
     badge.className = 'alert-badge alert-badge-off';
@@ -2786,7 +2788,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 <script>
 function bnActivate(id) {
   document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  var _el = document.getElementById(id); if (_el) _el.classList.add('active');
 }
 var _scrollTicking = false;
 var _scrollSections = null;
@@ -3065,7 +3067,8 @@ function renderStats() {
   }
 }
 function deleteAnimal(name) {
-  if (!confirm('Supprimer ' + name + ' ?')) return;
+  var safeName = String(name || '').replace(/[\r\n]/g, ' ').slice(0, 100);
+  if (!confirm('Supprimer ' + safeName + ' ?')) return;
   var animals = safeParse('croc_animals', []);
   safeSet('croc_animals', animals.filter(function(a){return a.name!==name}));
   var remaining = safeParse('croc_animals', []);
@@ -3128,18 +3131,18 @@ function saveAnimal() {
 var _13MONTHS = 13 * 30 * 24 * 60 * 60 * 1000;
 function checkConsent() {
   if (!localStorage.getItem('croc_consent_v1')) {
-    document.getElementById('consent-overlay').style.display = 'flex';
+    var _cov = document.getElementById('consent-overlay'); if (_cov) _cov.style.display = 'flex';
     return;
   }
   var prefs = safeParse('croc_cookies_choice', null);
   if (!prefs) {
-    document.getElementById('cookie-banner').style.display = 'block';
+    var _cb2 = document.getElementById('cookie-banner'); if (_cb2) _cb2.style.display = 'block';
     return;
   }
   // Renouvellement tous les 13 mois (CNIL)
   if (!prefs.date || typeof prefs.date !== 'number' || (Date.now() - prefs.date) > _13MONTHS) {
     localStorage.removeItem('croc_cookies_choice');
-    document.getElementById('cookie-banner').style.display = 'block';
+    var _cb3 = document.getElementById('cookie-banner'); if (_cb3) _cb3.style.display = 'block';
     return;
   }
   _cookieApply(prefs);
@@ -3168,9 +3171,9 @@ function acceptConsent() {
       // Le consentRecord localStorage sert de preuve principale — Firebase Auth conserve l'email
     }
   } catch(e) {}
-  document.getElementById('consent-overlay').style.display = 'none';
+  var _co = document.getElementById('consent-overlay'); if (_co) _co.style.display = 'none';
   if (!localStorage.getItem('croc_cookies_choice')) {
-    document.getElementById('cookie-banner').style.display = 'block';
+    var _cb = document.getElementById('cookie-banner'); if (_cb) _cb.style.display = 'block';
   }
 }
 function acceptConsentChecked() {
@@ -3196,25 +3199,23 @@ function _cookieApply(prefs) {
     });
   }
 }
+function _cookieHide() {
+  var b = document.getElementById('cookie-banner'); if (b) b.style.display = 'none';
+  var s = document.getElementById('cookie-settings'); if (s) s.style.display = 'none';
+}
 function acceptAllCookies() {
   var prefs = {push:true, perf:true};
-  _cookieSave(prefs);
-  _cookieApply(prefs);
-  document.getElementById('cookie-banner').style.display = 'none';
-  document.getElementById('cookie-settings').style.display = 'none';
+  _cookieSave(prefs); _cookieApply(prefs); _cookieHide();
 }
 function rejectAllCookies() {
   var prefs = {push:false, perf:false};
-  _cookieSave(prefs);
-  _cookieApply(prefs);
-  document.getElementById('cookie-banner').style.display = 'none';
-  document.getElementById('cookie-settings').style.display = 'none';
+  _cookieSave(prefs); _cookieApply(prefs); _cookieHide();
 }
 function openCookieSettings() {
-  document.getElementById('cookie-banner').style.display = 'none';
-  document.getElementById('cookie-settings').style.display = 'block';
-  var saved = localStorage.getItem('croc_cookies_choice');
-  var prefs = saved ? JSON.parse(saved) : {push:false, perf:false};
+  var b = document.getElementById('cookie-banner'); if (b) b.style.display = 'none';
+  var s = document.getElementById('cookie-settings'); if (s) s.style.display = 'block';
+  var prefs = safeParse('croc_cookies_choice', {push:false, perf:false});
+  if (!prefs || typeof prefs !== 'object') prefs = {push:false, perf:false};
   ['push','perf'].forEach(function(n) {
     var el = document.getElementById('cookie-toggle-' + n);
     if (el) {
@@ -3225,22 +3226,24 @@ function openCookieSettings() {
   });
 }
 function closeCookieSettings() {
-  document.getElementById('cookie-settings').style.display = 'none';
-  document.getElementById('cookie-banner').style.display = 'block';
+  var s = document.getElementById('cookie-settings'); if (s) s.style.display = 'none';
+  var b = document.getElementById('cookie-banner'); if (b) b.style.display = 'block';
 }
 function _updateToggle(name) {
-  var checked = document.getElementById('cookie-toggle-' + name).checked;
-  document.getElementById('cookie-toggle-' + name + '-track').style.background = checked ? 'var(--green-bright)' : '#ccc';
-  document.getElementById('cookie-toggle-' + name + '-thumb').style.left = checked ? '23px' : '3px';
+  var tog   = document.getElementById('cookie-toggle-' + name); if (!tog) return;
+  var track = document.getElementById('cookie-toggle-' + name + '-track');
+  var thumb = document.getElementById('cookie-toggle-' + name + '-thumb');
+  if (!track || !thumb) return;
+  track.style.background = tog.checked ? 'var(--green-bright)' : '#ccc';
+  thumb.style.left = tog.checked ? '23px' : '3px';
 }
 function saveCookieSettings() {
-  var prefs = {
-    push: document.getElementById('cookie-toggle-push').checked,
-    perf: document.getElementById('cookie-toggle-perf').checked
-  };
+  var _tp = document.getElementById('cookie-toggle-push');
+  var _tf = document.getElementById('cookie-toggle-perf');
+  var prefs = { push: _tp ? _tp.checked : false, perf: _tf ? _tf.checked : false };
   _cookieSave(prefs);
   _cookieApply(prefs);
-  document.getElementById('cookie-settings').style.display = 'none';
+  var _cs = document.getElementById('cookie-settings'); if (_cs) _cs.style.display = 'none';
 }
 function openCookieManager() {
   // Rouvrir la bannière pour modifier les choix

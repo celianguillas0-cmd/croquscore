@@ -1807,6 +1807,7 @@ async function deleteAccount() {
   if(!confirm('Supprimer définitivement votre compte CrocScore ?\n\nConformément à l\'Art. 17 RGPD (droit à l\'effacement) :\n· Votre compte Firebase et vos données d\'authentification seront supprimés\n· Toutes vos données locales (historique, animaux, préférences) seront effacées de cet appareil\n\nCette action est irréversible.')) return;
   try {
     // Suppression Firebase d'abord (Art. 17 RGPD) — si elle échoue, le localStorage n'est PAS vidé
+    if (!auth.currentUser) throw new Error('no-user');
     await auth.currentUser.delete();
     // Suppression complète de toutes les données locales CrocScore
     try {
@@ -2184,7 +2185,7 @@ try {
 } catch(e) { var _opffBc = null; }
 async function doSearch() {
   const val = document.getElementById('main-search').value.trim();
-  if(!val) return;
+  if(!val) { clearTimeout(_opffSearchTimer); return; }
   // 1. Base locale + produits custom
   var local = searchLocalDB(val);
   if (local) { displayProduct(local, val); return; }
@@ -2273,9 +2274,13 @@ async function handleBarcodeFile(input) {
   if('BarcodeDetector' in window) {
     try {
       const img = await createImageBitmap(file);
-      const detector = new BarcodeDetector({formats:['ean_13','ean_8','code_128','upc_a','upc_e']});
-      const barcodes = await detector.detect(img);
-      if(barcodes.length > 0) { fetchByBarcode(barcodes[0].rawValue); return; }
+      let _barcodeVal = null;
+      try {
+        const detector = new BarcodeDetector({formats:['ean_13','ean_8','code_128','upc_a','upc_e']});
+        const barcodes = await detector.detect(img);
+        if(barcodes.length > 0) _barcodeVal = barcodes[0].rawValue;
+      } finally { img.close(); }
+      if(_barcodeVal) { fetchByBarcode(_barcodeVal); return; }
     } catch(e) {}
   }
   // Fallback manuel
@@ -3144,14 +3149,14 @@ function saveWeight(animalName) {
   var val = _wEl.value.trim();
   var _dEl = document.getElementById('weight-input-date');
   var dateInput = _dEl ? _dEl.value : '';
-  var _wv = parseFloat(val); if (!val || isNaN(_wv) || _wv < 0 || _wv > 999) return;
+  var _wv = parseFloat(val); if (!val || isNaN(_wv) || _wv <= 0 || _wv > 999) return;
   var _parsedDate = dateInput ? new Date(dateInput) : null;
   var _validDate = _parsedDate && !isNaN(_parsedDate.getTime());
   var dateLabel = _validDate ? _parsedDate.toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
   var isoDate = _validDate ? dateInput : new Date().toISOString().split('T')[0];
   var ws = safeParse('croc_weights', []);
   ws.push({ animal: animalName, weight: _wv, date: dateLabel, isoDate: isoDate });
-  ws.sort(function(a,b){ return a.isoDate.localeCompare(b.isoDate); });
+  ws.sort(function(a,b){ return (a.isoDate||'').localeCompare(b.isoDate||''); });
   if (ws.length > 365) ws = ws.slice(-365);
   safeSet('croc_weights', ws);
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
@@ -3522,7 +3527,7 @@ function renderAnalyserResult(p, name) {
     + '<span style="font-size:16px;flex-shrink:0">⚠️</span>'
     + '<div style="font-size:11px;color:#8b6a00;line-height:1.5"><strong>Score indicatif, non contractuel.</strong> Données issues d\'<a href="https://world.openpetfoodfacts.org" target="_blank" rel="noopener" style="color:#8b6a00;text-decoration:underline">Open Pet Food Facts</a> (licence ODbL) et d\'une base collaborative — exactitude, exhaustivité et actualité <strong>non garanties</strong>. Ce score ne constitue pas un avis médical ou vétérinaire. Ne remplace pas l\'avis d\'un <strong>vétérinaire qualifié et diplômé</strong>. CrocScore décline toute responsabilité quant aux décisions prises sur la base de ces informations.</div>'
     + '</div>'
-    + '<div style="font-size:10px;color:#a07820;line-height:1.4;border-top:1px solid rgba(232,184,75,0.2);padding-top:8px">CrocScore — Outil informatif uniquement · <a href="mailto:crocscore.help@gmail.com" style="color:#8b6a00">crocscore.help@gmail.com</a> · <a href="https://www.cnil.fr" target="_blank" rel="noopener" style="color:#8b6a00">CNIL</a></div>'
+    + '<div style="font-size:10px;color:#a07820;line-height:1.4;border-top:1px solid rgba(232,184,75,0.2);padding-top:8px">CrocScore — Outil informatif uniquement · <a href="mailto:crocscore.help@gmail.com" style="color:#8b6a00">crocscore.help@gmail.com</a> · <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener" style="color:#8b6a00">CNIL</a></div>'
     + '</div>'
     + '<button onclick="renderAnalyserHistory();document.getElementById(\'analyser-search-input\').value=\'\'" style="width:100%;padding:13px;background:var(--cream-dark);color:var(--text);border:none;border-radius:12px;font-family:\'DM Sans\',sans-serif;font-size:14px;cursor:pointer;box-sizing:border-box">'
     + '↩ Nouvelle analyse'
@@ -3556,12 +3561,15 @@ function renderAnalyserNotFound(name) {
 }
 
 function submitAnalyserForm(productName) {
+  if (typeof productName !== 'string') return;
+  productName = productName.trim().slice(0, 200);
+  if (!productName) return;
   var _ap = document.getElementById('an-prot'), _af = document.getElementById('an-fat'), _ac2 = document.getElementById('an-carb');
   var prot = Math.min(100, Math.max(0, parseFloat(_ap ? _ap.value : 0) || 0));
   var fat  = Math.min(100, Math.max(0, parseFloat(_af ? _af.value : 0) || 0));
   var carb = Math.min(100, Math.max(0, parseFloat(_ac2 ? _ac2.value : 0) || 0));
   var _ai = document.getElementById('an-ingr'), _as = document.getElementById('an-save');
-  var ingr = (_ai ? _ai.value : '').trim();
+  var ingr = (_ai ? _ai.value : '').trim().slice(0, 500);
   var save = _as ? _as.checked : false;
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {

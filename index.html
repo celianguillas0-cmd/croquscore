@@ -1711,7 +1711,6 @@ async function signIn() {
     await auth.signInWithEmailAndPassword(email, pw);
     closeAuth();
   } catch(e) {
-    console.error('[CrocScore Auth]', e.code, e.message);
     showAuthError('signin-error', authError(e.code, e.message));
   } finally { setAuthBtn('signin-btn', false); }
 }
@@ -1741,7 +1740,6 @@ async function signUp() {
     });
     closeAuth();
   } catch(e) {
-    console.error('[CrocScore Auth]', e.code);
     showAuthError('signup-error', authError(e.code, e.message));
   } finally { setAuthBtn('signup-btn', false); }
 }
@@ -1755,7 +1753,6 @@ async function forgotPassword() {
     var _se = document.getElementById('signin-error');
     if (_se) { _se.style.color = '#2d6016'; _se.style.background = '#e8f5d8'; }
   } catch(e) {
-    console.error('[CrocScore Auth]', e.code, e.message);
     showAuthError('signin-error', authError(e.code, e.message));
   }
 }
@@ -1840,13 +1837,16 @@ function exportMyData() {
   };
   var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
   var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'crocscore-mes-donnees-' + new Date().toISOString().split('T')[0] + '.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  try {
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'crocscore-mes-donnees-' + new Date().toISOString().split('T')[0] + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
   alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, suivi du poids, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
 }
 
@@ -1908,7 +1908,7 @@ window.addEventListener('DOMContentLoaded', function() {
 if (window.matchMedia) {
   var mql = window.matchMedia('(prefers-color-scheme: dark)');
   var listener = function(e) {
-    if (!localStorage.getItem('croc_theme')) applyTheme(e.matches ? 'dark' : 'light');
+    try { if (!localStorage.getItem('croc_theme')) applyTheme(e.matches ? 'dark' : 'light'); } catch(e2) {}
   };
   if (mql.addEventListener) mql.addEventListener('change', listener);
   else if (mql.addListener) mql.addListener(listener);
@@ -2076,7 +2076,7 @@ function displayProduct(p, fallbackName) {
     rows[i].querySelector('span:last-child').textContent = v+'%';
   });
   const rs = document.getElementById('result-section');
-  if (rs) { rs.classList.add('visible'); setTimeout(() => rs.scrollIntoView({behavior:'smooth', block:'start'}), 100); }
+  if (rs) { rs.classList.add('visible'); setTimeout(() => { if (rs && document.body.contains(rs)) rs.scrollIntoView({behavior:'smooth', block:'start'}); }, 100); }
   var _animals = safeParse('croc_animals', []);
   var _curAnimal = _statsAnimal || (_animals.length ? _animals[0].name : null);
   var _histName = p.product_name || fallbackName;
@@ -2139,15 +2139,17 @@ function showManualForm(productName) {
   var scoreCard = rs.querySelector('.result-score-card');
   if (scoreCard) scoreCard.parentNode.insertBefore(block, scoreCard);
   else rs.appendChild(block);
-  setTimeout(() => rs.scrollIntoView({behavior:'smooth', block:'start'}), 100);
+  if (rs) setTimeout(() => { if (rs && document.body.contains(rs)) rs.scrollIntoView({behavior:'smooth', block:'start'}); }, 100);
 }
 
 function submitManualForm(productName) {
-  var prot = parseFloat(document.getElementById('mf-prot').value) || 0;
-  var fat  = parseFloat(document.getElementById('mf-fat').value)  || 0;
-  var carb = parseFloat(document.getElementById('mf-carb').value) || 0;
-  var ingr = document.getElementById('mf-ingr').value || '';
-  var save = document.getElementById('mf-save').checked;
+  var _mp = document.getElementById('mf-prot'), _mf = document.getElementById('mf-fat'), _mc = document.getElementById('mf-carb');
+  var prot = Math.min(100, Math.max(0, parseFloat(_mp ? _mp.value : 0) || 0));
+  var fat  = Math.min(100, Math.max(0, parseFloat(_mf ? _mf.value : 0) || 0));
+  var carb = Math.min(100, Math.max(0, parseFloat(_mc ? _mc.value : 0) || 0));
+  var _mi = document.getElementById('mf-ingr'), _ms = document.getElementById('mf-save');
+  var ingr = (_mi ? _mi.value : '') || '';
+  var save = _ms ? _ms.checked : false;
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
     var custom = safeParse('croc_custom_products', []);
@@ -2164,6 +2166,8 @@ function submitManualForm(productName) {
 // -- Recherche texte ---------------------------------------
 var _opffLastCall = 0;
 var _opffSearchTimer = null;
+var _srmProduct = null;
+var _srmBarcode = '';
 async function doSearch() {
   const val = document.getElementById('main-search').value.trim();
   if(!val) return;
@@ -2283,8 +2287,8 @@ function showSrmFound(product, barcode) {
     + '</div>'
     + '<button class="srm-btn-primary" onclick="closeSrm();displayProduct(_srmProduct,_srmBarcode)">Voir l\'analyse complète</button>'
     + '<button class="srm-btn-secondary" onclick="closeSrm()">Fermer</button>';
-  window._srmProduct = product;
-  window._srmBarcode = barcode;
+  _srmProduct = product;
+  _srmBarcode = barcode;
 }
 function showSrmNotFound(barcode) {
   var _st = document.getElementById('srm-title'); if (_st) _st.textContent = 'Produit inconnu';
@@ -2834,6 +2838,7 @@ var _statsAnimal = null;
 function openStatsPanel() {
   var _sto = document.getElementById('stats-overlay'); if (_sto) _sto.style.display = 'flex';
   document.body.style.overflow = 'hidden';
+  _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
   var animals = safeParse('croc_animals', []);
   _statsAnimal = animals.length ? animals[0].name : null;
   renderStatsTabs();
@@ -3489,11 +3494,13 @@ function renderAnalyserNotFound(name) {
 }
 
 function submitAnalyserForm(productName) {
-  var prot = parseFloat(document.getElementById('an-prot').value) || 0;
-  var fat  = parseFloat(document.getElementById('an-fat').value)  || 0;
-  var carb = parseFloat(document.getElementById('an-carb').value) || 0;
-  var ingr = (document.getElementById('an-ingr').value || '').trim();
-  var save = document.getElementById('an-save').checked;
+  var _ap = document.getElementById('an-prot'), _af = document.getElementById('an-fat'), _ac2 = document.getElementById('an-carb');
+  var prot = Math.min(100, Math.max(0, parseFloat(_ap ? _ap.value : 0) || 0));
+  var fat  = Math.min(100, Math.max(0, parseFloat(_af ? _af.value : 0) || 0));
+  var carb = Math.min(100, Math.max(0, parseFloat(_ac2 ? _ac2.value : 0) || 0));
+  var _ai = document.getElementById('an-ingr'), _as = document.getElementById('an-save');
+  var ingr = (_ai ? _ai.value : '').trim();
+  var save = _as ? _as.checked : false;
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
     var custom = safeParse('croc_custom_products', []);

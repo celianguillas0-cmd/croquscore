@@ -1747,9 +1747,12 @@ async function signUp() {
   } finally { setAuthBtn('signup-btn', false); }
 }
 
+var _forgotPending = false;
 async function forgotPassword() {
+  if (_forgotPending) return;
   const email = document.getElementById('signin-email').value.trim();
   if(!email) { showAuthError('signin-error','Entrez votre email ci-dessus d\'abord.'); return; }
+  _forgotPending = true;
   try {
     await auth.sendPasswordResetEmail(email);
     showAuthError('signin-error','Email envoyé ! Vérifiez votre boîte mail.');
@@ -1757,6 +1760,8 @@ async function forgotPassword() {
     if (_se) { _se.style.color = '#2d6016'; _se.style.background = '#e8f5d8'; }
   } catch(e) {
     showAuthError('signin-error', authError(e.code));
+  } finally {
+    _forgotPending = false;
   }
 }
 
@@ -1839,7 +1844,12 @@ function exportMyData() {
     consentRecord: safeParse('croc_consent_v1', null),
     accountConsent: safeParse('croc_account_consent', null)
   };
-  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var _jsonStr;
+  try { _jsonStr = JSON.stringify(data, null, 2); } catch(e) {
+    alert('Erreur lors de la sérialisation des données. Contactez crocscore.help@gmail.com');
+    return;
+  }
+  var blob = new Blob([_jsonStr], {type: 'application/json'});
   var url = URL.createObjectURL(blob);
   try {
     var a = document.createElement('a');
@@ -1849,7 +1859,7 @@ function exportMyData() {
     a.click();
     document.body.removeChild(a);
   } finally {
-    URL.revokeObjectURL(url);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 200);
   }
   alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, suivi du poids, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
 }
@@ -1943,8 +1953,9 @@ function safeColor(v, fallback) {
 
 // -- Scoring ----------------------------------------------
 function scoreProduct(p) {
+  if (!p || typeof p !== 'object') return {score:50,letter:'C',bg:'#fdedc0',color:'#8b5e0a'};
   let score = 50;
-  const ingr = (p.ingredients_text || '').toLowerCase();
+  const ingr = (typeof p.ingredients_text === 'string' ? p.ingredients_text : '').toLowerCase();
   const nutr = (p.nutriments && typeof p.nutriments === 'object') ? p.nutriments : {};
   const proteins = Math.max(0, parseFloat(nutr.proteins_100g) || 0);
   const fat      = Math.max(0, parseFloat(nutr.fat_100g)      || 0);
@@ -2514,7 +2525,7 @@ OneSignalDeferred.push(async function(OneSignal) {
     </div>
     <div id="form-signin">
       <div class="auth-field"><label for="signin-email">Email</label><input type="email" id="signin-email" placeholder="votre@email.com" autocomplete="email"/></div>
-      <div class="auth-field"><label for="signin-password">Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signin-password" placeholder="Votre mot de passe" autocomplete="current-password"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signin-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+      <div class="auth-field"><label for="signin-password">Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signin-password" placeholder="Votre mot de passe" autocomplete="current-password" minlength="6"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signin-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
       <span class="auth-forgot" onclick="forgotPassword()">Mot de passe oublié ?</span>
       <button class="auth-btn" id="signin-btn" onclick="signIn()">Se connecter</button>
       <div class="auth-error" id="signin-error"></div>
@@ -2523,7 +2534,7 @@ OneSignalDeferred.push(async function(OneSignal) {
       <div class="auth-field"><label for="signup-name">Prénom</label><input type="text" id="signup-name" placeholder="Votre prénom" autocomplete="given-name"/></div>
       <div class="auth-field"><label for="signup-email">Email</label><input type="email" id="signup-email" placeholder="votre@email.com" autocomplete="email" aria-describedby="signup-email-hint"/></div>
       <p id="signup-email-hint" style="font-size:11px;color:var(--text-muted);margin:-8px 0 10px;line-height:1.4">Utilisé uniquement pour l'authentification — non partagé à des tiers (Art. 6.1.b RGPD).</p>
-      <div class="auth-field"><label for="signup-password">Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signup-password" placeholder="6 caractères minimum" autocomplete="new-password" aria-describedby="signup-pw-hint"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signup-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+      <div class="auth-field"><label for="signup-password">Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signup-password" placeholder="6 caractères minimum" autocomplete="new-password" aria-describedby="signup-pw-hint" minlength="6"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signup-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
       <p id="signup-pw-hint" style="font-size:11px;color:var(--text-muted);margin:-8px 0 10px;line-height:1.4">Chiffré par Firebase Auth (Google). CrocScore ne stocke jamais votre mot de passe en clair.</p>
       <div style="background:var(--cream-dark);border-radius:10px;padding:12px 14px;margin-bottom:14px">
         <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-bottom:8px">
@@ -2995,7 +3006,7 @@ function renderStats() {
   html += '</div>';
   html += '<div id="weight-add-form" style="display:none;background:var(--cream);border-radius:12px;padding:14px;margin-bottom:14px">';
   html += '<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">';
-  html += '<div style="flex:1;min-width:80px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Poids (kg)</label><input id="weight-input-val" type="number" step="0.1" min="0" placeholder="4.5" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>';
+  html += '<div style="flex:1;min-width:80px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Poids (kg)</label><input id="weight-input-val" type="number" step="0.1" min="0.1" max="300" placeholder="4.5" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>';
   html += '<div style="flex:1.5;min-width:110px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Date</label><input id="weight-input-date" type="date" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>';
   html += '<button onclick="saveWeight(\'' + escapeJsArg(a.name) + '\')" style="padding:9px 16px;background:var(--green-dark);color:var(--cream);border:none;border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0">Enregistrer</button>';
   html += '</div></div>';
@@ -3124,7 +3135,8 @@ function renderStats() {
   }
 }
 function deleteAnimal(name) {
-  var safeName = String(name || '').replace(/[\r\n]/g, ' ').slice(0, 100);
+  if (typeof name !== 'string' || !name) return;
+  var safeName = name.replace(/[\r\n]/g, ' ').slice(0, 100);
   if (!confirm('Supprimer ' + safeName + ' ?')) return;
   var animals = safeParse('croc_animals', []);
   safeSet('croc_animals', animals.filter(function(a){return a.name!==name}));
@@ -3151,7 +3163,7 @@ function saveWeight(animalName) {
   var val = _wEl.value.trim();
   var _dEl = document.getElementById('weight-input-date');
   var dateInput = _dEl ? _dEl.value : '';
-  var _wv = parseFloat(val); if (!val || isNaN(_wv) || _wv <= 0 || _wv > 999) return;
+  var _wv = parseFloat(val); if (!val || isNaN(_wv) || _wv <= 0 || _wv > 300) return;
   var _parsedDate = dateInput ? new Date(dateInput) : null;
   var _validDate = _parsedDate && !isNaN(_parsedDate.getTime());
   var dateLabel = _validDate ? _parsedDate.toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
@@ -3373,11 +3385,12 @@ function doAnalyserSearch() {
   var el = document.getElementById('analyser-search-input'); if (!el) return;
   var val = (el.value || '').trim();
   if (!val) return;
+  // Annuler systématiquement le fetch/timer précédent avant tout chemin
+  clearTimeout(_opffSearchTimer);
+  if (_opffActiveCtrl) { _opffActiveCtrl.abort(); _opffActiveCtrl = null; }
   var local = searchLocalDB(val);
   if (local) { renderAnalyserResult(local, val); return; }
   // Debounce + rate limit OPFF API — partagé avec doSearch()
-  clearTimeout(_opffSearchTimer);
-  if (_opffActiveCtrl) { _opffActiveCtrl.abort(); _opffActiveCtrl = null; }
   var now = Date.now();
   var delay = Math.max(0, 1000 - (now - _opffLastCall));
   renderAnalyserLoading();

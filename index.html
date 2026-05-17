@@ -1962,7 +1962,7 @@ function scoreProduct(p) {
   if(goodMeat.some(g => firstIngr.includes(g))) score += 15;
   if(['maïs','blé','farine de céréales','sous-produits','dérivés'].some(b => firstIngr.includes(b))) score -= 15;
   const cerealCount = (ingrNorm.match(/maïs|blé|céréales|amidon|gluten/g)||[]).length;
-  score -= cerealCount * 5;
+  score -= Math.min(4, cerealCount) * 5;
   if(goodMeat.filter(m => ingrNorm.includes(m)).length >= 2) score += 10;
   score = Math.max(5, Math.min(99, Math.round(score)));
   let letter, bg, color;
@@ -2218,7 +2218,8 @@ async function doSearch() {
   }
   }, delay);
 }
-document.getElementById('main-search').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch()});
+var _msEl = document.getElementById('main-search');
+if (_msEl) _msEl.addEventListener('keydown', function(e){ if(e.key==='Enter') doSearch(); });
 
 // -- Scan code-barres --------------------------------------
 let html5QrCode = null;
@@ -2236,7 +2237,7 @@ function openScan() {
     openCameraScan();
   } else {
     // Fallback : photo depuis la galerie/caméra
-    document.getElementById('barcode-file-input').click();
+    var _bfi = document.getElementById('barcode-file-input'); if (_bfi) _bfi.click();
   }
 }
 
@@ -2255,10 +2256,10 @@ function openCameraScan() {
         fetchByBarcode(barcode).finally(function(){ _barcodeScanInProgress = false; });
       },
       () => {}
-    ).catch(() => { closeScan(); document.getElementById('barcode-file-input').click(); });
+    ).catch(function(){ closeScan(); var _bfi2 = document.getElementById('barcode-file-input'); if (_bfi2) _bfi2.click(); });
   } catch(e) {
     closeScan();
-    document.getElementById('barcode-file-input').click();
+    var _bfi3 = document.getElementById('barcode-file-input'); if (_bfi3) _bfi3.click();
   }
 }
 
@@ -2297,6 +2298,7 @@ function openSrm() {
 function closeSrm() {
   var _so = document.getElementById('srm-overlay'); if (_so) _so.classList.remove('open');
   var _ss = document.getElementById('srm-sheet'); if (_ss) _ss.classList.remove('open');
+  _srmProduct = null; _srmBarcode = '';
 }
 function showSrmLoading() {
   var _st = document.getElementById('srm-title'); if (_st) _st.textContent = 'Recherche…';

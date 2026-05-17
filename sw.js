@@ -35,7 +35,7 @@ self.addEventListener('fetch', event => {
       caches.open(CACHE_NAME).then(cache =>
         cache.match(event.request).then(cached => {
           const networkFetch = fetch(event.request).then(response => {
-            if (response && response.status === 200) {
+            if (response && response.status === 200 && (response.headers.get('content-type')||'').includes('javascript')) {
               cache.put(event.request, response.clone());
             }
             return response;

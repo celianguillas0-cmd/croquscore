@@ -296,6 +296,18 @@
 /* Score cards (A-E) gardent leurs couleurs vives en mode sombre — pas d'override */
 /* Why cards */
 :root[data-theme="dark"] .why-card{ background:#252b30 !important; }
+/* === BADGES SOURCE — modèle DogFoodAdvisor === */
+.src-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;margin-top:6px;white-space:nowrap}
+.src-badge.verified{background:#e8f5d8;color:#2d6016}
+.src-badge.community{background:#eef2ff;color:#4460b0}
+.src-badge.custom{background:#fff8e6;color:#7a5c10}
+.src-stale{display:flex;align-items:center;gap:6px;font-size:11px;color:#8a5a20;background:#fff3cd;border-radius:8px;padding:7px 11px;margin-top:8px;line-height:1.4}
+.src-report{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);text-decoration:none;margin-top:8px;padding:5px 10px;border-radius:8px;background:var(--cream-dark);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color 0.15s}
+.src-report:hover{color:var(--text)}
+:root[data-theme="dark"] .src-badge.verified{background:#1f3a1a;color:#a8d878}
+:root[data-theme="dark"] .src-badge.community{background:#1f2438;color:#7a9ee0}
+:root[data-theme="dark"] .src-badge.custom{background:#3a3520;color:#d0a850}
+:root[data-theme="dark"] .src-stale{background:#3a3220;color:#e8c060}
 /* Bouton toggle — toujours visible */
 .theme-toggle{position:fixed;bottom:80px;right:14px;width:44px;height:44px;border-radius:50%;background:var(--white);border:1.5px solid rgba(74,148,34,0.25);box-shadow:0 4px 14px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;color:var(--green-dark);transition:all 0.25s ease;padding:0}
 .theme-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,0,0,0.22)}
@@ -904,10 +916,11 @@ footer{background:#0d1a08;padding:40px 5%}
       <div class="result-score-big rsb-b">B</div>
       <div>
         <div style="font-size:18px;font-weight:500;color:var(--text)" id="result-name">—</div>
-        <div style="font-size:14px;color:var(--text-muted);margin-top:3px" id="result-subtitle"></div>
-        <div style="margin-top:8px;display:flex;gap:8px">
+        <div style="font-size:13px;color:var(--text-muted);margin-top:2px;font-weight:500" id="result-brand"></div>
+        <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
           <span class="tag-dog2" id="result-tag-type" style="display:none">Chien</span>
         </div>
+        <div id="result-source" style="margin-top:2px"></div>
       </div>
     </div>
     <div class="result-body">
@@ -1934,12 +1947,101 @@ function scoreProduct(p) {
   return {score, letter, bg, color};
 }
 
+// -- Source des données (modèle DogFoodAdvisor) -----------
+var VERIFIED_BRANDS = {
+  'royal canin':{'src':'royalcanin.com/fr','ver':'2026-05'},
+  'purina pro plan':{'src':'purina.fr','ver':'2026-05'},
+  'purina':{'src':'purina.fr','ver':'2026-05'},
+  "hill's science plan":{'src':'hillspet.fr','ver':'2026-05'},
+  "hill's prescription diet":{'src':'hillspet.fr','ver':'2026-05'},
+  'hills':{'src':'hillspet.fr','ver':'2026-05'},
+  'orijen':{'src':'orijen.ca','ver':'2026-05'},
+  'acana':{'src':'acana.com','ver':'2026-05'},
+  'farmina':{'src':'farmina.com','ver':'2026-05'},
+  'eukanuba':{'src':'eukanuba.eu','ver':'2026-05'},
+  'iams':{'src':'iams.com','ver':'2026-05'},
+  'ziwi':{'src':'ziwipets.com','ver':'2026-05'},
+  'instinct':{'src':'instinct.com','ver':'2026-05'},
+  'wellness':{'src':'wellnesspetfood.com','ver':'2026-05'},
+  'blue buffalo':{'src':'bluebuffalo.com','ver':'2026-05'},
+  'merrick':{'src':'merrickpetcare.com','ver':'2026-05'},
+  'taste of the wild':{'src':'tasteofthewild.com','ver':'2026-05'},
+  'burns':{'src':'burnspet.co.uk','ver':'2026-05'},
+  'arden grange':{'src':'ardengrange.com','ver':'2026-05'},
+  "lily's kitchen":{'src':'lilyskitchen.co.uk','ver':'2026-05'},
+  'canagan':{'src':'canagan.co.uk','ver':'2026-05'},
+  'forthglade':{'src':'forthglade.com','ver':'2026-05'},
+  'edgard & cooper':{'src':'edgardcooper.com','ver':'2026-05'},
+  'edgard cooper':{'src':'edgardcooper.com','ver':'2026-05'},
+  'yarrah':{'src':'yarrah.com','ver':'2026-05'},
+  'bozita':{'src':'bozita.com','ver':'2026-05'},
+  'carnilove':{'src':'carnilove.com','ver':'2026-05'},
+  'josera':{'src':'josera.de','ver':'2026-05'},
+  'monge':{'src':'monge.it','ver':'2026-05'},
+  'virbac':{'src':'virbac.com','ver':'2026-05'},
+  'animonda':{'src':'animonda.de','ver':'2026-05'},
+  'brit':{'src':'brit-petfood.com','ver':'2026-05'},
+  'pro pac':{'src':'propacpetfood.com','ver':'2026-05'},
+  'nutrivet':{'src':'nutrivet.fr','ver':'2026-05'},
+  'specific':{'src':'specificpetfood.com','ver':'2026-05'}
+};
+
+function getProductMeta(p) {
+  if (p._custom) return {type:'custom',src:null,ver:null};
+  var brand = (p.brands||'').toLowerCase().trim();
+  var keys = Object.keys(VERIFIED_BRANDS);
+  for (var i=0;i<keys.length;i++) {
+    if (brand.indexOf(keys[i])!==-1 || keys[i].indexOf(brand)!==-1) {
+      return {type:'verified',src:VERIFIED_BRANDS[keys[i]].src,ver:VERIFIED_BRANDS[keys[i]].ver};
+    }
+  }
+  return {type:'community',src:'world.openpetfoodfacts.org',ver:null};
+}
+
+function isDataStale(ver) {
+  if (!ver) return false;
+  var p=ver.split('-'), d=new Date(+p[0],+p[1]-1,1), now=new Date();
+  return (now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth())>=12;
+}
+
+function formatVer(ver) {
+  if (!ver) return '';
+  var p=ver.split('-');
+  var m=['jan.','fév.','mars','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];
+  return m[+p[1]-1]+' '+p[0];
+}
+
+function buildSourceHTML(meta, productName) {
+  var html='', sub=encodeURIComponent('Erreur données : '+(productName||'produit')),
+      bod=encodeURIComponent('Bonjour,\n\nErreur sur : '+(productName||'')+'\n\nDétail :\n');
+  if (meta.type==='verified') {
+    html='<span class="src-badge verified">'
+      +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+      +'Vérifié · '+escapeHtml(meta.src)+(meta.ver?' · '+formatVer(meta.ver):'')+' · Données publiques CE 767/2009'
+      +'</span>';
+    if (isDataStale(meta.ver)) html+='<div class="src-stale">⚠️ Formule non revérifiée depuis plus de 12 mois — consultez l\'étiquette du produit.</div>';
+  } else if (meta.type==='community') {
+    html='<span class="src-badge community">🌐 Données communautaires · Open Pet Food Facts (ODbL)</span>';
+  } else {
+    html='<span class="src-badge custom">✏️ Saisi manuellement — non vérifié</span>';
+  }
+  html+='<br><a href="mailto:crocscore.help@gmail.com?subject='+sub+'&body='+bod+'" class="src-report">'
+    +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+    +'Signaler une erreur sur ce produit</a>';
+  return html;
+}
+
 // -- Affichage résultat ------------------------------------
 function displayProduct(p, fallbackName) {
   const nutr = p.nutriments || {};
   const scored = scoreProduct(p);
   const ingr = (p.ingredients_text || '').toLowerCase();
-  document.getElementById('result-name').textContent = p.product_name || fallbackName;
+  var _pName = p.product_name || fallbackName;
+  document.getElementById('result-name').textContent = _pName;
+  var _brandEl = document.getElementById('result-brand');
+  if (_brandEl) _brandEl.textContent = p.brands || '';
+  var _srcEl = document.getElementById('result-source');
+  if (_srcEl) { var _meta = getProductMeta(p); _srcEl.innerHTML = buildSourceHTML(_meta, _pName); }
   const badge = document.querySelector('.result-score-big');
   badge.textContent = scored.letter;
   badge.style.background = scored.bg;
@@ -2145,6 +2247,7 @@ function showSrmFound(product, barcode) {
   document.getElementById('srm-body').innerHTML =
     '<div class="srm-found-name">' + escapeHtml(name) + '</div>'
     + (brand ? '<div class="srm-found-brand">' + escapeHtml(brand) + '</div>' : '')
+    + '<div style="margin-bottom:10px">' + buildSourceHTML(getProductMeta(product), name) + '</div>'
     + '<div class="srm-score-row">'
     +   '<div class="srm-score-badge" style="background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
     +   '<div><div style="font-size:15px;font-weight:600;color:var(--text)">Score ' + scored.score + '/100</div>'

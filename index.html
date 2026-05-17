@@ -872,7 +872,7 @@ footer{background:#0d1a08;padding:40px 5%}
       </button>
     </div>
     <div class="hero-search">
-      <input type="text" id="main-search" placeholder="Nom du produit ou marque..." aria-label="Rechercher un aliment pour animal"/>
+      <input type="text" id="main-search" maxlength="200" placeholder="Nom du produit ou marque..." aria-label="Rechercher un aliment pour animal"/>
       <button onclick="doSearch()" aria-label="Lancer l'analyse">Analyser</button>
     </div>
     <div style="font-size:11px;color:var(--text-light);margin-top:6px;line-height:1.5">Résultats indicatifs — données Open Pet Food Facts (ODbL) &amp; base CrocScore. Exactitude non garantie.</div>
@@ -1804,12 +1804,12 @@ async function deleteAccount() {
   if(!confirm('Supprimer définitivement votre compte CrocScore ?\n\nConformément à l\'Art. 17 RGPD (droit à l\'effacement) :\n· Votre compte Firebase et vos données d\'authentification seront supprimés\n· Toutes vos données locales (historique, animaux, préférences) seront effacées de cet appareil\n\nCette action est irréversible.')) return;
   try {
     // Suppression complète de toutes les données locales CrocScore (Art. 17 RGPD)
-    [
-      'croc_consent_v1', 'croc_account_consent', 'croc_cookies_choice',
-      'croc_history', 'croc_animals', 'croc_custom_products',
-      'croc_premium', 'croc_prefs', 'croc_scan_history', 'croc_weights',
-      'croc_theme'
-    ].forEach(function(k) { localStorage.removeItem(k); });
+    // Utilise le préfixe croc_ pour capturer aussi les futures clés
+    try {
+      Object.keys(localStorage)
+        .filter(function(k){ return k.startsWith('croc_'); })
+        .forEach(function(k){ try { localStorage.removeItem(k); } catch(e2){} });
+    } catch(e) {}
     await auth.currentUser.delete();
     closeAccount();
     alert('Votre compte et toutes vos données ont été supprimés de cet appareil.\n\nConformément au RGPD (Art. 17), vos données d\'authentification Firebase ont également été effacées.\n\nSi vous avez des questions : crocscore.help@gmail.com');
@@ -2131,7 +2131,7 @@ function showManualForm(productName) {
     +'<div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:3px">Lipides (g/100g)</label><input id="mf-fat" type="number" step="0.1" min="0" max="100" placeholder="ex: 15" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>'
     +'<div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:3px">Glucides (g/100g)</label><input id="mf-carb" type="number" step="0.1" min="0" max="100" placeholder="ex: 35" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>'
     +'</div>'
-    +'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:3px">Ingrédients (optionnel)</label><input id="mf-ingr" type="text" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>'
+    +'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:3px">Ingrédients (optionnel)</label><input id="mf-ingr" type="text" maxlength="500" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>'
     +'<div style="display:flex;gap:10px;align-items:center">'
     +'<button onclick="submitManualForm(\''+escapeJsArg(productName||'')+'\')" style="padding:10px 20px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer">Analyser</button>'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer"><input type="checkbox" id="mf-save" checked style="accent-color:var(--green-bright)"> Enregistrer pour la prochaine fois</label>'
@@ -2297,13 +2297,13 @@ function showSrmNotFound(barcode) {
     '<div class="srm-notfound-icon">🔍</div>'
     + '<div class="srm-notfound-title">Produit non trouvé</div>'
     + '<div class="srm-notfound-sub">Code-barres : ' + escapeHtml(barcode) + '<br>Renseignez les infos pour obtenir un score.</div>'
-    + '<div class="srm-field"><label>Nom du produit</label><input id="srm-name" type="text" placeholder="ex: Royal Canin Adult…"></div>'
+    + '<div class="srm-field"><label>Nom du produit</label><input id="srm-name" type="text" maxlength="200" placeholder="ex: Royal Canin Adult…"></div>'
     + '<div class="srm-row3">'
     +   '<div class="srm-field"><label>Protéines (g/100g)</label><input id="srm-prot" type="number" step="0.1" min="0" max="100" placeholder="ex: 30"></div>'
     +   '<div class="srm-field"><label>Lipides (g/100g)</label><input id="srm-fat" type="number" step="0.1" min="0" max="100" placeholder="ex: 15"></div>'
     +   '<div class="srm-field"><label>Glucides (g/100g)</label><input id="srm-carb" type="number" step="0.1" min="0" max="100" placeholder="ex: 35"></div>'
     + '</div>'
-    + '<div class="srm-field"><label>Ingrédients (optionnel)</label><input id="srm-ingr" type="text" placeholder="ex: poulet, riz, maïs…"></div>'
+    + '<div class="srm-field"><label>Ingrédients (optionnel)</label><input id="srm-ingr" type="text" maxlength="500" placeholder="ex: poulet, riz, maïs…"></div>'
     + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px;cursor:pointer">'
     +   '<input type="checkbox" id="srm-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil'
     + '</label>'
@@ -2376,7 +2376,7 @@ function showTab(name,btn){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs => {
     regs.forEach(r => { if(!r.active || !r.active.scriptURL.includes('OneSignal')) r.update(); });
-  });
+  }).catch(() => {});
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then(reg => { reg.update(); })
@@ -2706,7 +2706,7 @@ OneSignalDeferred.push(async function(OneSignal) {
     <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px">Renseignez les informations de votre animal pour un suivi personnalisé.</div>
     <div style="margin-bottom:14px">
       <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Nom de l'animal</label>
-      <input id="animal-name" type="text" placeholder="Ex: Max" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
+      <input id="animal-name" type="text" maxlength="100" placeholder="Ex: Max" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
     </div>
     <div style="display:flex;gap:12px;margin-bottom:14px">
       <div style="flex:1">
@@ -2718,7 +2718,7 @@ OneSignalDeferred.push(async function(OneSignal) {
       </div>
       <div style="flex:1">
         <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Race</label>
-        <input id="animal-breed" type="text" placeholder="Ex: Labrador" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
+        <input id="animal-breed" type="text" maxlength="100" placeholder="Ex: Labrador" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
       </div>
     </div>
     <div style="display:flex;gap:12px;margin-bottom:24px">
@@ -2860,7 +2860,9 @@ function renderStatsTabs() {
   }).join('');
 }
 function selectStatsAnimal(name) {
-  _statsAnimal = name;
+  if (typeof name !== 'string') return;
+  var _sa = safeParse('croc_animals', []);
+  _statsAnimal = _sa.find(function(a){ return a.name === name; }) ? name : (_sa.length ? _sa[0].name : null);
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
   renderStatsTabs();
   renderStats();
@@ -2913,7 +2915,7 @@ function renderStats() {
   html += '<div style="flex:1"><div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500">' + escapeHtml(a.name) + '</div>';
   html += '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-top:2px">' + (a.type && typeof a.type==='string' ? escapeHtml(a.type.charAt(0).toUpperCase()+a.type.slice(1)) : '') + (a.breed && typeof a.breed==='string' ?' · '+escapeHtml(a.breed):'') + '</div>';
   html += '<div style="display:flex;gap:16px;margin-top:10px">';
-  var _age = parseInt(a.age); if (a.age && !isNaN(_age) && _age >= 0 && _age <= 100) html += '<div style="text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:15px;color:var(--cream)">' + _age + ' an' + (_age>1?'s':'') + '</div><div style="font-size:10px;color:rgba(250,248,242,0.5)">Âge</div></div>';
+  var _age = parseInt(a.age, 10); if (a.age && !isNaN(_age) && _age >= 0 && _age <= 100) html += '<div style="text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:15px;color:var(--cream)">' + _age + ' an' + (_age>1?'s':'') + '</div><div style="font-size:10px;color:rgba(250,248,242,0.5)">Âge</div></div>';
   var _aw = parseFloat(a.weight); if (a.weight && !isNaN(_aw) && _aw > 0) html += '<div style="text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:15px;color:var(--cream)">' + _aw + ' kg</div><div style="font-size:10px;color:rgba(250,248,242,0.5)">Poids</div></div>';
   html += '</div></div>';
   html += '<button onclick="deleteAnimal(\'' + escapeJsArg(a.name) + '\')" style="background:rgba(255,255,255,0.1);border:none;border-radius:8px;padding:6px 10px;color:rgba(250,248,242,0.5);font-family:\'DM Sans\',sans-serif;font-size:11px;cursor:pointer">Supprimer</button>';
@@ -2993,9 +2995,9 @@ function renderStats() {
   if (analyses.length >= 2 && typeof Chart !== 'undefined') {
     var canvas = document.getElementById('stats-chart');
     if (canvas) {
-      var labels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date); return d || ('Analyse '+(i+1)); });
+      var labels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : (typeof h.date === 'string' ? h.date : '')); return d || ('Analyse '+(i+1)); });
       var scores = analyses.map(function(h){ return typeof h.score==='number' ? h.score : 0; });
-      _statsCharts.push(new Chart(canvas, {
+      try { _statsCharts.push(new Chart(canvas, {
         type: 'line',
         data: {
           labels: labels,
@@ -3021,7 +3023,7 @@ function renderStats() {
             x: { grid: { display: false }, ticks: { color: '#9b9b8e', font: { size: 10 }, maxRotation: 0, maxTicksLimit: 6 } }
           }
         }
-      }));
+      })); } catch(e) {}
     }
   }
 
@@ -3029,8 +3031,8 @@ function renderStats() {
   if (hasNutrData && analyses.length >= 2 && typeof Chart !== 'undefined') {
     var nutrCanvas = document.getElementById('stats-nutr-chart');
     if (nutrCanvas) {
-      var nutrLabels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date); return d || ('Analyse '+(i+1)); });
-      _statsCharts.push(new Chart(nutrCanvas, {
+      var nutrLabels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : (typeof h.date === 'string' ? h.date : '')); return d || ('Analyse '+(i+1)); });
+      try { _statsCharts.push(new Chart(nutrCanvas, {
         type: 'line',
         data: {
           labels: nutrLabels,
@@ -3048,7 +3050,7 @@ function renderStats() {
             x: { grid: { display: false }, ticks: { color: '#9b9b8e', font: { size: 10 }, maxRotation: 0, maxTicksLimit: 6 } }
           }
         }
-      }));
+      })); } catch(e) {}
     }
   }
 
@@ -3056,10 +3058,10 @@ function renderStats() {
   if (weights.length >= 2 && typeof Chart !== 'undefined') {
     var weightCanvas = document.getElementById('stats-weight-chart');
     if (weightCanvas) {
-      _statsCharts.push(new Chart(weightCanvas, {
+      try { _statsCharts.push(new Chart(weightCanvas, {
         type: 'bar',
         data: {
-          labels: weights.map(function(w){ return w.date; }),
+          labels: weights.map(function(w){ return typeof w.date === 'string' ? w.date : ''; }),
           datasets: [{
             label: 'Poids',
             data: weights.map(function(w){ var v=parseFloat(w.weight); return isNaN(v)?null:v; }),
@@ -3078,7 +3080,7 @@ function renderStats() {
             y: { grid: { display: false }, ticks: { color: '#9b9b8e', font: { size: 10 } } }
           }
         }
-      }));
+      })); } catch(e) {}
     }
   }
 }
@@ -3087,6 +3089,11 @@ function deleteAnimal(name) {
   if (!confirm('Supprimer ' + safeName + ' ?')) return;
   var animals = safeParse('croc_animals', []);
   safeSet('croc_animals', animals.filter(function(a){return a.name!==name}));
+  // Nettoyage des données associées (historique + poids) pour éviter orphelins localStorage
+  var hist = safeParse('croc_history', []);
+  safeSet('croc_history', hist.filter(function(h){ return h.animal !== name; }));
+  var weights = safeParse('croc_weights', []);
+  safeSet('croc_weights', weights.filter(function(w){ return w.animal !== name; }));
   var remaining = safeParse('croc_animals', []);
   _statsAnimal = remaining.length ? remaining[0].name : null;
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
@@ -3098,6 +3105,8 @@ function toggleWeightForm() {
   if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
 }
 function saveWeight(animalName) {
+  if (!animalName || typeof animalName !== 'string') return;
+  animalName = animalName.trim();
   if (!animalName) return;
   var _wEl = document.getElementById('weight-input-val'); if (!_wEl) return;
   var val = _wEl.value.trim();
@@ -3109,6 +3118,7 @@ function saveWeight(animalName) {
   var ws = safeParse('croc_weights', []);
   ws.push({ animal: animalName, weight: _wv, date: dateLabel, isoDate: isoDate });
   ws.sort(function(a,b){ return a.isoDate.localeCompare(b.isoDate); });
+  if (ws.length > 365) ws = ws.slice(-365);
   safeSet('croc_weights', ws);
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
   renderStats();
@@ -3126,7 +3136,7 @@ function closeAddAnimal() {
 function saveAnimal() {
   var _an = document.getElementById('animal-name');
   if (!_an) return;
-  var name = _an.value.trim();
+  var name = _an.value.trim().slice(0, 100);
   if (!name) { _an.focus(); return; }
   var animals = safeParse('croc_animals', []);
   var _at = document.getElementById('animal-type');
@@ -3137,7 +3147,7 @@ function saveAnimal() {
     name: name,
     type: _at ? _at.value : '',
     breed: _ab ? _ab.value.trim() : '',
-    age: parseInt(_aa ? _aa.value : 0) || null,
+    age: parseInt(_aa ? _aa.value : 0, 10) || null,
     weight: parseFloat(_aw ? _aw.value : 0) || null
   });
   safeSet('croc_animals', animals);
@@ -3485,7 +3495,7 @@ function renderAnalyserNotFound(name) {
     + '<input id="an-carb" type="number" step="0.1" min="0" max="100" placeholder="ex: 35" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
     + '</div>'
     + '<div style="margin-bottom:14px"><label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:4px;font-family:\'DM Sans\',sans-serif">Ingrédients (optionnel)</label>'
-    + '<input id="an-ingr" type="text" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
+    + '<input id="an-ingr" type="text" maxlength="500" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
     + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:12px;cursor:pointer;font-family:\'DM Sans\',sans-serif">'
     + '<input type="checkbox" id="an-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil (localStorage uniquement — non transmis)</label>'
     + '<div style="font-size:10px;color:var(--text-light);line-height:1.5;margin-bottom:12px;padding:8px 10px;background:var(--cream);border-radius:8px">💡 Score calculé à partir des valeurs saisies. Résultat purement indicatif, non contractuel. Ne remplace pas l\'avis d\'un vétérinaire qualifié. Données stockées uniquement sur votre appareil (RGPD Art. 5.1.c).</div>'

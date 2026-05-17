@@ -1183,6 +1183,9 @@ footer{background:#0d1a08;padding:40px 5%}
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">1. Responsable du traitement</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Le responsable du traitement de vos données personnelles est l'éditeur de CrocScore (auto-entreprise enregistrée en France — immatriculation en cours, SIRET communiqué dès obtention). Contact : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
 
+    <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">1.1 Délégué à la protection des données (DPO)</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">En tant qu'auto-entreprise ne réalisant pas de traitement à grande échelle de données sensibles, CrocScore n'est pas soumise à l'obligation de désigner un Délégué à la Protection des Données (Art. 37 RGPD). Aucun DPO n'est désigné. Pour toute question relative à vos données : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> (réponse sous 30 jours — Art. 12 RGPD).</p>
+
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">2. Données collectées et bases légales (Art. 6 RGPD)</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px">Nous collectons uniquement les données suivantes :</p>
     <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;padding-left:20px;margin-bottom:12px">
@@ -2166,8 +2169,14 @@ function submitManualForm(productName) {
 // -- Recherche texte ---------------------------------------
 var _opffLastCall = 0;
 var _opffSearchTimer = null;
+var _opffActiveCtrl = null;
 var _srmProduct = null;
 var _srmBarcode = '';
+// Partage du rate-limit OPFF entre onglets via BroadcastChannel
+try {
+  var _opffBc = new BroadcastChannel('croc_opff_rl');
+  _opffBc.onmessage = function() { _opffLastCall = Date.now(); };
+} catch(e) { var _opffBc = null; }
 async function doSearch() {
   const val = document.getElementById('main-search').value.trim();
   if(!val) return;
@@ -2176,13 +2185,16 @@ async function doSearch() {
   if (local) { displayProduct(local, val); return; }
   // 2. API Open Pet Food Facts — debounce 800ms + rate limit 1 req/s
   clearTimeout(_opffSearchTimer);
+  if (_opffActiveCtrl) { _opffActiveCtrl.abort(); _opffActiveCtrl = null; }
   var now = Date.now();
   var delay = Math.max(0, 1000 - (now - _opffLastCall));
   _opffSearchTimer = setTimeout(async function() {
   _opffLastCall = Date.now();
+  if (_opffBc) try { _opffBc.postMessage('call'); } catch(e) {}
+  _opffActiveCtrl = new AbortController();
   var _sl = document.getElementById('scan-loading'); if (_sl) _sl.classList.add('open');
   try {
-    const _ctrl1 = new AbortController(); const _t1 = setTimeout(()=>_ctrl1.abort(), 10000);
+    const _ctrl1 = _opffActiveCtrl; const _t1 = setTimeout(()=>_ctrl1.abort(), 10000);
     const res = await fetch(`https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(val)}&search_simple=1&action=process&json=1&page_size=1`, {signal:_ctrl1.signal});
     clearTimeout(_t1);
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -2203,6 +2215,14 @@ document.getElementById('main-search').addEventListener('keydown',function(e){if
 
 // -- Scan code-barres --------------------------------------
 let html5QrCode = null;
+var _barcodeScanInProgress = false;
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden && html5QrCode) {
+    try { html5QrCode.stop(); } catch(e) {}
+    html5QrCode = null;
+    var _sm = document.getElementById('scan-modal'); if (_sm) _sm.classList.remove('open');
+  }
+});
 
 function openScan() {
   if(typeof Html5Qrcode !== 'undefined') {
@@ -2222,8 +2242,10 @@ function openCameraScan() {
       {facingMode:'environment'},
       {fps:10, qrbox:{width:250,height:150}},
       (barcode) => {
+        if (_barcodeScanInProgress) return;
+        _barcodeScanInProgress = true;
         closeScan();
-        fetchByBarcode(barcode);
+        fetchByBarcode(barcode).finally(function(){ _barcodeScanInProgress = false; });
       },
       () => {}
     ).catch(() => { closeScan(); document.getElementById('barcode-file-input').click(); });
@@ -2950,7 +2972,8 @@ function renderStats() {
   html += '</div>';
 
   // Graphique évolution du poids
-  var weights = safeParse('croc_weights', []).filter(function(w){ return w.animal === a.name; });
+  var _rawWeights = safeParse('croc_weights', []); if (!Array.isArray(_rawWeights)) _rawWeights = [];
+  var weights = _rawWeights.filter(function(w){ return w.animal === a.name; });
   html += '<div style="background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.08);padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(26,58,15,0.06)">';
   html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">';
   html += '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted)">Évolution du poids</div>';
@@ -3115,8 +3138,10 @@ function saveWeight(animalName) {
   var _dEl = document.getElementById('weight-input-date');
   var dateInput = _dEl ? _dEl.value : '';
   var _wv = parseFloat(val); if (!val || isNaN(_wv) || _wv < 0 || _wv > 999) return;
-  var dateLabel = dateInput ? new Date(dateInput).toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
-  var isoDate = dateInput || new Date().toISOString().split('T')[0];
+  var _parsedDate = dateInput ? new Date(dateInput) : null;
+  var _validDate = _parsedDate && !isNaN(_parsedDate.getTime());
+  var dateLabel = _validDate ? _parsedDate.toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
+  var isoDate = _validDate ? dateInput : new Date().toISOString().split('T')[0];
   var ws = safeParse('croc_weights', []);
   ws.push({ animal: animalName, weight: _wv, date: dateLabel, isoDate: isoDate });
   ws.sort(function(a,b){ return a.isoDate.localeCompare(b.isoDate); });
@@ -3141,6 +3166,11 @@ function saveAnimal() {
   var name = _an.value.trim().slice(0, 100);
   if (!name) { _an.focus(); return; }
   var animals = safeParse('croc_animals', []);
+  if (!Array.isArray(animals)) animals = [];
+  if (animals.some(function(a){ return a.name.toLowerCase() === name.toLowerCase(); })) {
+    alert('Un animal nommé "' + name + '" existe déjà.');
+    _an.focus(); return;
+  }
   var _at = document.getElementById('animal-type');
   var _ab = document.getElementById('animal-breed');
   var _aa = document.getElementById('animal-age');
@@ -3299,6 +3329,13 @@ window.addEventListener('load', function() {
   } catch(e) {}
 });
 
+// Cohérence multi-onglets : si deleteAccount() vide le localStorage dans un autre onglet, on recharge
+window.addEventListener('storage', function(e) {
+  if (e.key === 'croc_consent_v1' && e.newValue === null) {
+    window.location.reload();
+  }
+});
+
 function openAnalyserPanel() {
   var el = document.getElementById('analyser-overlay');
   if (!el) return;
@@ -3324,12 +3361,15 @@ function doAnalyserSearch() {
   if (local) { renderAnalyserResult(local, val); return; }
   // Debounce + rate limit OPFF API — partagé avec doSearch()
   clearTimeout(_opffSearchTimer);
+  if (_opffActiveCtrl) { _opffActiveCtrl.abort(); _opffActiveCtrl = null; }
   var now = Date.now();
   var delay = Math.max(0, 1000 - (now - _opffLastCall));
   renderAnalyserLoading();
   _opffSearchTimer = setTimeout(function() {
     _opffLastCall = Date.now();
-    var _ctrl3 = new AbortController(); var _t3 = setTimeout(function(){_ctrl3.abort();}, 10000);
+    if (_opffBc) try { _opffBc.postMessage('call'); } catch(e) {}
+    _opffActiveCtrl = new AbortController();
+    var _ctrl3 = _opffActiveCtrl; var _t3 = setTimeout(function(){_ctrl3.abort();}, 10000);
     fetch('https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(val) + '&search_simple=1&action=process&json=1&page_size=1', {signal:_ctrl3.signal})
       .then(function(r){ clearTimeout(_t3); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function(data){

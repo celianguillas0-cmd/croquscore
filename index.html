@@ -1657,27 +1657,27 @@ auth.onAuthStateChanged(user => {
 });
 
 function openPremModal() {
-  document.getElementById('prem-overlay').classList.add('open');
+  var _po = document.getElementById('prem-overlay'); if (_po) _po.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closePremModal() {
-  document.getElementById('prem-overlay').classList.remove('open');
+  var _po = document.getElementById('prem-overlay'); if (_po) _po.classList.remove('open');
   document.body.style.overflow = '';
 }
 function openAuth() {
   if(auth.currentUser) { openAccount(); return; }
-  document.getElementById('auth-overlay').classList.add('open');
+  var _ao = document.getElementById('auth-overlay'); if (_ao) _ao.classList.add('open');
 }
 function closeAuth() {
-  document.getElementById('auth-overlay').classList.remove('open');
-  document.getElementById('signin-error').style.display='none';
-  document.getElementById('signup-error').style.display='none';
+  var _ao = document.getElementById('auth-overlay'); if (_ao) _ao.classList.remove('open');
+  var _se = document.getElementById('signin-error'); if (_se) _se.style.display='none';
+  var _sue = document.getElementById('signup-error'); if (_sue) _sue.style.display='none';
 }
 function switchTab(tab) {
-  document.getElementById('form-signin').style.display = tab==='signin'?'block':'none';
-  document.getElementById('form-signup').style.display = tab==='signup'?'block':'none';
-  document.getElementById('tab-signin').classList.toggle('active', tab==='signin');
-  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+  var _fs = document.getElementById('form-signin'); if (_fs) _fs.style.display = tab==='signin'?'block':'none';
+  var _fsu = document.getElementById('form-signup'); if (_fsu) _fsu.style.display = tab==='signup'?'block':'none';
+  var _ts = document.getElementById('tab-signin'); if (_ts) _ts.classList.toggle('active', tab==='signin');
+  var _tsu = document.getElementById('tab-signup'); if (_tsu) _tsu.classList.toggle('active', tab==='signup');
 }
 function showAuthError(id, msg) {
   const el = document.getElementById(id);
@@ -1752,8 +1752,8 @@ async function forgotPassword() {
   try {
     await auth.sendPasswordResetEmail(email);
     showAuthError('signin-error','Email envoyé ! Vérifiez votre boîte mail.');
-    document.getElementById('signin-error').style.color = '#2d6016';
-    document.getElementById('signin-error').style.background = '#e8f5d8';
+    var _se = document.getElementById('signin-error');
+    if (_se) { _se.style.color = '#2d6016'; _se.style.background = '#e8f5d8'; }
   } catch(e) {
     console.error('[CrocScore Auth]', e.code, e.message);
     showAuthError('signin-error', authError(e.code, e.message));
@@ -1762,6 +1762,7 @@ async function forgotPassword() {
 
 function togglePw(id, btn) {
   const input = document.getElementById(id);
+  if (!input) return;
   const isHidden = input.type === 'password';
   input.type = isHidden ? 'text' : 'password';
   btn.innerHTML = isHidden
@@ -1784,19 +1785,19 @@ function authError(code, raw) {
     'auth/user-disabled': 'Ce compte a été désactivé.',
     'auth/popup-closed-by-user': 'Connexion annulée.',
   };
-  return msgs[code] || `Erreur inattendue (${code || raw || 'inconnue'}). Réessayez.`;
+  return msgs[code] || 'Erreur inattendue. Vérifiez vos identifiants et réessayez.';
 }
 function openAccount() {
   const user = auth.currentUser;
   if(!user) return;
   const initial = (user.displayName||user.email||'?')[0].toUpperCase();
-  document.getElementById('account-avatar-letter').textContent = initial;
-  document.getElementById('account-display-name').textContent = user.displayName || 'Utilisateur';
-  document.getElementById('account-email-display').textContent = user.email;
-  document.getElementById('account-panel').classList.add('open');
+  var _aal = document.getElementById('account-avatar-letter'); if (_aal) _aal.textContent = initial;
+  var _adn = document.getElementById('account-display-name'); if (_adn) _adn.textContent = user.displayName || 'Utilisateur';
+  var _aed = document.getElementById('account-email-display'); if (_aed) _aed.textContent = user.email;
+  var _ap = document.getElementById('account-panel'); if (_ap) _ap.classList.add('open');
 }
 function closeAccount() {
-  document.getElementById('account-panel').classList.remove('open');
+  var _ap = document.getElementById('account-panel'); if (_ap) _ap.classList.remove('open');
 }
 async function signOut() {
   await auth.signOut();
@@ -2054,7 +2055,7 @@ function displayProduct(p, fallbackName) {
   const nutr = (p.nutriments && typeof p.nutriments === 'object') ? p.nutriments : {};
   const scored = scoreProduct(p);
   const ingr = (p.ingredients_text || '').toLowerCase();
-  document.getElementById('result-name').textContent = p.product_name || fallbackName;
+  var _rn = document.getElementById('result-name'); if (_rn) _rn.textContent = p.product_name || fallbackName;
   const badge = document.querySelector('.result-score-big');
   if (badge) {
     badge.textContent = scored.letter;
@@ -2115,9 +2116,10 @@ function searchLocalDB(query) {
 
 function showManualForm(productName) {
   var rs = document.getElementById('result-section');
-  document.getElementById('result-name').textContent = productName || 'Produit inconnu';
-  rs.classList.add('visible');
-  document.getElementById('result-name').textContent = 'Produit scanné — renseignez les infos';
+  var _rn = document.getElementById('result-name');
+  if (_rn) _rn.textContent = productName || 'Produit inconnu';
+  if (rs) rs.classList.add('visible');
+  if (_rn) _rn.textContent = 'Produit scanné — renseignez les infos';
   var existing = document.getElementById('manual-form-block');
   if (existing) existing.remove();
   var block = document.createElement('div');
@@ -2174,7 +2176,7 @@ async function doSearch() {
   var delay = Math.max(0, 1000 - (now - _opffLastCall));
   _opffSearchTimer = setTimeout(async function() {
   _opffLastCall = Date.now();
-  document.getElementById('scan-loading').classList.add('open');
+  var _sl = document.getElementById('scan-loading'); if (_sl) _sl.classList.add('open');
   try {
     const _ctrl1 = new AbortController(); const _t1 = setTimeout(()=>_ctrl1.abort(), 10000);
     const res = await fetch(`https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(val)}&search_simple=1&action=process&json=1&page_size=1`, {signal:_ctrl1.signal});
@@ -2188,7 +2190,7 @@ async function doSearch() {
   } catch(e) {
     showManualForm(val);
   } finally {
-    document.getElementById('scan-loading').classList.remove('open');
+    var _sl2 = document.getElementById('scan-loading'); if (_sl2) _sl2.classList.remove('open');
   }
   }, delay);
 }
@@ -2208,7 +2210,7 @@ function openScan() {
 
 function openCameraScan() {
   if (html5QrCode) return;
-  document.getElementById('scan-modal').classList.add('open');
+  var _sm = document.getElementById('scan-modal'); if (_sm) _sm.classList.add('open');
   try {
     html5QrCode = new Html5Qrcode('scan-reader');
     html5QrCode.start(
@@ -2227,7 +2229,7 @@ function openCameraScan() {
 }
 
 function closeScan() {
-  document.getElementById('scan-modal').classList.remove('open');
+  var _sm = document.getElementById('scan-modal'); if (_sm) _sm.classList.remove('open');
   if(html5QrCode){ html5QrCode.stop().catch(()=>{}); html5QrCode=null; }
 }
 
@@ -2249,18 +2251,19 @@ async function handleBarcodeFile(input) {
 }
 // -- Scan Result Modal -------------------------------------
 function openSrm() {
-  document.getElementById('srm-overlay').classList.add('open');
+  var _so = document.getElementById('srm-overlay'); if (_so) _so.classList.add('open');
   requestAnimationFrame(() => {
-    document.getElementById('srm-sheet').classList.add('open');
+    var _ss = document.getElementById('srm-sheet'); if (_ss) _ss.classList.add('open');
   });
 }
 function closeSrm() {
-  document.getElementById('srm-overlay').classList.remove('open');
-  document.getElementById('srm-sheet').classList.remove('open');
+  var _so = document.getElementById('srm-overlay'); if (_so) _so.classList.remove('open');
+  var _ss = document.getElementById('srm-sheet'); if (_ss) _ss.classList.remove('open');
 }
 function showSrmLoading() {
-  document.getElementById('srm-title').textContent = 'Recherche…';
-  document.getElementById('srm-body').innerHTML =
+  var _st = document.getElementById('srm-title'); if (_st) _st.textContent = 'Recherche…';
+  var _sb = document.getElementById('srm-body');
+  if (_sb) _sb.innerHTML =
     '<div class="srm-loading-state"><div class="srm-spinner"></div><div style="font-size:14px;color:var(--text-muted)">Identification du produit…</div></div>';
   openSrm();
 }
@@ -2268,8 +2271,9 @@ function showSrmFound(product, barcode) {
   const name = product.product_name || barcode;
   const brand = product.brands || '';
   const scored = scoreProduct(product);
-  document.getElementById('srm-title').textContent = 'Produit trouvé';
-  document.getElementById('srm-body').innerHTML =
+  var _st = document.getElementById('srm-title'); if (_st) _st.textContent = 'Produit trouvé';
+  var _sb = document.getElementById('srm-body');
+  if (_sb) _sb.innerHTML =
     '<div class="srm-found-name">' + escapeHtml(name) + '</div>'
     + (brand ? '<div class="srm-found-brand">' + escapeHtml(brand) + '</div>' : '')
     + '<div class="srm-score-row">'
@@ -2283,8 +2287,9 @@ function showSrmFound(product, barcode) {
   window._srmBarcode = barcode;
 }
 function showSrmNotFound(barcode) {
-  document.getElementById('srm-title').textContent = 'Produit inconnu';
-  document.getElementById('srm-body').innerHTML =
+  var _st = document.getElementById('srm-title'); if (_st) _st.textContent = 'Produit inconnu';
+  var _sb = document.getElementById('srm-body');
+  if (_sb) _sb.innerHTML =
     '<div class="srm-notfound-icon">🔍</div>'
     + '<div class="srm-notfound-title">Produit non trouvé</div>'
     + '<div class="srm-notfound-sub">Code-barres : ' + escapeHtml(barcode) + '<br>Renseignez les infos pour obtenir un score.</div>'
@@ -2302,11 +2307,16 @@ function showSrmNotFound(barcode) {
     + '<button class="srm-btn-secondary" onclick="closeSrm()">Annuler</button>';
 }
 function submitSrmForm(barcode) {
-  const name = (document.getElementById('srm-name').value || '').trim() || barcode;
-  const prot = parseFloat(document.getElementById('srm-prot').value) || 0;
-  const fat  = parseFloat(document.getElementById('srm-fat').value)  || 0;
-  const carb = parseFloat(document.getElementById('srm-carb').value) || 0;
-  const ingr = (document.getElementById('srm-ingr').value || '').trim();
+  const _sn = document.getElementById('srm-name');
+  const name = (_sn ? _sn.value : '').trim() || barcode;
+  const _sp = document.getElementById('srm-prot');
+  const prot = parseFloat(_sp ? _sp.value : 0) || 0;
+  const _sf = document.getElementById('srm-fat');
+  const fat  = parseFloat(_sf ? _sf.value : 0) || 0;
+  const _sc = document.getElementById('srm-carb');
+  const carb = parseFloat(_sc ? _sc.value : 0) || 0;
+  const _si = document.getElementById('srm-ingr');
+  const ingr = (_si ? _si.value : '').trim();
   var _srmSave = document.getElementById('srm-save');
   const save = _srmSave ? _srmSave.checked : false;
   const product = {product_name:name, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
@@ -2322,7 +2332,8 @@ function submitSrmForm(barcode) {
 }
 
 async function fetchByBarcode(barcode) {
-  if (document.getElementById('analyser-overlay').style.display !== 'flex') {
+  var _aov = document.getElementById('analyser-overlay');
+  if (!_aov || _aov.style.display !== 'flex') {
     openAnalyserPanel();
   }
   renderAnalyserLoading();
@@ -2353,8 +2364,8 @@ async function fetchByBarcode(barcode) {
 function showTab(name,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  var _tc = document.getElementById('tab-'+name); if (_tc) _tc.classList.add('active');
 }
 </script>
 <script>
@@ -2821,7 +2832,7 @@ var _statsCharts = [];
 var _statsAnimal = null;
 
 function openStatsPanel() {
-  document.getElementById('stats-overlay').style.display = 'flex';
+  var _sto = document.getElementById('stats-overlay'); if (_sto) _sto.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   var animals = safeParse('croc_animals', []);
   _statsAnimal = animals.length ? animals[0].name : null;
@@ -2829,7 +2840,7 @@ function openStatsPanel() {
   renderStats();
 }
 function closeStatsPanel() {
-  document.getElementById('stats-overlay').style.display = 'none';
+  var _sto = document.getElementById('stats-overlay'); if (_sto) _sto.style.display = 'none';
   document.body.style.overflow = '';
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
 }
@@ -3100,23 +3111,29 @@ function saveWeight(animalName) {
 
 // Ajouter un animal
 function openAddAnimal() {
-  document.getElementById('add-animal-overlay').style.display = 'flex';
+  var _aao = document.getElementById('add-animal-overlay'); if (_aao) _aao.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
 function closeAddAnimal() {
-  document.getElementById('add-animal-overlay').style.display = 'none';
+  var _aao = document.getElementById('add-animal-overlay'); if (_aao) _aao.style.display = 'none';
   document.body.style.overflow = '';
 }
 function saveAnimal() {
-  var name = document.getElementById('animal-name').value.trim();
-  if (!name) { document.getElementById('animal-name').focus(); return; }
+  var _an = document.getElementById('animal-name');
+  if (!_an) return;
+  var name = _an.value.trim();
+  if (!name) { _an.focus(); return; }
   var animals = safeParse('croc_animals', []);
+  var _at = document.getElementById('animal-type');
+  var _ab = document.getElementById('animal-breed');
+  var _aa = document.getElementById('animal-age');
+  var _aw = document.getElementById('animal-weight');
   animals.push({
     name: name,
-    type: document.getElementById('animal-type').value,
-    breed: document.getElementById('animal-breed').value.trim(),
-    age: parseInt(document.getElementById('animal-age').value) || null,
-    weight: parseFloat(document.getElementById('animal-weight').value) || null
+    type: _at ? _at.value : '',
+    breed: _ab ? _ab.value.trim() : '',
+    age: parseInt(_aa ? _aa.value : 0) || null,
+    weight: parseFloat(_aw ? _aw.value : 0) || null
   });
   safeSet('croc_animals', animals);
   closeAddAnimal();
@@ -3246,9 +3263,8 @@ function saveCookieSettings() {
   var _cs = document.getElementById('cookie-settings'); if (_cs) _cs.style.display = 'none';
 }
 function openCookieManager() {
-  // Rouvrir la bannière pour modifier les choix
-  document.getElementById('cookie-banner').style.display = 'block';
-  document.getElementById('cookie-settings').style.display = 'none';
+  var _cb = document.getElementById('cookie-banner'); if (_cb) _cb.style.display = 'block';
+  var _cs = document.getElementById('cookie-settings'); if (_cs) _cs.style.display = 'none';
   window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
 }
 window.addEventListener('load', checkConsent);
@@ -3268,6 +3284,7 @@ window.addEventListener('load', function() {
 
 function openAnalyserPanel() {
   var el = document.getElementById('analyser-overlay');
+  if (!el) return;
   el.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   renderAnalyserHistory();
@@ -3278,7 +3295,7 @@ function openAnalyserPanel() {
 }
 
 function closeAnalyserPanel() {
-  document.getElementById('analyser-overlay').style.display = 'none';
+  var _ao = document.getElementById('analyser-overlay'); if (_ao) _ao.style.display = 'none';
   document.body.style.overflow = '';
   bnActivate('bn-accueil');
 }
@@ -3362,7 +3379,8 @@ function renderAnalyserResult(p, name) {
                      scored.score >= 40 ? 'Score moyen selon notre algorithme indicatif' :
                      'Score faible selon notre algorithme indicatif';
 
-  document.getElementById('analyser-content').innerHTML =
+  var _ac = document.getElementById('analyser-content'); if (!_ac) return;
+  _ac.innerHTML =
     // Score card
     '<div style="background:var(--green-dark);border-radius:20px;padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:16px">'
     + '<div style="width:72px;height:72px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:32px;font-weight:600;flex-shrink:0;background:' + safeColor(scored.bg,'#e8f5d8') + ';color:' + safeColor(scored.color,'#1a3a0f') + '">' + scored.letter + '</div>'
@@ -3446,7 +3464,8 @@ function renderAnalyserResult(p, name) {
 }
 
 function renderAnalyserNotFound(name) {
-  document.getElementById('analyser-content').innerHTML =
+  var _ac = document.getElementById('analyser-content'); if (!_ac) return;
+  _ac.innerHTML =
     '<div style="text-align:center;padding:32px 0 20px;font-size:40px">🔍</div>'
     + '<div style="font-size:16px;font-weight:600;color:var(--text);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:4px">Produit introuvable</div>'
     + (name ? '<div style="font-size:11px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:6px;font-family:monospace;background:var(--cream-dark);display:inline-block;padding:2px 10px;border-radius:6px;margin:0 auto 12px;display:block">Code scanné : ' + escapeHtml(name) + '</div>' : '')
@@ -3487,9 +3506,10 @@ function submitAnalyserForm(productName) {
 }
 
 function renderAnalyserHistory() {
+  var _ac = document.getElementById('analyser-content'); if (!_ac) return;
   var hist = safeParse('croc_history', []);
   if (!hist.length) {
-    document.getElementById('analyser-content').innerHTML =
+    _ac.innerHTML =
       '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center">'
       + '<div style="font-size:52px;margin-bottom:16px">🐾</div>'
       + '<div style="font-family:\'Fraunces\',serif;font-size:20px;font-weight:500;color:var(--text);margin-bottom:8px">Analysez un aliment</div>'
@@ -3517,7 +3537,7 @@ function renderAnalyserHistory() {
       + '<div style="font-size:16px;font-weight:700;color:var(--text);font-family:\'Fraunces\',serif">' + (h.score||'—') + '</div>'
       + '</div>';
   }).join('');
-  document.getElementById('analyser-content').innerHTML =
+  _ac.innerHTML =
     '<div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;font-family:\'DM Sans\',sans-serif">Analyses récentes</div>'
     + items;
 }

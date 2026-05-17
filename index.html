@@ -235,6 +235,8 @@
 :root[data-theme="dark"] .tag-dog2{ color:#a8d878 !important; }
 /* Boutons inline style="background:var(--green-dark)" — texte forcé clair */
 :root[data-theme="dark"] [style*="background:var(--green-dark)"]{ color:#faf8f2 !important; }
+/* Verdict / cartes sur fond vert-pale en dark mode — texte vert clair */
+:root[data-theme="dark"] [style*="background:var(--green-pale)"]{ color:#a8d878 !important; }
 /* Pricing card free — fond white devient cream dark */
 :root[data-theme="dark"] .pricing-card:not(.pricing-card-pro){ background:#252b30 !important; }
 :root[data-theme="dark"] .pricing-card .plan-price{ color:#a8d878 !important; }
@@ -753,7 +755,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <p>De l'analyse indicative au résumé mensuel — une seule app pour mieux comprendre la composition des aliments de votre chien ou chat (scores indicatifs basés sur les ingrédients, données à titre informatif).</p>
       <div class="showcase-search">
         <input type="text" placeholder="Recherchez une croquette..." oninput="document.getElementById('main-search').value=this.value" onkeydown="if(event.key==='Enter'){doSearch()}"/>
-        <button onclick="document.getElementById('main-search').value=this.previousElementSibling.value;doSearch();window.scrollTo({top:document.getElementById('main-search').offsetTop-100,behavior:'smooth'})">Analyser ?</button>
+        <button onclick="document.getElementById('main-search').value=this.previousElementSibling.value;doSearch();window.scrollTo({top:document.getElementById('main-search').offsetTop-100,behavior:'smooth'})">Analyser 🔍</button>
       </div>
     </div>
 
@@ -1255,7 +1257,7 @@ footer{background:#0d1a08;padding:40px 5%}
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">9. Portabilité et suppression de vos données</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">
     <strong>Portabilité (Art. 20 RGPD) :</strong> Vous pouvez demander l'export de vos données (historique, animaux) en format JSON en écrivant à <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a>. Les données locales (localStorage) sont accessibles directement depuis votre navigateur.<br><br>
-    <strong>Suppression (Art. 17 RGPD) :</strong> Pour supprimer votre compte Firebase et toutes les données associées, contactez <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a>. Les données locales peuvent être supprimées depuis les paramètres de votre navigateur (localStorage) ou depuis votre espace compte.<br><br>
+    <strong>Suppression (Art. 17 RGPD) :</strong> Vous pouvez supprimer votre compte et toutes vos données directement depuis <strong>Compte → Supprimer mon compte</strong> dans l'application — la suppression est immédiate et irréversible. En alternative, contactez <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> (réponse sous 30 jours conformément à l'Art. 12 RGPD).<br><br>
     <strong>Limitation de traitement (Art. 18 RGPD) :</strong> Vous pouvez demander la limitation du traitement de vos données pendant l'examen d'une contestation.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">10. Décisions automatisées et profilage</h3>
@@ -1786,7 +1788,8 @@ async function deleteAccount() {
     [
       'croc_consent_v1', 'croc_account_consent', 'croc_cookies_choice',
       'croc_history', 'croc_animals', 'croc_custom_products',
-      'croc_premium', 'croc_prefs', 'croc_scan_history', 'croc_weights'
+      'croc_premium', 'croc_prefs', 'croc_scan_history', 'croc_weights',
+      'croc_theme'
     ].forEach(function(k) { localStorage.removeItem(k); });
     await auth.currentUser.delete();
     closeAccount();
@@ -1934,6 +1937,90 @@ function scoreProduct(p) {
   return {score, letter, bg, color};
 }
 
+// -- Source des données (modèle DogFoodAdvisor) -----------
+var VERIFIED_BRANDS = {
+  'royal canin':{'src':'royalcanin.com/fr','ver':'2026-05'},
+  'purina pro plan':{'src':'purina.fr','ver':'2026-05'},
+  'purina':{'src':'purina.fr','ver':'2026-05'},
+  "hill's science plan":{'src':'hillspet.fr','ver':'2026-05'},
+  "hill's prescription diet":{'src':'hillspet.fr','ver':'2026-05'},
+  'hills':{'src':'hillspet.fr','ver':'2026-05'},
+  'orijen':{'src':'orijen.ca','ver':'2026-05'},
+  'acana':{'src':'acana.com','ver':'2026-05'},
+  'farmina':{'src':'farmina.com','ver':'2026-05'},
+  'eukanuba':{'src':'eukanuba.eu','ver':'2026-05'},
+  'iams':{'src':'iams.com','ver':'2026-05'},
+  'ziwi':{'src':'ziwipets.com','ver':'2026-05'},
+  'instinct':{'src':'instinct.com','ver':'2026-05'},
+  'wellness':{'src':'wellnesspetfood.com','ver':'2026-05'},
+  'blue buffalo':{'src':'bluebuffalo.com','ver':'2026-05'},
+  'merrick':{'src':'merrickpetcare.com','ver':'2026-05'},
+  'taste of the wild':{'src':'tasteofthewild.com','ver':'2026-05'},
+  'burns':{'src':'burnspet.co.uk','ver':'2026-05'},
+  'arden grange':{'src':'ardengrange.com','ver':'2026-05'},
+  "lily's kitchen":{'src':'lilyskitchen.co.uk','ver':'2026-05'},
+  'canagan':{'src':'canagan.co.uk','ver':'2026-05'},
+  'forthglade':{'src':'forthglade.com','ver':'2026-05'},
+  'edgard & cooper':{'src':'edgardcooper.com','ver':'2026-05'},
+  'edgard cooper':{'src':'edgardcooper.com','ver':'2026-05'},
+  'yarrah':{'src':'yarrah.com','ver':'2026-05'},
+  'bozita':{'src':'bozita.com','ver':'2026-05'},
+  'carnilove':{'src':'carnilove.com','ver':'2026-05'},
+  'josera':{'src':'josera.de','ver':'2026-05'},
+  'monge':{'src':'monge.it','ver':'2026-05'},
+  'virbac':{'src':'virbac.com','ver':'2026-05'},
+  'animonda':{'src':'animonda.de','ver':'2026-05'},
+  'brit':{'src':'brit-petfood.com','ver':'2026-05'},
+  'pro pac':{'src':'propacpetfood.com','ver':'2026-05'},
+  'nutrivet':{'src':'nutrivet.fr','ver':'2026-05'},
+  'specific':{'src':'specificpetfood.com','ver':'2026-05'}
+};
+
+function getProductMeta(p) {
+  if (p._custom) return {type:'custom',src:null,ver:null};
+  var brand = (p.brands||'').toLowerCase().trim();
+  var keys = Object.keys(VERIFIED_BRANDS);
+  for (var i=0;i<keys.length;i++) {
+    if (brand.indexOf(keys[i])!==-1 || keys[i].indexOf(brand)!==-1) {
+      return {type:'verified',src:VERIFIED_BRANDS[keys[i]].src,ver:VERIFIED_BRANDS[keys[i]].ver};
+    }
+  }
+  return {type:'community',src:'world.openpetfoodfacts.org',ver:null};
+}
+
+function isDataStale(ver) {
+  if (!ver) return false;
+  var p=ver.split('-'), d=new Date(+p[0],+p[1]-1,1), now=new Date();
+  return (now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth())>=12;
+}
+
+function formatVer(ver) {
+  if (!ver) return '';
+  var p=ver.split('-');
+  var m=['jan.','fév.','mars','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];
+  return m[+p[1]-1]+' '+p[0];
+}
+
+function buildSourceHTML(meta, productName) {
+  var html='', sub=encodeURIComponent('Erreur données : '+(productName||'produit')),
+      bod=encodeURIComponent('Bonjour,\n\nErreur sur : '+(productName||'')+'\n\nDétail :\n');
+  if (meta.type==='verified') {
+    html='<span class="src-badge verified">'
+      +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+      +'Vérifié · '+escapeHtml(meta.src)+(meta.ver?' · '+formatVer(meta.ver):'')+' · Données publiques CE 767/2009'
+      +'</span>';
+    if (isDataStale(meta.ver)) html+='<div class="src-stale">⚠️ Formule non revérifiée depuis plus de 12 mois — consultez l\'étiquette du produit.</div>';
+  } else if (meta.type==='community') {
+    html='<span class="src-badge community">🌐 Données communautaires · Open Pet Food Facts (<a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">ODbL</a>)</span>';
+  } else {
+    html='<span class="src-badge custom">✏️ Saisi manuellement — non vérifié</span>';
+  }
+  html+='<br><a href="mailto:crocscore.help@gmail.com?subject='+sub+'&body='+bod+'" class="src-report">'
+    +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+    +'Signaler une erreur sur ce produit</a>';
+  return html;
+}
+
 // -- Affichage résultat ------------------------------------
 function displayProduct(p, fallbackName) {
   const nutr = p.nutriments || {};
@@ -2044,13 +2131,17 @@ function submitManualForm(productName) {
 }
 
 // -- Recherche texte ---------------------------------------
+var _opffLastCall = 0;
 async function doSearch() {
   const val = document.getElementById('main-search').value.trim();
   if(!val) return;
   // 1. Base locale + produits custom
   var local = searchLocalDB(val);
   if (local) { displayProduct(local, val); return; }
-  // 2. API Open Pet Food Facts
+  // 2. API Open Pet Food Facts — rate limit 1 req/s
+  var now = Date.now();
+  if (now - _opffLastCall < 1000) { return; }
+  _opffLastCall = now;
   document.getElementById('scan-loading').classList.add('open');
   try {
     const res = await fetch(`https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(val)}&search_simple=1&action=process&json=1&page_size=1`);
@@ -3141,6 +3232,10 @@ function doAnalyserSearch() {
   if (!val) return;
   var local = searchLocalDB(val);
   if (local) { renderAnalyserResult(local, val); return; }
+  // Rate limit OPFF API — 1 req/s
+  var now = Date.now();
+  if (now - _opffLastCall < 1000) { return; }
+  _opffLastCall = now;
   renderAnalyserLoading();
   fetch('https://world.openpetfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(val) + '&search_simple=1&action=process&json=1&page_size=1')
     .then(function(r){ return r.json(); })
@@ -3220,9 +3315,12 @@ function renderAnalyserResult(p, name) {
     + '</div>'
     + '</div>'
 
+    // Source badge (below dark card — contraste garanti en clair/sombre)
+    + '<div style="margin-bottom:12px;padding:0 2px">' + buildSourceHTML(getProductMeta(p), productName) + '</div>'
+
     // Verdict
     + '<div style="background:var(--green-pale);border-radius:14px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--green-dark);font-family:\'DM Sans\',sans-serif;display:flex;align-items:center;gap:8px">'
-    + '<span style="font-size:18px">' + (scored.score >= 60 ? '?' : scored.score >= 40 ? '??' : '?') + '</span>'
+    + '<span style="font-size:18px">' + (scored.score >= 60 ? '✅' : scored.score >= 40 ? '⚠️' : '❌') + '</span>'
     + scoreVerdict
     + '</div>'
 
@@ -3253,11 +3351,11 @@ function renderAnalyserResult(p, name) {
         + '</div>'
         + '</div>'
         + '<div style="background:rgba(240,173,0,0.2);border-radius:10px;padding:12px;font-size:14px;color:#7a5000;font-weight:600;font-family:\'DM Sans\',sans-serif;text-align:center;margin-bottom:10px">'
-        + '?? Vérifiez toujours les valeurs sur l\'étiquette du produit'
+        + '⚠️ Vérifiez toujours les valeurs sur l\'étiquette du produit'
         + '</div>'
         + '<a href="mailto:crocscore.help@gmail.com?subject=Donn%C3%A9es%20%3A%20' + encodeURIComponent(productName) + '&body=Produit%20%3A%20' + encodeURIComponent(productName) + '%0AValeurs%20r%C3%A9elles%20%3A%20" '
         + 'style="display:block;text-align:center;font-size:13px;color:#7a5000;text-decoration:none;background:rgba(240,173,0,0.15);padding:8px;border-radius:8px;border:1px solid rgba(240,173,0,0.4);font-family:\'DM Sans\',sans-serif">'
-        + '? Envoyer les valeurs réelles de ce produit</a>'
+        + '📧 Envoyer les valeurs réelles de ce produit</a>'
         + '</div>'
       : isLocalDB
       ? '<div style="background:#f0f4ff;border-radius:12px;padding:12px 14px;margin-bottom:12px;border:1px solid rgba(80,120,220,0.25)">'
@@ -3268,7 +3366,7 @@ function renderAnalyserResult(p, name) {
         + '</div>'
         + '<a href="mailto:crocscore.help@gmail.com?subject=Erreur%20donn%C3%A9es%20%3A%20' + encodeURIComponent(productName) + '&body=Produit%20%3A%20' + encodeURIComponent(productName) + '%0AErreur%20constat%C3%A9e%20%3A%20" '
         + 'style="display:inline-block;font-size:11px;color:#2a4a8a;text-decoration:none;background:rgba(80,120,220,0.1);padding:4px 10px;border-radius:6px;border:1px solid rgba(80,120,220,0.2)">'
-        + '? Signaler une erreur sur ce produit</a>'
+        + '⚠ Signaler une erreur sur ce produit</a>'
         + '</div>'
       : '')
 
@@ -3281,7 +3379,7 @@ function renderAnalyserResult(p, name) {
     + '<div style="font-size:10px;color:#a07820;line-height:1.4;border-top:1px solid rgba(232,184,75,0.2);padding-top:8px">CrocScore — Outil informatif uniquement · <a href="mailto:crocscore.help@gmail.com" style="color:#8b6a00">crocscore.help@gmail.com</a> · <a href="https://www.cnil.fr" target="_blank" rel="noopener" style="color:#8b6a00">CNIL</a></div>'
     + '</div>'
     + '<button onclick="renderAnalyserHistory();document.getElementById(\'analyser-search-input\').value=\'\'" style="width:100%;padding:13px;background:var(--cream-dark);color:var(--text);border:none;border-radius:12px;font-family:\'DM Sans\',sans-serif;font-size:14px;cursor:pointer;box-sizing:border-box">'
-    + '? Nouvelle analyse'
+    + '↩ Nouvelle analyse'
     + '</button>'
     + '<div style="height:20px"></div>';
 }

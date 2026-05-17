@@ -1,6 +1,6 @@
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 
-const CACHE_NAME = 'crocscore-v13';
+const CACHE_NAME = 'crocscore-v14';
 
 // Vider les anciens caches au démarrage
 self.addEventListener('activate', event => {
@@ -16,7 +16,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(['/manifest.json', '/opff_db.js', '/localdb.js', '/more_products.js']))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(['/manifest.json', '/opff_db.js', '/localdb.js', '/more_products.js', '/icon-192.png', '/icon-512.png']))
   );
 });
 

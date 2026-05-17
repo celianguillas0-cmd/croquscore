@@ -2083,8 +2083,8 @@ function displayProduct(p, fallbackName) {
 }
 
 // -- Base de données locale (définie dans localdb.js) ---------------
-if (typeof OPFF_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, OPFF_DB);
-if (typeof MORE_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, MORE_DB);
+if (typeof LOCAL_DB !== 'undefined' && typeof OPFF_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, OPFF_DB);
+if (typeof LOCAL_DB !== 'undefined' && typeof MORE_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, MORE_DB);
 
 function searchLocalDB(query) {
   if (!query || query.length < 2) return null;

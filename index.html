@@ -1769,8 +1769,8 @@ function togglePw(id, btn) {
 
 function authError(code, raw) {
   const msgs = {
-    'auth/user-not-found': 'Aucun compte associé à cet email.',
-    'auth/wrong-password': 'Mot de passe incorrect.',
+    'auth/user-not-found': 'Email ou mot de passe incorrect.',
+    'auth/wrong-password': 'Email ou mot de passe incorrect.',
     'auth/invalid-credential': 'Email ou mot de passe incorrect.',
     'auth/email-already-in-use': 'Un compte existe déjà avec cet email.',
     'auth/weak-password': 'Mot de passe trop court (6 caractères minimum).',
@@ -2199,6 +2199,7 @@ function openScan() {
 }
 
 function openCameraScan() {
+  if (html5QrCode) return;
   document.getElementById('scan-modal').classList.add('open');
   try {
     html5QrCode = new Html5Qrcode('scan-reader');
@@ -2264,7 +2265,7 @@ function showSrmFound(product, barcode) {
     '<div class="srm-found-name">' + escapeHtml(name) + '</div>'
     + (brand ? '<div class="srm-found-brand">' + escapeHtml(brand) + '</div>' : '')
     + '<div class="srm-score-row">'
-    +   '<div class="srm-score-badge" style="background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
+    +   '<div class="srm-score-badge" style="background:' + safeColor(scored.bg,'#e8f5d8') + ';color:' + safeColor(scored.color,'#1a3a0f') + '">' + scored.letter + '</div>'
     +   '<div><div style="font-size:15px;font-weight:600;color:var(--text)">Score ' + scored.score + '/100</div>'
     +      '<div class="srm-score-label">CrocScore estimé</div></div>'
     + '</div>'
@@ -2777,20 +2778,31 @@ function bnActivate(id) {
   document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-window.addEventListener('scroll', function() {
-  const sections = [
+var _scrollTicking = false;
+var _scrollSections = null;
+function _getScrollSections() {
+  return [
     {id:'bn-accueil', pos:0},
     {id:'bn-analyser', pos:document.getElementById('main-search')?.offsetTop||0},
     {id:'bn-scores', pos:document.getElementById('scores')?.offsetTop||0},
     {id:'bn-premium', pos:document.getElementById('tarifs')?.offsetTop||0},
   ];
-  const y = window.scrollY + 100;
-  let current = 'bn-accueil';
-  sections.forEach(s => { if(y >= s.pos) current = s.id; });
-  document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById(current);
-  if(el) el.classList.add('active');
-});
+}
+window.addEventListener('scroll', function() {
+  if (_scrollTicking) return;
+  _scrollTicking = true;
+  requestAnimationFrame(function() {
+    if (!_scrollSections) _scrollSections = _getScrollSections();
+    const y = window.scrollY + 100;
+    let current = 'bn-accueil';
+    _scrollSections.forEach(s => { if(y >= s.pos) current = s.id; });
+    document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById(current);
+    if(el) el.classList.add('active');
+    _scrollTicking = false;
+  });
+}, {passive: true});
+window.addEventListener('resize', function() { _scrollSections = null; }, {passive: true});
 
 // Statistiques
 var _statsCharts = [];

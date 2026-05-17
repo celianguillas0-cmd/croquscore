@@ -1872,7 +1872,11 @@ function safeParse(key, fallback) {
     var raw = localStorage.getItem(key);
     if (raw === null || raw === undefined) return fallback;
     var v = JSON.parse(raw);
-    return (v === null || v === undefined) ? fallback : v;
+    if (v === null || v === undefined) return fallback;
+    // Type-guard: array fallback requires array result, object fallback requires plain object
+    if (Array.isArray(fallback) && !Array.isArray(v)) return fallback;
+    if (fallback !== null && typeof fallback === 'object' && !Array.isArray(fallback) && (typeof v !== 'object' || Array.isArray(v) || v === null)) return fallback;
+    return v;
   } catch(e) {
     // JSON corrompu (manipulation DevTools, ancien format, plantage écriture) — on retourne le défaut
     return fallback;
@@ -2080,13 +2084,14 @@ function displayProduct(p, fallbackName) {
   });
   const rs = document.getElementById('result-section');
   if (rs) { rs.classList.add('visible'); setTimeout(() => { if (rs && document.body.contains(rs)) rs.scrollIntoView({behavior:'smooth', block:'start'}); }, 100); }
-  var _animals = safeParse('croc_animals', []);
+  var _animals = safeParse('croc_animals', []); if (!Array.isArray(_animals)) _animals = [];
   var _curAnimal = _statsAnimal || (_animals.length ? _animals[0].name : null);
   var _histName = (p.product_name || fallbackName || '').slice(0, 200);
-  var _hist = safeParse('croc_history', []);
+  var _hist = safeParse('croc_history', []); if (!Array.isArray(_hist)) _hist = [];
   // Déduplication par nom — cohérent avec renderAnalyserResult, évite le bloat localStorage
   _hist = _hist.filter(function(h){ return h.name !== _histName; });
-  _hist.push({name: _histName, brand: (p.brands||'').slice(0,100), score: scored.score, letter: scored.letter, bg: safeColor(scored.bg,'#e8f5d8'), color: safeColor(scored.color,'#1a3a0f'), date: Date.now(), dateLabel: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: parseFloat(nutr.proteins_100g)||0, fat: parseFloat(nutr.fat_100g)||0, carbs: parseFloat(nutr.carbohydrates_100g)||0});
+  var _dp = parseFloat(nutr.proteins_100g), _df = parseFloat(nutr.fat_100g), _dc = parseFloat(nutr.carbohydrates_100g);
+  _hist.push({name: _histName, brand: (p.brands||'').slice(0,100), score: scored.score, letter: scored.letter, bg: safeColor(scored.bg,'#e8f5d8'), color: safeColor(scored.color,'#1a3a0f'), date: Date.now(), dateLabel: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: (isFinite(_dp)&&_dp>=0)?_dp:0, fat: (isFinite(_df)&&_df>=0)?_df:0, carbs: (isFinite(_dc)&&_dc>=0)?_dc:0});
   // Limite à 50 entrées (cohérent avec renderAnalyserResult)
   if (_hist.length > 50) _hist = _hist.slice(-50);
   safeSet('croc_history', _hist);
@@ -3181,8 +3186,8 @@ function saveAnimal() {
     name: name,
     type: _at ? _at.value : '',
     breed: _ab ? _ab.value.trim() : '',
-    age: parseInt(_aa ? _aa.value : 0, 10) || null,
-    weight: parseFloat(_aw ? _aw.value : 0) || null
+    age: (function(v){return (isFinite(v)&&v>=0&&v<=100)?v:null;})(parseInt(_aa?_aa.value:0,10)),
+    weight: (function(v){return (isFinite(v)&&v>0&&v<=300)?v:null;})(parseFloat(_aw?_aw.value:0))
   });
   safeSet('croc_animals', animals);
   closeAddAnimal();
@@ -3413,7 +3418,7 @@ function renderAnalyserResult(p, name) {
   var isCustom = !!p._custom;
 
   // Historique
-  var hist = safeParse('croc_history', []);
+  var hist = safeParse('croc_history', []); if (!Array.isArray(hist)) hist = [];
   hist = hist.filter(function(h){ return h.name !== productName; });
   hist.unshift({name:productName, brand:brand, score:scored.score, letter:scored.letter, bg:safeColor(scored.bg,'#e8f5d8'), color:safeColor(scored.color,'#1a3a0f'), date:Date.now()});
   if (hist.length > 50) hist = hist.slice(0, 50);

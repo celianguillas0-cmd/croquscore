@@ -2207,6 +2207,7 @@ async function doSearch() {
   } catch(e) {
     showManualForm(val);
   } finally {
+    _opffActiveCtrl = null;
     var _sl2 = document.getElementById('scan-loading'); if (_sl2) _sl2.classList.remove('open');
   }
   }, delay);
@@ -2274,7 +2275,7 @@ async function handleBarcodeFile(input) {
   }
   // Fallback manuel
   const code = prompt('Code-barres non détecté automatiquement.\nEntrez-le manuellement :');
-  if(code && code.trim()) fetchByBarcode(code.trim());
+  if(code) { var _ct = code.trim(); if(_ct.length >= 3 && _ct.length <= 128 && /^[0-9A-Za-z.\-]{3,128}$/.test(_ct)) fetchByBarcode(_ct); }
 }
 // -- Scan Result Modal -------------------------------------
 function openSrm() {
@@ -2359,6 +2360,7 @@ function submitSrmForm(barcode) {
 }
 
 async function fetchByBarcode(barcode) {
+  if (typeof barcode !== 'string' || !/^[0-9A-Za-z.\-]{3,128}$/.test(barcode)) return;
   var _aov = document.getElementById('analyser-overlay');
   if (!_aov || _aov.style.display !== 'flex') {
     openAnalyserPanel();
@@ -3255,6 +3257,7 @@ function _cookieSave(prefs) {
   safeSet('croc_cookies_choice', prefs);
 }
 function _cookieApply(prefs) {
+  if (!prefs || typeof prefs !== 'object' || Array.isArray(prefs)) prefs = {push:false, perf:false};
   if (prefs.push) {
     initOneSignal();
   } else if (window._oneSignalLoaded && typeof OneSignalDeferred !== 'undefined') {
@@ -3279,7 +3282,7 @@ function openCookieSettings() {
   var b = document.getElementById('cookie-banner'); if (b) b.style.display = 'none';
   var s = document.getElementById('cookie-settings'); if (s) s.style.display = 'block';
   var prefs = safeParse('croc_cookies_choice', {push:false, perf:false});
-  if (!prefs || typeof prefs !== 'object') prefs = {push:false, perf:false};
+  if (!prefs || typeof prefs !== 'object' || Array.isArray(prefs)) prefs = {push:false, perf:false};
   ['push','perf'].forEach(function(n) {
     var el = document.getElementById('cookie-toggle-' + n);
     if (el) {
@@ -3355,7 +3358,8 @@ function closeAnalyserPanel() {
 }
 
 function doAnalyserSearch() {
-  var val = (document.getElementById('analyser-search-input').value || '').trim();
+  var el = document.getElementById('analyser-search-input'); if (!el) return;
+  var val = (el.value || '').trim();
   if (!val) return;
   var local = searchLocalDB(val);
   if (local) { renderAnalyserResult(local, val); return; }
@@ -3379,7 +3383,8 @@ function doAnalyserSearch() {
           renderAnalyserNotFound(val);
         }
       })
-      .catch(function(){ renderAnalyserNotFound(val); });
+      .catch(function(){ renderAnalyserNotFound(val); })
+      .finally(function(){ _opffActiveCtrl = null; });
   }, delay);
 }
 
@@ -3498,7 +3503,7 @@ function renderAnalyserResult(p, name) {
         + '<div style="font-size:11px;color:#2a4a8a;line-height:1.6;margin-bottom:8px">'
         + '<strong>Données base CrocScore — valeurs approximatives.</strong> '
         + 'Formulation à la date de saisie : le fabricant peut avoir modifié la composition depuis.<br>'
-        + 'La marque est citée à des fins d\'identification uniquement — CrocScore n\'est pas affilié à ' + (brand || 'ce fabricant') + '.'
+        + 'La marque est citée à des fins d\'identification uniquement — CrocScore n\'est pas affilié à ' + escapeHtml(brand || 'ce fabricant') + '.'
         + '</div>'
         + '<a href="mailto:crocscore.help@gmail.com?subject=Erreur%20donn%C3%A9es%20%3A%20' + encodeURIComponent(productName) + '&body=Produit%20%3A%20' + encodeURIComponent(productName) + '%0AErreur%20constat%C3%A9e%20%3A%20" '
         + 'style="display:inline-block;font-size:11px;color:#2a4a8a;text-decoration:none;background:rgba(80,120,220,0.1);padding:4px 10px;border-radius:6px;border:1px solid rgba(80,120,220,0.2)">'
@@ -3593,7 +3598,7 @@ function renderAnalyserHistory() {
       + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:\'DM Sans\',sans-serif">' + escapeHtml(h.name||'Produit') + '</div>'
       + '<div style="font-size:12px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif">' + (h.brand ? escapeHtml(h.brand) + ' · ' : '') + escapeHtml(age) + '</div>'
       + '</div>'
-      + '<div style="font-size:16px;font-weight:700;color:var(--text);font-family:\'Fraunces\',serif">' + (h.score||'—') + '</div>'
+      + '<div style="font-size:16px;font-weight:700;color:var(--text);font-family:\'Fraunces\',serif">' + (typeof h.score === 'number' ? h.score : '—') + '</div>'
       + '</div>';
   }).join('');
   _ac.innerHTML =

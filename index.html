@@ -737,6 +737,129 @@ footer{background:#0d1a08;padding:40px 5%}
 .suivi-alert{display:flex;align-items:center;gap:8px;font-size:12px;color:#b46400;background:#fff8ee;border-radius:10px;padding:10px 12px}
 @media(max-width:768px){.suivi-inner{grid-template-columns:1fr}.suivi-right{display:none}}
 
+/* ============================================================
+   ANIMATIONS PREMIUM
+   Uniquement transform+opacity (accélération GPU).
+   prefers-reduced-motion respecté.
+   ============================================================ */
+@keyframes _fadeUp   {from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes _scaleIn  {0%{opacity:0;transform:scale(0.78)}60%{transform:scale(1.07)}80%{transform:scale(0.97)}100%{opacity:1;transform:scale(1)}}
+@keyframes _bounceIn {0%{opacity:0;transform:scale(0.5) rotate(-8deg)}55%{transform:scale(1.12) rotate(2deg)}80%{transform:scale(0.95)}100%{opacity:1;transform:none}}
+@keyframes _shimmer  {0%{left:-65%}100%{left:145%}}
+@keyframes _slideUp  {from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:none}}
+@keyframes _slideInR {from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
+@keyframes _rotateIn {from{opacity:0;transform:rotate(-18deg) scale(0.82)}to{opacity:1;transform:none}}
+@keyframes _ripple   {to{transform:scale(4.5);opacity:0}}
+@keyframes _glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(74,148,34,0.45)}50%{box-shadow:0 0 0 9px rgba(74,148,34,0)}}
+@keyframes _waveBar  {0%,60%,100%{transform:scaleY(0.42)}30%{transform:scaleY(1)}}
+@keyframes _logoEnt  {0%{opacity:0;transform:scale(0.78) translateY(14px)}65%{transform:scale(1.05) translateY(-4px)}100%{opacity:1;transform:none}}
+@keyframes _tagFade  {from{opacity:0;transform:translateY(8px)}to{opacity:0.45;transform:none}}
+@keyframes _dotPulse {0%,100%{transform:scale(1);opacity:1}50%{transform:scale(2.1);opacity:0}}
+@keyframes _pop      {0%{transform:scale(1)}38%{transform:scale(1.22)}70%{transform:scale(0.93)}100%{transform:scale(1)}}
+@keyframes _spinS    {from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes _gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+@media (prefers-reduced-motion: no-preference) {
+
+/* Splash */
+.pwa-splash{background:linear-gradient(135deg,#1a3a0f 0%,#2d6016 50%,#1a3a0f 100%);background-size:200% 200%;animation:_gradShift 5s ease infinite}
+.pwa-splash.out{opacity:0;animation:none}
+.pwa-splash-logo{animation:_logoEnt 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both}
+.pwa-splash-icon{animation:_rotateIn 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.05s both}
+.pwa-splash-tag {animation:_tagFade 0.5s ease 0.6s both}
+
+/* Hero */
+.hero-badge-dot{animation:_dotPulse 2.4s ease-in-out infinite}
+.hero-card-main{box-shadow:0 8px 40px rgba(26,58,15,0.14),0 0 0 1px rgba(74,148,34,0.06)}
+.hero-scan{transition:all 0.22s ease}
+.hero-scan:hover{color:var(--text);transform:translateX(4px)}
+
+/* Scroll reveal */
+.reveal-ready{opacity:0;transform:translateY(28px);transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.22,1,0.36,1)}
+.reveal-ready.revealed{opacity:1;transform:none}
+.reveal-ready.d1{transition-delay:0.07s}.reveal-ready.d2{transition-delay:0.14s}
+.reveal-ready.d3{transition-delay:0.21s}.reveal-ready.d4{transition-delay:0.28s}
+.reveal-ready.d5{transition-delay:0.35s}
+
+/* Feature / why / plan / suivi cards */
+.sc-feat{transition:all 0.28s cubic-bezier(0.22,1,0.36,1)}
+.sc-feat:hover{transform:translateY(-7px) scale(1.012);box-shadow:0 18px 44px rgba(0,0,0,0.22),0 0 0 1px rgba(168,216,120,0.22);border-color:rgba(168,216,120,0.3)!important}
+.sc-feat-icon{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+.sc-feat:hover .sc-feat-icon{transform:scale(1.18) rotate(-6deg)}
+.sc-feat-crown svg{transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);filter:drop-shadow(0 0 4px rgba(255,224,102,0.4))}
+.sc-feat:hover .sc-feat-crown svg{transform:scale(1.35) rotate(15deg);filter:drop-shadow(0 0 9px rgba(255,224,102,0.75))}
+.why-card{transition:all 0.28s cubic-bezier(0.22,1,0.36,1)}
+.why-card:hover{transform:translateY(-5px);box-shadow:0 14px 36px rgba(26,58,15,0.12)}
+.plan-card{transition:all 0.28s cubic-bezier(0.22,1,0.36,1)}
+.plan-card:hover{transform:translateY(-5px);box-shadow:0 16px 44px rgba(26,58,15,0.18)}
+.suivi-card{transition:all 0.28s cubic-bezier(0.22,1,0.36,1)}
+.suivi-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(26,58,15,0.16)}
+
+/* Buttons: shimmer glint on hover */
+.auth-btn,.showcase-cta-btn,.hero-search button,.showcase-search button,.prem-cta-btn{position:relative;overflow:hidden}
+.auth-btn::after,.showcase-cta-btn::after,.hero-search button::after,.showcase-search button::after,.prem-cta-btn::after{content:'';position:absolute;top:0;left:-65%;width:42%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.24),transparent);transform:skewX(-15deg);pointer-events:none;opacity:0}
+.auth-btn:hover::after,.showcase-cta-btn:hover::after,.hero-search button:hover::after,.showcase-search button:hover::after,.prem-cta-btn:hover::after{opacity:1;animation:_shimmer 0.55s ease forwards}
+
+/* Ripple */
+.ripple-host{position:relative!important;overflow:hidden!important}
+.ripple-wave{position:absolute;border-radius:50%;background:rgba(255,255,255,0.28);transform:scale(0);animation:_ripple 0.58s linear forwards;pointer-events:none}
+
+/* Score pill */
+.score-pill{transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.3s ease}
+.score-pill:hover{transform:scale(1.14)}
+.score-pill.anim-pop,.result-score-big.anim-pop{animation:_bounceIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both}
+
+/* Crit fill bars transition */
+.crit-fill2{transition:width 0.75s cubic-bezier(0.22,1,0.36,1)}
+
+/* Result section appear */
+.result-section.visible{animation:_slideUp 0.45s cubic-bezier(0.22,1,0.36,1) both}
+
+/* Modals / overlays */
+.auth-overlay.open .auth-box{animation:_scaleIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both}
+.prem-overlay.open .prem-modal{animation:_slideUp 0.38s cubic-bezier(0.22,1,0.36,1) both}
+.alert-overlay.open .alert-modal{animation:_scaleIn 0.32s cubic-bezier(0.34,1.56,0.64,1) both}
+.account-panel.open{animation:_slideInR 0.32s cubic-bezier(0.22,1,0.36,1) both}
+#add-animal-overlay[style*="flex"]{animation:_slideUp 0.3s cubic-bezier(0.22,1,0.36,1) both}
+#analyser-overlay[style*="flex"]{animation:_slideUp 0.28s cubic-bezier(0.22,1,0.36,1) both}
+#stats-overlay[style*="flex"]{animation:_slideUp 0.3s cubic-bezier(0.22,1,0.36,1) both}
+
+/* Nav logo wobble on hover */
+.nav-logo-icon{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+.nav-logo:hover .nav-logo-icon{transform:rotate(-10deg) scale(1.1)}
+.mobile-app-logo-icon{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+.mobile-app-logo:hover .mobile-app-logo-icon{transform:rotate(-10deg) scale(1.12)}
+
+/* Bottom nav */
+.bn-item{transition:all 0.22s cubic-bezier(0.22,1,0.36,1)}
+.bn-item:active{transform:scale(0.86)}
+.bn-item.active .bn-icon{animation:_pop 0.36s cubic-bezier(0.34,1.56,0.64,1) both}
+
+/* Account items */
+.account-item{transition:all 0.22s cubic-bezier(0.22,1,0.36,1)!important}
+.account-item:hover{transform:translateX(5px)!important}
+.account-avatar-big{transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+.account-avatar-big:hover{transform:scale(1.09) rotate(-3deg)}
+
+/* Input focus glow */
+.auth-field input:focus,.hero-search input:focus{animation:_glowPulse 1.2s ease 1}
+
+/* Wave bars scan loading */
+.scan-wave{display:flex;align-items:center;gap:5px;height:38px}
+.scan-wave span{display:inline-block;width:5px;border-radius:3px;background:var(--green-light);animation:_waveBar 1.1s ease-in-out infinite}
+.scan-wave span:nth-child(2){animation-delay:0.11s}
+.scan-wave span:nth-child(3){animation-delay:0.22s}
+.scan-wave span:nth-child(4){animation-delay:0.33s}
+.scan-wave span:nth-child(5){animation-delay:0.44s}
+
+/* Spinners plus fluides */
+.scan-spinner,.srm-spinner{animation:_spinS 0.78s cubic-bezier(0.37,0,0.63,1) infinite!important}
+
+/* Tabs: indicateur coulissant */
+.tab{position:relative;transition:color 0.2s ease,background 0.2s ease,border-color 0.2s ease}
+
+} /* end prefers-reduced-motion */
+
 </style>
 </head>
 <body>
@@ -3724,6 +3847,78 @@ function renderAnalyserHistory() {
     '<div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;font-family:\'DM Sans\',sans-serif">Analyses récentes</div>'
     + items;
 }
+
+// ============================================================
+// ANIMATIONS PREMIUM — JS
+// ============================================================
+
+// 1. Intersection Observer — scroll reveal staggeré
+(function() {
+  if (!('IntersectionObserver' in window)) return;
+  var selectors = '.sc-feat,.why-card,.plan-card,.suivi-card';
+  var groups = document.querySelectorAll(selectors);
+  groups.forEach(function(el, i) {
+    el.classList.add('reveal-ready');
+    var delay = (i % 5) + 1;
+    el.classList.add('d' + delay);
+  });
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin:'0px 0px -40px 0px' });
+  groups.forEach(function(el) { obs.observe(el); });
+})();
+
+// 2. Ripple helper
+function _addRipple(btn, colorOverride) {
+  btn.classList.add('ripple-host');
+  btn.addEventListener('click', function(e) {
+    var r = Math.max(btn.offsetWidth, btn.offsetHeight) * 2;
+    var rect = btn.getBoundingClientRect();
+    var wave = document.createElement('span');
+    wave.className = 'ripple-wave';
+    if (colorOverride) wave.style.background = colorOverride;
+    wave.style.width = wave.style.height = r + 'px';
+    wave.style.left = (e.clientX - rect.left - r / 2) + 'px';
+    wave.style.top  = (e.clientY - rect.top  - r / 2) + 'px';
+    btn.appendChild(wave);
+    wave.addEventListener('animationend', function() { wave.remove(); });
+  }, {passive:true});
+}
+
+// Appliquer ripple aux boutons principaux
+document.querySelectorAll('.auth-btn,.showcase-cta-btn').forEach(function(b) { _addRipple(b); });
+document.querySelectorAll('.bn-item').forEach(function(b) { _addRipple(b, 'rgba(74,148,34,0.18)'); });
+
+// 3. Score pill — pop animation à chaque nouveau résultat
+var _origDisplayProduct = displayProduct;
+displayProduct = function(p, fallbackName) {
+  _origDisplayProduct(p, fallbackName);
+  var pill = document.querySelector('#result-section .result-score-big');
+  if (pill) { pill.classList.remove('anim-pop'); void pill.offsetWidth; pill.classList.add('anim-pop'); }
+};
+
+// 4. Crit-fill2 : partir de 0 puis animer vers la valeur cible
+var _origDP2 = displayProduct;
+displayProduct = function(p, fallbackName) {
+  var rows = document.querySelectorAll('.crit-row');
+  rows.forEach(function(r) { var f = r.querySelector('.crit-fill2'); if (f) { f.style.transition = 'none'; f.style.width = '0%'; } });
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      rows.forEach(function(r) { var f = r.querySelector('.crit-fill2'); if (f) f.style.transition = ''; });
+      _origDP2(p, fallbackName);
+    });
+  });
+};
+
+// 5. Scan loading : remplacer le spinner par des barres ondulantes
+(function() {
+  var sl = document.getElementById('scan-loading');
+  if (!sl) return;
+  sl.innerHTML = '<div class="scan-wave"><span></span><span></span><span></span><span></span><span></span></div>'
+    + '<div style="color:#fff;font-size:15px;font-family:\'DM Sans\',sans-serif;margin-top:8px">Analyse en cours…</div>';
+})();
 
 </script>
 

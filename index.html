@@ -2090,9 +2090,12 @@ function displayProduct(p, fallbackName) {
   const rows = document.querySelectorAll('.crit-row');
   [[0,fat,hasNutrDisplay],[1,carb,hasNutrDisplay],[2,45,true],[3,meat,true]].forEach(([i,v,show])=>{
     if(!rows[i]) return;
-    if(!show){rows[i].querySelector('.crit-fill2').style.width='0%';rows[i].querySelector('span:last-child').textContent='N/D';return;}
-    rows[i].querySelector('.crit-fill2').style.width = v+'%';
-    rows[i].querySelector('span:last-child').textContent = v+'%';
+    var _fill = rows[i].querySelector('.crit-fill2');
+    var _lbl  = rows[i].querySelector('span:last-child');
+    if(!_fill || !_lbl) return;
+    if(!show){_fill.style.width='0%';_lbl.textContent='N/D';return;}
+    _fill.style.width = v+'%';
+    _lbl.textContent = v+'%';
   });
   const rs = document.getElementById('result-section');
   if (rs) { rs.classList.add('visible'); setTimeout(() => { if (rs && document.body.contains(rs)) rs.scrollIntoView({behavior:'smooth', block:'start'}); }, 100); }
@@ -2231,6 +2234,21 @@ async function doSearch() {
 }
 var _msEl = document.getElementById('main-search');
 if (_msEl) _msEl.addEventListener('keydown', function(e){ if(e.key==='Enter') doSearch(); });
+
+// Fermeture des overlays avec Escape (hors consent-overlay/cookie-banner : consentement RGPD explicite)
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  var legalIds = ['modal-confidentialite','modal-mentions','modal-cgu'];
+  for (var li = 0; li < legalIds.length; li++) { var lm = document.getElementById(legalIds[li]); if (lm && lm.style.display !== 'none' && lm.style.display !== '') { lm.style.display = 'none'; return; } }
+  var _ao2 = document.getElementById('alert-overlay'); if (_ao2 && _ao2.classList.contains('open')) { closeAlertModal(); return; }
+  var _po2 = document.getElementById('prem-overlay'); if (_po2 && _po2.classList.contains('open')) { closePremModal(); return; }
+  var _auo = document.getElementById('auth-overlay'); if (_auo && _auo.classList.contains('open')) { closeAuth(); return; }
+  var _srmo = document.getElementById('srm-overlay'); if (_srmo && _srmo.classList.contains('open')) { closeSrm(); return; }
+  var _sm = document.querySelector('.scan-modal'); if (_sm && _sm.classList.contains('open')) { closeScan(); return; }
+  var _aao2 = document.getElementById('add-animal-overlay'); if (_aao2 && _aao2.style.display === 'flex') { closeAddAnimal(); return; }
+  var _so = document.getElementById('stats-overlay'); if (_so && _so.style.display === 'flex') { closeStatsPanel(); return; }
+  var _anao = document.getElementById('analyser-overlay'); if (_anao && _anao.style.display === 'flex') { closeAnalyserPanel(); return; }
+});
 
 // -- Scan code-barres --------------------------------------
 let html5QrCode = null;
@@ -2773,11 +2791,11 @@ OneSignalDeferred.push(async function(OneSignal) {
     <div style="display:flex;gap:12px;margin-bottom:24px">
       <div style="flex:1">
         <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Âge</label>
-        <input id="animal-age" type="number" min="0" max="30" placeholder="Ex: 3" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
+        <input id="animal-age" type="number" min="0" max="100" placeholder="Ex: 3" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
       </div>
       <div style="flex:1">
         <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Poids (kg)</label>
-        <input id="animal-weight" type="number" min="0" max="100" placeholder="Ex: 25" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
+        <input id="animal-weight" type="number" min="0.1" max="300" placeholder="Ex: 25" style="width:100%;padding:11px 14px;border:1.5px solid rgba(26,58,15,0.15);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;box-sizing:border-box"/>
       </div>
     </div>
     <button onclick="saveAnimal()" style="width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer">Enregistrer</button>
@@ -3186,7 +3204,11 @@ function closeAddAnimal() {
   var _aao = document.getElementById('add-animal-overlay'); if (_aao) _aao.style.display = 'none';
   document.body.style.overflow = '';
 }
+var _saveAnimalPending = false;
 function saveAnimal() {
+  if (_saveAnimalPending) return;
+  _saveAnimalPending = true;
+  try {
   var _an = document.getElementById('animal-name');
   if (!_an) return;
   var name = _an.value.trim().slice(0, 100);
@@ -3203,14 +3225,15 @@ function saveAnimal() {
   var _aw = document.getElementById('animal-weight');
   animals.push({
     name: name,
-    type: _at ? _at.value : '',
-    breed: _ab ? _ab.value.trim() : '',
+    type: (_at && ['chien','chat'].includes(_at.value)) ? _at.value : 'chien',
+    breed: (_ab ? _ab.value.trim() : '').slice(0, 100),
     age: (function(v){return (isFinite(v)&&v>=0&&v<=100)?v:null;})(parseInt(_aa?_aa.value:0,10)),
     weight: (function(v){return (isFinite(v)&&v>0&&v<=300)?v:null;})(parseFloat(_aw?_aw.value:0))
   });
   safeSet('croc_animals', animals);
   closeAddAnimal();
   ['animal-name','animal-breed','animal-age','animal-weight'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  } finally { _saveAnimalPending = false; }
 }
 
 // ----------------------------------------------
@@ -3378,6 +3401,8 @@ function openAnalyserPanel() {
 function closeAnalyserPanel() {
   var _ao = document.getElementById('analyser-overlay'); if (_ao) _ao.style.display = 'none';
   document.body.style.overflow = '';
+  clearTimeout(_opffSearchTimer);
+  if (_opffActiveCtrl) { _opffActiveCtrl.abort(); _opffActiveCtrl = null; }
   bnActivate('bn-accueil');
 }
 

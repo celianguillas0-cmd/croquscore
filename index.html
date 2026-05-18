@@ -329,6 +329,23 @@ nav{position:sticky;top:0;z-index:100;background:var(--cream);backdrop-filter:bl
 .nav-logo-icon{width:36px;height:36px;background:var(--green-pale);border-radius:10px;display:flex;align-items:center;justify-content:center}
 .nav-logo-text{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--green-dark);letter-spacing:-0.3px}
 .nav-logo-text span{color:var(--green-bright)}
+/* ---- Splash screen PWA ---- */
+.pwa-splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#1a3a0f;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;opacity:1;transition:opacity 0.5s ease}
+.pwa-splash.out{opacity:0;pointer-events:none}
+.pwa-splash-logo{display:flex;align-items:center;gap:16px;margin-bottom:10px}
+.pwa-splash-icon{width:64px;height:64px;background:rgba(168,216,120,0.13);border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(168,216,120,0.18)}
+.pwa-splash-name{font-family:'Fraunces',serif;font-size:42px;font-weight:600;color:#faf8f2;letter-spacing:-0.5px;line-height:1}
+.pwa-splash-name em{font-style:normal;color:#a8d878}
+.pwa-splash-tag{font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(250,248,242,0.42);letter-spacing:0.3px}
+/* ---- Mobile app header ---- */
+.mobile-app-header{display:none}
+@media(max-width:1023px){
+  .mobile-app-header{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--green-dark);padding:calc(env(safe-area-inset-top,0px) + 10px) 20px 10px;border-bottom:1px solid rgba(168,216,120,0.15)}
+  .mobile-app-logo{display:flex;align-items:center;gap:10px}
+  .mobile-app-logo-icon{width:34px;height:34px;background:rgba(168,216,120,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center}
+  .mobile-app-logo-text{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:#faf8f2;letter-spacing:-0.3px}
+  .mobile-app-logo-text em{font-style:normal;color:#a8d878}
+}
 .nav-links{display:flex;align-items:center;gap:28px;list-style:none}
 .nav-links a{text-decoration:none;font-size:14px;color:var(--text-muted);transition:color 0.2s}
 .nav-links a:hover{color:var(--text)}
@@ -725,6 +742,39 @@ footer{background:#0d1a08;padding:40px 5%}
 <body>
 <noscript><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#1a3a0f;color:#faf8f2;text-align:center;padding:16px;font-family:sans-serif;font-size:14px">CrocScore nécessite JavaScript pour fonctionner. Veuillez activer JavaScript dans les paramètres de votre navigateur.</div></noscript>
 
+<!-- Splash screen PWA — affiché une seule fois par session -->
+<div id="pwa-splash" class="pwa-splash" aria-hidden="true" role="presentation">
+  <div class="pwa-splash-logo">
+    <div class="pwa-splash-icon">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <ellipse cx="5" cy="8" rx="2" ry="2.5" fill="#a8d878"/>
+        <ellipse cx="9.5" cy="5.5" rx="2" ry="2.5" fill="#a8d878"/>
+        <ellipse cx="14.5" cy="5.5" rx="2" ry="2.5" fill="#a8d878"/>
+        <ellipse cx="19" cy="8" rx="2" ry="2.5" fill="#a8d878"/>
+        <path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z" fill="#a8d878"/>
+      </svg>
+    </div>
+    <span class="pwa-splash-name">Croc<em>Score</em></span>
+  </div>
+  <div class="pwa-splash-tag">Analyseur de croquettes</div>
+</div>
+<script>
+(function(){
+  var s = document.getElementById('pwa-splash');
+  if (!s) return;
+  try {
+    if (sessionStorage.getItem('croc_splashed')) { s.style.display = 'none'; return; }
+    sessionStorage.setItem('croc_splashed', '1');
+  } catch(e) { s.style.display = 'none'; return; }
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      s.classList.add('out');
+      setTimeout(function() { s.style.display = 'none'; }, 520);
+    }, 1200);
+  });
+})();
+</script>
+
 <nav class="top-nav" id="top-nav" style="display:none">
   <div class="nav-inner">
     <a class="nav-logo" href="#">
@@ -762,6 +812,22 @@ footer{background:#0d1a08;padding:40px 5%}
   if(n && window.innerWidth < 1024) n.parentNode.removeChild(n);
 })();
 </script>
+
+<!-- Header mobile (masqué sur desktop ≥1024px qui utilise la top-nav) -->
+<header class="mobile-app-header" role="banner">
+  <div class="mobile-app-logo" aria-label="CrocScore">
+    <div class="mobile-app-logo-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <ellipse cx="5" cy="8" rx="2" ry="2.5" fill="#a8d878"/>
+        <ellipse cx="9.5" cy="5.5" rx="2" ry="2.5" fill="#a8d878"/>
+        <ellipse cx="14.5" cy="5.5" rx="2" ry="2.5" fill="#a8d878"/>
+        <ellipse cx="19" cy="8" rx="2" ry="2.5" fill="#a8d878"/>
+        <path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z" fill="#a8d878"/>
+      </svg>
+    </div>
+    <span class="mobile-app-logo-text">Croc<em>Score</em></span>
+  </div>
+</header>
 
 <section class="showcase">
   <div class="showcase-inner">

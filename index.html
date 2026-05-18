@@ -860,6 +860,121 @@ footer{background:#0d1a08;padding:40px 5%}
 
 } /* end prefers-reduced-motion */
 
+/* ============================================================
+   TRANSITIONS SUPPLÉMENTAIRES (toujours actives)
+   ============================================================ */
+
+/* --- Pricing cards --- */
+.pricing-card{transition:border-color 0.25s ease,box-shadow 0.25s ease,transform 0.28s cubic-bezier(0.22,1,0.36,1)}
+.pricing-card:hover{border-color:rgba(74,148,34,0.35)!important;box-shadow:0 14px 40px rgba(26,58,15,0.15);transform:translateY(-5px)}
+.pricing-card-pro:hover{box-shadow:0 18px 48px rgba(26,58,15,0.32);transform:translateY(-6px)}
+
+/* --- SRM fields --- */
+.srm-field input{transition:border-color 0.2s ease,box-shadow 0.2s ease}
+.srm-field input:focus{border-color:var(--green-bright);box-shadow:0 0 0 3px rgba(74,148,34,0.12)}
+
+/* --- SRM / scan buttons --- */
+.srm-btn-primary{transition:all 0.22s cubic-bezier(0.22,1,0.36,1)}
+.srm-btn-primary:hover{background:var(--green-mid);transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,58,15,0.25)}
+.srm-btn-primary:active{transform:translateY(0);box-shadow:none}
+.srm-btn-secondary{transition:all 0.2s ease}
+.srm-btn-secondary:hover{background:var(--cream-dark);filter:brightness(0.96)}
+
+/* --- Boutons de fermeture (×) : rotation au hover --- */
+.srm-close{transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1)}
+.srm-close:hover{background:var(--green-pale);color:var(--green-dark);transform:scale(1.12) rotate(90deg)}
+.scan-close{transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1)}
+.scan-close:hover{background:rgba(255,255,255,0.28);transform:scale(1.12) rotate(90deg)}
+.prem-close:hover{transform:scale(1.12) rotate(90deg)}
+.alert-close{transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1)!important}
+.alert-close:hover{border-color:var(--green-bright);color:var(--green-bright);transform:scale(1.12) rotate(90deg)}
+.auth-close{transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1)}
+.auth-close:hover{transform:scale(1.15) rotate(90deg);color:var(--green-dark)}
+.account-panel-close{transition:all 0.22s cubic-bezier(0.34,1.56,0.64,1)}
+.account-panel-close:hover{transform:scale(1.15) rotate(90deg);color:var(--green-dark)}
+
+/* --- Result card --- */
+.result-card{transition:box-shadow 0.28s ease,transform 0.28s cubic-bezier(0.22,1,0.36,1)}
+.result-card:hover{box-shadow:0 14px 44px rgba(26,58,15,0.14);transform:translateY(-2px)}
+
+/* --- How steps --- */
+.how-step{transition:all 0.28s cubic-bezier(0.22,1,0.36,1)}
+.how-step:hover{background:rgba(255,255,255,0.09);transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,0.22);border-color:rgba(168,216,120,0.3)!important}
+.step-num{transition:color 0.3s ease}
+.how-step:hover .step-num{color:rgba(168,216,120,0.65)}
+
+/* --- Hero / showcase search bar focus-within glow --- */
+.hero-search{transition:box-shadow 0.25s ease,border-color 0.25s ease}
+.hero-search:focus-within{box-shadow:0 0 0 3px rgba(74,148,34,0.18),0 6px 24px rgba(26,58,15,0.1);border-color:rgba(74,148,34,0.4)}
+.showcase-search{transition:box-shadow 0.25s ease,border-color 0.25s ease}
+.showcase-search:focus-within{box-shadow:0 0 0 3px rgba(168,216,120,0.25);border-color:rgba(168,216,120,0.5)}
+
+/* --- Auth field inputs --- */
+.auth-field input{transition:border-color 0.2s ease,box-shadow 0.2s ease}
+.auth-field input:focus{border-color:var(--green-bright);box-shadow:0 0 0 3px rgba(74,148,34,0.12)}
+
+/* --- Score cards (A–E) --- */
+.score-card{transition:transform 0.28s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease}
+.score-card:hover{transform:translateY(-6px) scale(1.05);box-shadow:0 12px 28px rgba(26,58,15,0.14)}
+
+/* --- Why icon --- */
+.why-icon{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),background 0.25s ease}
+.why-card:hover .why-icon{transform:scale(1.12) rotate(-8deg);background:var(--green-pale)}
+
+/* --- Plan buttons --- */
+.plan-btn{transition:all 0.25s cubic-bezier(0.22,1,0.36,1)!important}
+.plan-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(74,148,34,0.28)}
+.plan-btn:active{transform:translateY(0)!important}
+
+/* --- CTA btn shimmer --- */
+.cta-btn{position:relative;overflow:hidden}
+.cta-btn::after{content:'';position:absolute;top:0;left:-65%;width:42%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.24),transparent);transform:skewX(-15deg);pointer-events:none;opacity:0}
+.cta-btn:hover::after{opacity:1;animation:_shimmer 0.55s ease forwards}
+
+/* --- Nav links subtil --- */
+.nav-links a{transition:color 0.2s ease,transform 0.2s ease}
+.nav-links a:hover{transform:translateY(-1px)}
+
+/* --- Auth tabs: underline glissant --- */
+.auth-tab{position:relative}
+.auth-tab::after{content:'';position:absolute;bottom:-2px;left:50%;right:50%;height:2px;background:var(--green-dark);transition:left 0.25s cubic-bezier(0.22,1,0.36,1),right 0.25s cubic-bezier(0.22,1,0.36,1)}
+.auth-tab.active::after{left:0;right:0}
+
+/* --- Tab content : fade-in à l'activation (classe ajoutée par JS) --- */
+@keyframes _tabFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tab-content.tab-enter{animation:_tabFadeIn 0.22s ease both}
+
+/* --- SRM drag handle --- */
+.srm-handle{transition:background 0.2s ease,width 0.2s ease}
+.srm-sheet:hover .srm-handle,.srm-sheet.open .srm-handle{background:var(--green-light);width:40px}
+
+/* --- Account plan action --- */
+.account-plan-action{transition:all 0.22s cubic-bezier(0.22,1,0.36,1)!important}
+.account-plan-action:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.18)}
+.account-plan-action:active{transform:translateY(0)!important}
+
+/* --- Cookie / consent buttons (inline style) --- */
+#cookie-banner button,#cookie-settings-panel button{transition:transform 0.18s cubic-bezier(0.22,1,0.36,1),box-shadow 0.18s ease,opacity 0.2s ease!important}
+#cookie-banner button:hover,#cookie-settings-panel button:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.13)!important}
+#cookie-banner button:active,#cookie-settings-panel button:active{transform:translateY(0)!important}
+#consent-overlay button{transition:all 0.22s cubic-bezier(0.22,1,0.36,1)!important}
+#consent-overlay button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.15)!important}
+
+/* --- Analyser search input --- */
+#analyser-search-input{transition:border-color 0.2s ease,box-shadow 0.2s ease!important}
+#analyser-search-input:focus{box-shadow:0 0 0 3px rgba(74,148,34,0.15)!important}
+
+/* --- Nav bell: transition vers état actif --- */
+.nav-bell{transition:all 0.25s cubic-bezier(0.22,1,0.36,1)}
+
+/* --- Account item danger --- */
+.account-item.danger{transition:all 0.22s cubic-bezier(0.22,1,0.36,1)!important}
+.account-item.danger:hover{background:#fff0ee!important;transform:translateX(5px)!important}
+
+/* --- Score pill (hero card demo) --- */
+.score-pill{transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease}
+.score-pill:hover{transform:scale(1.14);box-shadow:0 4px 14px rgba(0,0,0,0.12)}
+
 </style>
 </head>
 <body>
@@ -2623,9 +2738,14 @@ async function fetchByBarcode(barcode) {
 }
 function showTab(name,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active','tab-enter'));
   if (btn) btn.classList.add('active');
-  var _tc = document.getElementById('tab-'+name); if (_tc) _tc.classList.add('active');
+  var _tc = document.getElementById('tab-'+name);
+  if (_tc) {
+    _tc.classList.add('active');
+    void _tc.offsetWidth; // reflow pour relancer l'animation
+    _tc.classList.add('tab-enter');
+  }
 }
 </script>
 <script>

@@ -157,17 +157,27 @@
     var chipsWrap = document.createElement('div');
     chipsWrap.className = 'cs-home-chips';
     chipsWrap.innerHTML = ''
+      + chip('analyser', 'Analyser', 'Recherchez parmi 14 000 produits',
+             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>')
       + chip('stats', 'Statistiques', 'Suivi nutritionnel de votre animal',
              '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>')
       + chip('add', 'Mon animal', 'Ajoutez le profil de votre compagnon',
-             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>');
+             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>')
+      + chip('account', 'Mon compte', 'Connexion · synchronisation',
+             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>');
     heroInner.appendChild(chipsWrap);
 
+    chipsWrap.querySelector('[data-chip="analyser"]').addEventListener('click', function() {
+      if (typeof window.openAnalyserPanel === 'function') window.openAnalyserPanel();
+    });
     chipsWrap.querySelector('[data-chip="stats"]').addEventListener('click', function() {
       if (typeof window.openStatsPanel === 'function') window.openStatsPanel();
     });
     chipsWrap.querySelector('[data-chip="add"]').addEventListener('click', function() {
       if (typeof window.openAddAnimal === 'function') window.openAddAnimal();
+    });
+    chipsWrap.querySelector('[data-chip="account"]').addEventListener('click', function() {
+      if (typeof window.openAuth === 'function') window.openAuth();
     });
 
     // Premium teaser

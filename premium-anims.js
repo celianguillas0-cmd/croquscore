@@ -16,12 +16,74 @@
   }
 
   ready(function init() {
+    injectStatusPill();
     injectScanFab();
     enhanceHero();
     addHomeChips();
     setupRipple();
     setupSparkles();
+    addAlertsToAccountPanel();
+    removeAlertsFromNav();
   });
+
+  /* ───── Retire complètement le bouton Alertes du tab bar ────── */
+  function removeAlertsFromNav() {
+    var alertes = document.querySelector('#bn-alertes');
+    if (alertes) alertes.remove();
+    var analyser = document.querySelector('#bn-analyser');
+    if (analyser) analyser.remove();
+  }
+
+  /* ───── Ajoute "Mes alertes" dans le panneau compte ─────────── */
+  function addAlertsToAccountPanel() {
+    var panel = document.querySelector('.account-items');
+    if (!panel || panel.querySelector('[data-cs-alerts]')) return;
+
+    var item = document.createElement('div');
+    item.className = 'account-item';
+    item.setAttribute('data-cs-alerts', '1');
+    item.innerHTML = ''
+      + '<span class="account-item-icon">'
+      +   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+      +     '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>'
+      +     '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>'
+      +   '</svg>'
+      + '</span>'
+      + '<span>Mes alertes</span>';
+    item.addEventListener('click', function() {
+      if (typeof window.closeAccount === 'function') window.closeAccount();
+      setTimeout(function() {
+        if (typeof window.openAlertModal === 'function') window.openAlertModal();
+      }, 200);
+    });
+
+    // Insérer en haut de la liste
+    panel.insertBefore(item, panel.firstChild);
+  }
+
+  /* ───── 0. Status pill (rappel app, décoratif) ───────────────── */
+  function injectStatusPill() {
+    if (document.querySelector('.cs-status-pill')) return;
+    var pill = document.createElement('div');
+    pill.className = 'cs-status-pill';
+
+    function fmtTime() {
+      var d = new Date();
+      var h = String(d.getHours()).padStart(2, '0');
+      var m = String(d.getMinutes()).padStart(2, '0');
+      return h + ':' + m;
+    }
+    pill.innerHTML = '<span class="cs-status-time">' + fmtTime() + '</span>'
+      + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3.2-6.9"/><circle cx="20.5" cy="6" r="2.1" fill="currentColor"/></svg>'
+      + '<span style="font-family:Fraunces,serif;font-weight:500;letter-spacing:-0.2px">CrocScore</span>';
+    document.body.appendChild(pill);
+
+    // Live clock update
+    setInterval(function() {
+      var t = pill.querySelector('.cs-status-time');
+      if (t) t.textContent = fmtTime();
+    }, 30000);
+  }
 
   /* ───── 1. Inject scan FAB au milieu du bottom-nav ────────────── */
   function injectScanFab() {
@@ -48,12 +110,8 @@
     }
 
     // Si trop d'items, cacher "Alertes" (toujours accessible via la page Compte)
+    // Si trop d'items, cacher "Alertes" (toujours accessible via la page Compte)
     items = nav.querySelectorAll('.bn-item');
-    if (items.length > 5) {
-      var alertes = nav.querySelector('#bn-alertes');
-      if (alertes) alertes.style.display = 'none';
-    }
-  }
 
   /* ───── 2. Word reveal sur titre hero ─────────────────────────── */
   function enhanceHero() {
@@ -99,27 +157,17 @@
     var chipsWrap = document.createElement('div');
     chipsWrap.className = 'cs-home-chips';
     chipsWrap.innerHTML = ''
-      + chip('analyser', 'Analyser', 'Recherchez parmi 14 000 produits',
-             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>')
       + chip('stats', 'Statistiques', 'Suivi nutritionnel de votre animal',
              '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>')
       + chip('add', 'Mon animal', 'Ajoutez le profil de votre compagnon',
-             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>')
-      + chip('account', 'Mon compte', 'Connexion · synchronisation',
-             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>');
+             '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>');
     heroInner.appendChild(chipsWrap);
 
-    chipsWrap.querySelector('[data-chip="analyser"]').addEventListener('click', function() {
-      if (typeof window.openAnalyserPanel === 'function') window.openAnalyserPanel();
-    });
     chipsWrap.querySelector('[data-chip="stats"]').addEventListener('click', function() {
       if (typeof window.openStatsPanel === 'function') window.openStatsPanel();
     });
     chipsWrap.querySelector('[data-chip="add"]').addEventListener('click', function() {
       if (typeof window.openAddAnimal === 'function') window.openAddAnimal();
-    });
-    chipsWrap.querySelector('[data-chip="account"]').addEventListener('click', function() {
-      if (typeof window.openAuth === 'function') window.openAuth();
     });
 
     // Premium teaser

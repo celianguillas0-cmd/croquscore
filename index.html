@@ -27,93 +27,36 @@
   "@type": "WebApplication",
   "name": "CrocScore",
   "url": "https://crocscore.vercel.app",
-  "description": "Outil indicatif d'analyse de la composition des aliments pour chiens et chats. Scores basés sur la liste des ingrédients déclarés — ne remplace pas l'avis d'un vétérinaire.",
+  "description": "Outil indicatif d'analyse nutritionnelle pour aliments chiens et chats. Ne remplace pas l'avis d'un vétérinaire.",
   "applicationCategory": "LifestyleApplication",
-  "operatingSystem": "Web, Android, iOS",
+  "operatingSystem": "Web",
   "inLanguage": "fr",
-  "availableLanguage": "fr",
-  "softwareVersion": "1.0",
-  "releaseNotes": "Phase bêta — toutes les fonctionnalités gratuites",
   "publisher": {
     "@type": "Organization",
     "name": "CrocScore",
     "email": "crocscore.help@gmail.com",
     "address": {"@type": "PostalAddress", "addressCountry": "FR"}
   },
-  "offers": [
-    {
-      "@type": "Offer",
-      "name": "Plan gratuit",
-      "price": "0",
-      "priceCurrency": "EUR",
-      "availability": "https://schema.org/InStock",
-      "description": "Score indicatif A à E, recherche par nom, scan code-barres, historique local"
-    },
-    {
-      "@type": "Offer",
-      "name": "Premium (bêta gratuite)",
-      "price": "0",
-      "priceCurrency": "EUR",
-      "availability": "https://schema.org/InStock",
-      "description": "Toutes les fonctionnalités gratuites pendant la bêta — tarif prévisionnel à partir de 1,99€/mois au lancement"
-    }
-  ],
-  "featureList": [
-    "Analyse de la composition des croquettes",
-    "Score indicatif A à E basé sur les ingrédients",
-    "Scan code-barres",
-    "Base de 15 000 références",
-    "Données Open Pet Food Facts (ODbL)"
-  ],
-  "disclaimer": "Scores indicatifs basés sur les ingrédients déclarés — données non garanties — ne remplace pas un avis vétérinaire qualifié."
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR",
+    "description": "Plan gratuit — scores indicatifs A à E, recherche par nom, scan code-barres"
+  },
+  "disclaimer": "Scores indicatifs, données non garanties, ne remplace pas un avis vétérinaire qualifié."
 }
 </script>
 <link rel="manifest" href="/manifest.json">
-<link rel="canonical" href="https://crocscore.vercel.app/">
-<!-- Favicon SVG inline (pas de requête réseau, fonctionne sans fichier PNG) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234a9422'><ellipse cx='5' cy='8' rx='2' ry='2.5'/><ellipse cx='9.5' cy='5.5' rx='2' ry='2.5'/><ellipse cx='14.5' cy='5.5' rx='2' ry='2.5'/><ellipse cx='19' cy='8' rx='2' ry='2.5'/><path d='M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z'/></svg>">
-<link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="theme-color" content="#1a3a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="CrocScore">
-<meta name="format-detection" content="telephone=no">
-<!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://crocscore.vercel.app/">
-<meta property="og:title" content="CrocScore — Analyseur de croquettes pour chiens et chats">
-<meta property="og:description" content="Analysez la composition des croquettes de votre animal en quelques secondes. Score indicatif A à E basé sur les ingrédients déclarés — gratuit, sans inscription.">
-<meta property="og:image" content="https://crocscore.vercel.app/icon-512.png">
-<meta property="og:image:width" content="512">
-<meta property="og:image:height" content="512">
-<meta property="og:locale" content="fr_FR">
-<meta property="og:site_name" content="CrocScore">
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CrocScore — Analyseur de croquettes">
-<meta name="twitter:description" content="Score indicatif A à E sur les aliments pour chiens et chats, basé sur la composition des ingrédients. Gratuit et sans inscription.">
-<meta name="twitter:image" content="https://crocscore.vercel.app/icon-512.png">
-<!-- Preconnects performance -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://www.gstatic.com">
-<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-<link rel="dns-prefetch" href="https://world.openpetfoodfacts.org">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script>
-  // Application du thème AVANT le rendu (évite le flash blanc en mode sombre)
-  (function() {
-    try {
-      var saved = localStorage.getItem('croc_theme');
-      var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-    } catch(e) {}
-  })();
-</script>
 <script>
   // OneSignal chargé uniquement si l'utilisateur a accepté les cookies push
   window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -137,188 +80,12 @@
   }
 </script>
 <style>
-:root{--green-dark:#1a3a0f;--green-mid:#2d6016;--green-bright:#4a9422;--green-light:#a8d878;--green-pale:#e8f5d8;--cream:#faf8f2;--cream-dark:#f0ece0;--text:#1a1a18;--text-muted:#6b6b5e;--text-light:#9b9b8e;--white:#ffffff;color-scheme:light}
-
-/* ==========================================================================
-   MODE SOMBRE — actif si [data-theme="dark"] sur <html>
-   Définit la palette inversée et override les couleurs hex hardcodées dans
-   les styles inline des modals légaux, cards, tables.
-   ========================================================================== */
-:root[data-theme="dark"]{
-  --green-dark:#1a3a0f; --green-mid:#2d6016; --green-bright:#4a9422;
-  --green-light:#a8d878; --green-pale:#1f3a1a;
-  --cream:#14181a; --cream-dark:#1e2326; --white:#252b30;
-  --text:#e8e8e2; --text-muted:#a8a8a0; --text-light:#777770;
-  color-scheme:dark;
-}
-/* Backgrounds des modals (inline style="background:#faf8f2") */
-:root[data-theme="dark"] [style*="background:#faf8f2"],
-:root[data-theme="dark"] [style*="background:rgba(0,0,0,0.5)"] > div[style*="background:#faf8f2"]{
-  background:#1e2326 !important;
-}
-:root[data-theme="dark"] [style*="background:#f0ece0"]{ background:#2a3036 !important; }
-:root[data-theme="dark"] [style*="background:#faf8f2"]:not(table):not(thead){ color:#e8e8e2 !important; }
-/* Tables dans les modals : alternance de lignes */
-:root[data-theme="dark"] tr[style*="background:#faf8f2"]{ background:#2a3036 !important; }
-:root[data-theme="dark"] thead tr[style*="background:#f0ece0"]{ background:#2f363c !important; }
-/* Headings et labels (color:#1a3a0f → green-light) */
-:root[data-theme="dark"] [style*="color:#1a3a0f"]{ color:#a8d878 !important; }
-:root[data-theme="dark"] [style*="color:#1a1a18"]{ color:#e8e8e2 !important; }
-:root[data-theme="dark"] [style*="color:#6b6b5e"]{ color:#a8a8a0 !important; }
-:root[data-theme="dark"] [style*="color:#9b9b8e"]{ color:#777770 !important; }
-:root[data-theme="dark"] [style*="color:#4a9422"]{ color:#7acc4e !important; }
-/* Cards blanches (background:var(--white)) — variable déjà overridée, OK */
-/* Backgrounds clairs des disclaimers/bannières */
-:root[data-theme="dark"] [style*="background:#fffbe6"]{ background:#3a3520 !important; color:#f0e8c0 !important; }
-:root[data-theme="dark"] [style*="background:#fff8ee"]{ background:#3a2e20 !important; color:#f0d8a0 !important; }
-:root[data-theme="dark"] [style*="background:#fff3cd"]{ background:#3a3220 !important; color:#f0e0a0 !important; }
-:root[data-theme="dark"] [style*="background:#fff0ee"]{ background:#3a2222 !important; color:#f0c0c0 !important; }
-:root[data-theme="dark"] [style*="background:#fff8e6"]{ background:#3a3520 !important; color:#e8d090 !important; }
-:root[data-theme="dark"] [style*="background:#f0f7e8"]{ background:#1f2e1a !important; color:#c0d8a0 !important; }
-:root[data-theme="dark"] [style*="background:#f0f4ff"]{ background:#1f2438 !important; color:#a8b8e0 !important; }
-:root[data-theme="dark"] [style*="background:#f0fce8"]{ background:#1f2e1a !important; }
-:root[data-theme="dark"] [style*="background:#fff8e1"]{ background:#3a3520 !important; color:#e8d090 !important; }
-:root[data-theme="dark"] [style*="background:#e8f5d8"]{ background:#1f3a1a !important; }
-/* Inputs en mode sombre */
-:root[data-theme="dark"] input[type="text"],
-:root[data-theme="dark"] input[type="email"],
-:root[data-theme="dark"] input[type="password"],
-:root[data-theme="dark"] input[type="number"],
-:root[data-theme="dark"] input[type="date"],
-:root[data-theme="dark"] select{
-  background:#1e2326 !important; color:#e8e8e2 !important; border-color:rgba(168,216,120,0.25) !important;
-}
-:root[data-theme="dark"] input::placeholder{ color:#777770 !important; }
-/* Overrides pour classes CSS avec backgrounds hardcodés (warnings/disclaimers) */
-:root[data-theme="dark"] .arrow-down{ background:#2a3036 !important; color:#777770 !important; }
-:root[data-theme="dark"] .prob-block{ background:#3a2e20 !important; }
-:root[data-theme="dark"] .prob-stat,
-:root[data-theme="dark"] .prob-label{ color:#f0c890 !important; }
-:root[data-theme="dark"] .prob-desc,
-:root[data-theme="dark"] .sol-desc{ color:#c0c0b8 !important; }
-:root[data-theme="dark"] .sol-block{ background:#1f2e1a !important; }
-:root[data-theme="dark"] .sol-stat,
-:root[data-theme="dark"] .sol-label{ color:#a8d878 !important; }
-:root[data-theme="dark"] .auth-error{ background:#3a2222 !important; color:#f0a0a0 !important; }
-:root[data-theme="dark"] .alert-badge-wait{ background:#3a3220 !important; color:#e8c060 !important; }
-:root[data-theme="dark"] .suivi-alert{ background:#3a2e20 !important; color:#e8b070 !important; }
-:root[data-theme="dark"] .card-advice,
-:root[data-theme="dark"] .advice2,
-:root[data-theme="dark"] .suivi-conseil{ background:#1f3a1a !important; color:#a8d878 !important; }
-:root[data-theme="dark"] .advice2-title,
-:root[data-theme="dark"] .suivi-conseil-title{ color:#c0e88a !important; }
-/* Sections sombres (showcase, how, cta-section, footer) — déjà sombres en clair, OK
-   On garde leurs couleurs forcées en mode sombre */
-:root[data-theme="dark"] .showcase,
-:root[data-theme="dark"] .how,
-:root[data-theme="dark"] .cta-section{ background:#0a1208 !important; }
-:root[data-theme="dark"] footer{ background:#050a04 !important; }
-/* Titre showcase : tout le texte en vert en dark mode (fond très sombre) */
-:root[data-theme="dark"] .showcase-top h2,
-:root[data-theme="dark"] .showcase-top h2 em{ color:#a8d878 !important; }
-/* Éléments utilisant --green-dark comme couleur de TEXTE : doivent rester lisibles sur fond sombre */
-:root[data-theme="dark"] .hero h1,
-:root[data-theme="dark"] .hero-stat-num,
-:root[data-theme="dark"] .scores-section h2,
-:root[data-theme="dark"] .why-section h2,
-:root[data-theme="dark"] .pricing h2,
-:root[data-theme="dark"] .nav-logo-text,
-:root[data-theme="dark"] .auth-logo,
-:root[data-theme="dark"] .account-panel-title,
-:root[data-theme="dark"] .srm-title,
-:root[data-theme="dark"] .srm-score-label,
-:root[data-theme="dark"] .alert-modal-title,
-:root[data-theme="dark"] .bn-item.active .bn-icon,
-:root[data-theme="dark"] .bn-item.active .bn-label,
-:root[data-theme="dark"] .mini-step-icon,
-:root[data-theme="dark"] .feat-dot,
-:root[data-theme="dark"] .tag-dog2{ color:#a8d878 !important; }
-/* Boutons inline style="background:var(--green-dark)" — texte forcé clair */
-:root[data-theme="dark"] [style*="background:var(--green-dark)"]{ color:#faf8f2 !important; }
-/* Pricing card free — fond white devient cream dark */
-:root[data-theme="dark"] .pricing-card:not(.pricing-card-pro){ background:#252b30 !important; }
-:root[data-theme="dark"] .pricing-card .plan-price{ color:#a8d878 !important; }
-/* Cookie banner & settings */
-:root[data-theme="dark"] #cookie-banner,
-:root[data-theme="dark"] #cookie-settings{ background:#1e2326 !important; border-color:rgba(168,216,120,0.15) !important; }
-/* Auth + account modals */
-:root[data-theme="dark"] .auth-box,
-:root[data-theme="dark"] .account-panel{ background:#1e2326 !important; }
-:root[data-theme="dark"] .account-item{ background:#252b30 !important; color:#e8e8e2 !important; }
-:root[data-theme="dark"] .account-item:hover{ background:#2f363c !important; }
-:root[data-theme="dark"] .account-plan-card.free{ background:#252b30 !important; }
-:root[data-theme="dark"] .account-plan-card.free .account-plan-name{ color:#a8d878 !important; }
-:root[data-theme="dark"] .account-plan-card.free .account-plan-action{ background:#5aaa2e !important; color:#14181a !important; }
-:root[data-theme="dark"] .auth-tabs{ border-bottom-color:#2a3036 !important; }
-:root[data-theme="dark"] .auth-tab.active{ color:#a8d878 !important; border-bottom-color:#a8d878 !important; }
-/* SRM result modal */
-:root[data-theme="dark"] .srm-sheet{ background:#1e2326 !important; }
-:root[data-theme="dark"] .srm-handle{ background:rgba(255,255,255,0.18) !important; }
-:root[data-theme="dark"] .srm-score-row{ background:#1f3a1a !important; }
-:root[data-theme="dark"] .srm-btn-secondary{ background:#2a3036 !important; color:#e8e8e2 !important; }
-/* Premium modal */
-:root[data-theme="dark"] .prem-modal{ background:#1e2326 !important; }
-:root[data-theme="dark"] .prem-feat{ background:#252b30 !important; border-color:rgba(168,216,120,0.1) !important; }
-/* Alert modal */
-:root[data-theme="dark"] .alert-modal{ background:#1e2326 !important; }
-:root[data-theme="dark"] .alert-type{ background:#252b30 !important; border-color:rgba(168,216,120,0.1) !important; }
-/* Score letter cards (ca-ce) — gardent leurs couleurs vives, OK */
-/* Borders génériques */
-:root[data-theme="dark"] [style*="border:1px solid rgba(26,58,15"],
-:root[data-theme="dark"] [style*="border-top:1px solid rgba(26,58,15"],
-:root[data-theme="dark"] [style*="border-bottom:1px solid rgba(26,58,15"]{ border-color:rgba(168,216,120,0.12) !important; }
-/* Texte sur fond vert foncé (var(--green-dark) = #1a3a0f) : forcer crème clair */
-:root[data-theme="dark"] .nav-avatar,
-:root[data-theme="dark"] .account-avatar-big,
-:root[data-theme="dark"] .tab.active,
-:root[data-theme="dark"] .srm-btn-primary,
-:root[data-theme="dark"] .alert-cta-on,
-:root[data-theme="dark"] .alert-cta-on:hover,
-:root[data-theme="dark"] .nav-cta{ color:#faf8f2 !important; }
-:root[data-theme="dark"] .pricing-card-pro .plan-name{ color:#a8d878 !important; }
-:root[data-theme="dark"] .pricing-card-pro .plan-price{ color:#faf8f2 !important; }
-:root[data-theme="dark"] .pricing-card-pro .plan-features li{ color:#e8e8e2 !important; }
-/* Bordure cookie toggle off/on */
-:root[data-theme="dark"] .auth-field input,
-:root[data-theme="dark"] .srm-field input{ background:#1e2326 !important; border-color:rgba(168,216,120,0.25) !important; color:#e8e8e2 !important; }
-/* Result section card */
-:root[data-theme="dark"] .result-card{ background:#252b30 !important; }
-:root[data-theme="dark"] .tab{ border-color:rgba(168,216,120,0.2) !important; color:#a8a8a0 !important; }
-:root[data-theme="dark"] .crit-track,
-:root[data-theme="dark"] .crit-track2{ background:#2a3036 !important; }
-/* Showcase search input */
-:root[data-theme="dark"] .showcase-search input{ color:#faf8f2 !important; }
-/* Hero card main */
-:root[data-theme="dark"] .hero-card-main{ background:#252b30 !important; }
-/* Suivi card */
-:root[data-theme="dark"] .suivi-card{ background:#252b30 !important; }
-:root[data-theme="dark"] .suivi-card-header{ border-bottom-color:rgba(168,216,120,0.1) !important; }
-/* Score cards (A-E) gardent leurs couleurs vives en mode sombre — pas d'override */
-/* Why cards */
-:root[data-theme="dark"] .why-card{ background:#252b30 !important; }
-/* === BADGES SOURCE — modèle DogFoodAdvisor === */
-.src-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;margin-top:6px;white-space:nowrap}
-.src-badge.verified{background:#e8f5d8;color:#2d6016}
-.src-badge.community{background:#eef2ff;color:#4460b0}
-.src-badge.custom{background:#fff8e6;color:#7a5c10}
-.src-stale{display:flex;align-items:center;gap:6px;font-size:11px;color:#8a5a20;background:#fff3cd;border-radius:8px;padding:7px 11px;margin-top:8px;line-height:1.4}
-.src-report{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);text-decoration:none;margin-top:8px;padding:5px 10px;border-radius:8px;background:var(--cream-dark);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color 0.15s}
-.src-report:hover{color:var(--text)}
-:root[data-theme="dark"] .src-badge.verified{background:#1f3a1a;color:#a8d878}
-:root[data-theme="dark"] .src-badge.community{background:#1f2438;color:#7a9ee0}
-:root[data-theme="dark"] .src-badge.custom{background:#3a3520;color:#d0a850}
-:root[data-theme="dark"] .src-stale{background:#3a3220;color:#e8c060}
-/* Bouton toggle — toujours visible */
-.theme-toggle{position:fixed;bottom:80px;right:14px;width:44px;height:44px;border-radius:50%;background:var(--white);border:1.5px solid rgba(74,148,34,0.25);box-shadow:0 4px 14px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:150;color:var(--green-dark);transition:all 0.25s ease;padding:0}
-.theme-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,0,0,0.22)}
-.theme-toggle svg{width:20px;height:20px}
-:root[data-theme="dark"] .theme-toggle{ background:#252b30; border-color:rgba(168,216,120,0.35); color:#a8d878; }
-@media(max-width:480px){ .theme-toggle{bottom:76px;right:10px;width:40px;height:40px} .theme-toggle svg{width:18px;height:18px} }
+:root{--green-dark:#1a3a0f;--green-mid:#2d6016;--green-bright:#4a9422;--green-light:#a8d878;--green-pale:#e8f5d8;--cream:#faf8f2;--cream-dark:#f0ece0;--text:#1a1a18;--text-muted:#6b6b5e;--text-light:#9b9b8e;--white:#ffffff}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6;padding-bottom:72px}
 @media(min-width:1024px){.top-nav{display:block !important}}
-nav{position:sticky;top:0;z-index:100;background:var(--cream);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,148,34,0.12);padding:0 5%}
+nav{position:sticky;top:0;z-index:100;background:rgba(250,248,242,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,148,34,0.12);padding:0 5%}
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-logo-icon{width:36px;height:36px;background:var(--green-pale);border-radius:10px;display:flex;align-items:center;justify-content:center}
@@ -522,7 +289,7 @@ footer{background:#0d1a08;padding:40px 5%}
 .footer-links a{font-size:13px;color:rgba(250,248,242,0.4);text-decoration:none;transition:color 0.2s}
 .footer-links a:hover{color:rgba(250,248,242,0.7)}
 .footer-disc{font-size:11px;color:rgba(250,248,242,0.25);text-align:center;margin-top:20px;max-width:1100px;margin-left:auto;margin-right:auto;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--cream);border-top:1px solid rgba(74,148,34,0.12);display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:200}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:#faf8f2;border-top:1px solid rgba(74,148,34,0.12);display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:200}
 .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;border-radius:12px;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;transition:all 0.18s;flex:1;min-width:0}
 .bn-item:hover{background:var(--green-pale)}
 .bn-item.active{background:var(--green-pale)}
@@ -716,9 +483,9 @@ footer{background:#0d1a08;padding:40px 5%}
 @media(max-width:768px){.suivi-inner{grid-template-columns:1fr}.suivi-right{display:none}}
 
 </style>
+<link rel="stylesheet" href="premium-overlay.css">
 </head>
 <body>
-<noscript><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#1a3a0f;color:#faf8f2;text-align:center;padding:16px;font-family:sans-serif;font-size:14px">CrocScore nécessite JavaScript pour fonctionner. Veuillez activer JavaScript dans les paramètres de votre navigateur.</div></noscript>
 
 <nav class="top-nav" id="top-nav" style="display:none">
   <div class="nav-inner">
@@ -762,7 +529,7 @@ footer{background:#0d1a08;padding:40px 5%}
   <div class="showcase-inner">
     <div class="showcase-top">
       <h2>Tout ce que CrocScore<br>fait pour <em>votre animal</em></h2>
-      <p>De l'analyse indicative au résumé mensuel — une seule app pour mieux comprendre la composition des aliments de votre chien ou chat (scores indicatifs basés sur les ingrédients, données à titre informatif).</p>
+      <p>De l'analyse indicative au résumé mensuel — une seule app pour mieux comprendre la qualité nutritionnelle de l'alimentation de votre chien ou chat (scores indicatifs, données non garanties).</p>
       <div class="showcase-search">
         <input type="text" placeholder="Recherchez une croquette..." oninput="document.getElementById('main-search').value=this.value" onkeydown="if(event.key==='Enter'){doSearch()}"/>
         <button onclick="document.getElementById('main-search').value=this.previousElementSibling.value;doSearch();window.scrollTo({top:document.getElementById('main-search').offsetTop-100,behavior:'smooth'})">Analyser ?</button>
@@ -780,7 +547,7 @@ footer{background:#0d1a08;padding:40px 5%}
         <div class="sc-feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a8d878" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
         <div class="sc-feat-badge free">Gratuit</div>
         <div class="sc-feat-title">Score A à E</div>
-        <div class="sc-feat-desc">Score indicatif basé sur l'analyse des ingrédients déclarés — premier ingrédient, présence de céréales, diversité des protéines animales.</div>
+        <div class="sc-feat-desc">Score indicatif basé sur les macronutriments (protéines, lipides, glucides) et la présence de viande identifiée.</div>
       </div>
       <div class="sc-feat">
         <div class="sc-feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a8d878" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
@@ -798,8 +565,8 @@ footer{background:#0d1a08;padding:40px 5%}
         <span class="sc-feat-crown"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffe066" stroke="#ffe066" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
         <div class="sc-feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a8d878" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
         <div class="sc-feat-badge pro">Premium</div>
-        <div class="sc-feat-title">Historique d'alimentation</div>
-        <div class="sc-feat-desc">Consultez l'historique des scores indicatifs de votre animal au fil du temps — à titre informatif uniquement.</div>
+        <div class="sc-feat-title">Suivi nutritionnel</div>
+        <div class="sc-feat-desc">Consultez l'évolution du score indicatif de votre animal au fil du temps — à titre informatif uniquement.</div>
       </div>
       <div class="sc-feat">
         <span class="sc-feat-crown"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ffe066" stroke="#ffe066" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
@@ -832,7 +599,7 @@ footer{background:#0d1a08;padding:40px 5%}
     </div>
 
     <div class="showcase-cta">
-      <button class="showcase-cta-btn" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Plan gratuit — Premium offert pendant la bêta</button>
+      <button class="showcase-cta-btn" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Plan gratuit — ou Premium à 1,99€ TTC le 1er mois</button>
       <div class="showcase-cta-sub">Sans carte bancaire pour le plan gratuit</div>
     </div>
   </div>
@@ -849,11 +616,11 @@ footer{background:#0d1a08;padding:40px 5%}
         <div class="prob-stat" style="font-size:28px">L'alimentation</div>
         <div class="prob-desc">La composition des aliments pour animaux est souvent difficile à décrypter. Savoir ce que contient vraiment la gamelle de votre animal n'est pas toujours simple.</div>
       </div>
-      <div class="arrow-down">↓</div>
+      <div class="arrow-down">?</div>
       <div class="sol-block">
         <div class="sol-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>La solution</div>
-        <div class="sol-stat">Gratuit<span style="font-size:14px;font-weight:400"> pendant la bêta</span></div>
-        <div class="sol-desc">CrocScore analyse la composition des ingrédients de vos croquettes et vous donne un score indicatif — à titre informatif uniquement, ne remplace pas un avis vétérinaire.</div>
+        <div class="sol-stat">1,99€<span style="font-size:14px;font-weight:400"> le 1er mois</span></div>
+        <div class="sol-desc">CrocScore analyse vos croquettes et vous donne un score indicatif sur leur qualité nutritionnelle — à titre informatif uniquement.</div>
       </div>
     </div>
     <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
@@ -916,11 +683,10 @@ footer{background:#0d1a08;padding:40px 5%}
       <div class="result-score-big rsb-b">B</div>
       <div>
         <div style="font-size:18px;font-weight:500;color:var(--text)" id="result-name">—</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-top:2px;font-weight:500" id="result-brand"></div>
-        <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <div style="font-size:14px;color:var(--text-muted);margin-top:3px" id="result-subtitle"></div>
+        <div style="margin-top:8px;display:flex;gap:8px">
           <span class="tag-dog2" id="result-tag-type" style="display:none">Chien</span>
         </div>
-        <div id="result-source" style="margin-top:2px"></div>
       </div>
     </div>
     <div class="result-body">
@@ -946,10 +712,10 @@ footer{background:#0d1a08;padding:40px 5%}
       </div>
       <div class="tab-content" id="tab-suivi">
         <div style="text-align:center;padding:24px;background:var(--green-pale);border-radius:12px">
-          <div style="font-size:16px;font-weight:500;color:var(--green-dark);margin-bottom:8px">Historique d'alimentation Premium</div>
-          <div style="font-size:14px;color:var(--green-mid);margin-bottom:20px;line-height:1.6">Consultez l'historique des scores indicatifs de votre animal au fil du temps — à titre informatif uniquement, ne remplace pas l'avis d'un vétérinaire.</div>
-          <button class="btn-pro" style="padding:12px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none" onclick="openAuth()">Accès gratuit — créer un compte</button>
-          <div style="font-size:12px;color:var(--green-mid);margin-top:10px;opacity:0.8">🚀 Gratuit pendant la bêta — aucune carte bancaire requise</div>
+          <div style="font-size:16px;font-weight:500;color:var(--green-dark);margin-bottom:8px">Suivi nutritionnel Premium</div>
+          <div style="font-size:14px;color:var(--green-mid);margin-bottom:20px;line-height:1.6">Consultez l'évolution du score indicatif de votre animal au fil du temps — à titre informatif uniquement, ne remplace pas l'avis d'un vétérinaire.</div>
+          <button class="btn-pro" style="padding:12px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none">Essayer 7 jours gratuit</button>
+          <div style="font-size:12px;color:var(--green-mid);margin-top:10px;opacity:0.7">1,99€ le 1er mois, puis 2,99€/mois — sans engagement</div>
         </div>
       </div>
     </div>
@@ -961,9 +727,9 @@ footer{background:#0d1a08;padding:40px 5%}
     <div class="section-label">Comment ça marche</div>
     <h2>Analysez les croquettes de votre animal en 3 étapes</h2>
     <div class="how-steps">
-      <div class="how-step"><div class="step-num">01</div><div class="step-title">Recherchez ou scannez</div><div class="step-desc">Tapez le nom du produit ou scannez le code-barres depuis votre téléphone. CrocScore dispose d'une base de plus de 15 000 références et interroge Open Pet Food Facts (ODbL).</div></div>
-      <div class="how-step"><div class="step-num">02</div><div class="step-title">Obtenez le score</div><div class="step-desc">Notre algorithme calcule un score indicatif de A à E basé sur l'analyse de la liste des ingrédients déclarés (premier ingrédient, céréales, diversité des protéines animales) — ne remplace pas l'avis d'un vétérinaire.</div></div>
-      <div class="how-step"><div class="step-num">03</div><div class="step-title">Suivez votre animal</div><div class="step-desc">Avec le suivi Premium, consultez l'historique des scores indicatifs de composition des aliments de votre chien ou votre chat au fil du temps — à titre informatif uniquement.</div></div>
+      <div class="how-step"><div class="step-num">01</div><div class="step-title">Recherchez ou scannez</div><div class="step-desc">Tapez le nom du produit ou scannez le code-barres depuis votre téléphone. CrocScore dispose d'une base de plus de 1 500 références et interroge Open Pet Food Facts (ODbL).</div></div>
+      <div class="how-step"><div class="step-num">02</div><div class="step-title">Obtenez le score</div><div class="step-desc">Notre algorithme calcule un score indicatif de A à E basé sur les macronutriments (protéines, lipides, glucides) et la présence de viande identifiée — ne remplace pas l'avis d'un vétérinaire.</div></div>
+      <div class="how-step"><div class="step-num">03</div><div class="step-title">Suivez votre animal</div><div class="step-desc">Avec le suivi Premium, consultez l'évolution du score nutritionnel indicatif de votre chien ou votre chat au fil du temps.</div></div>
     </div>
   </div>
 </section>
@@ -990,7 +756,7 @@ footer{background:#0d1a08;padding:40px 5%}
         </svg>
       </div>
       <div class="why-title">Mieux comprendre ce que mange votre animal</div>
-      <div class="why-desc">La composition des aliments pour animaux peut être complexe à lire. CrocScore analyse la liste des ingrédients déclarés pour vous aider à comparer — score indicatif non réglementaire, à titre informatif uniquement, ne remplace pas l'avis d'un vétérinaire.</div>
+      <div class="why-desc">La composition des aliments pour animaux peut être complexe à lire. CrocScore calcule un score indicatif basé sur les macronutriments pour vous aider à comparer — à titre informatif uniquement, ne remplace pas l'avis d'un vétérinaire.</div>
     </div>
     <div class="why-card">
       <div class="why-icon">
@@ -1007,8 +773,8 @@ footer{background:#0d1a08;padding:40px 5%}
           <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z" fill="#4a9422"/>
         </svg>
       </div>
-      <div class="why-title">Un historique d'alimentation indicatif dans le temps</div>
-      <div class="why-desc">Enregistrez le profil de votre animal (âge, poids, race) et consultez l'historique de ses scores indicatifs de composition au fil de vos analyses — à titre informatif uniquement.</div>
+      <div class="why-title">Un suivi nutritionnel indicatif dans le temps</div>
+      <div class="why-desc">Enregistrez le profil de votre animal (âge, poids, race) et consultez l'évolution de ses scores indicatifs au fil de vos analyses — à titre informatif uniquement.</div>
     </div>
   </div>
 </section>
@@ -1017,7 +783,7 @@ footer{background:#0d1a08;padding:40px 5%}
   <div class="suivi-inner">
     <div class="suivi-left">
       <div class="section-label" style="color:var(--green-mid)">Suivi Premium</div>
-      <h2 style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:500;color:var(--green-dark);letter-spacing:-0.5px;line-height:1.2;margin-bottom:16px">Votre animal a son propre <em style="font-style:italic;color:var(--green-bright)">historique d'alimentation indicatif</em></h2>
+      <h2 style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:500;color:var(--green-dark);letter-spacing:-0.5px;line-height:1.2;margin-bottom:16px">Votre animal a son propre <em style="font-style:italic;color:var(--green-bright)">carnet de suivi nutritionnel indicatif</em></h2>
       <p style="font-size:16px;color:var(--text-muted);line-height:1.65;margin-bottom:32px">Chaque mois CrocScore génère un résumé indicatif basé sur les analyses effectuées. Ces informations sont fournies à titre informatif uniquement et ne remplacent pas l'avis d'un vétérinaire.</p>
       <div class="suivi-features">
         <div class="suivi-feature">
@@ -1057,7 +823,7 @@ footer{background:#0d1a08;padding:40px 5%}
           </div>
         </div>
       </div>
-      <button class="plan-btn btn-pro" style="max-width:280px;margin-top:28px" onclick="openAuth()">Accès gratuit — bêta ouverte</button>
+      <button class="plan-btn btn-pro" style="max-width:280px;margin-top:28px" onclick="document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Essayer 7 jours gratuit ?</button>
     </div>
     <div class="suivi-right">
       <div class="suivi-card">
@@ -1071,8 +837,8 @@ footer{background:#0d1a08;padding:40px 5%}
         </div>
         <div class="suivi-card-body">
           <div class="suivi-score-row">
-            <span class="suivi-score-label">Score indicatif ce mois</span>
-            <span class="suivi-score-val" style="background:#d4f0a0;color:#2d6016">B+</span>
+            <span class="suivi-score-label">Score nutritionnel ce mois</span>
+            <span class="suivi-score-val score-b">B+</span>
           </div>
           <div class="suivi-progress-section">
             <div class="suivi-progress-label">Évolution sur 3 mois</div>
@@ -1112,49 +878,51 @@ footer{background:#0d1a08;padding:40px 5%}
   <div class="pricing-inner">
     <div class="section-label" style="color:var(--green-mid)">Tarifs</div>
     <h2>Commencez gratuitement</h2>
-    <p class="pricing-sub">Analysez vos premières croquettes sans carte bancaire. Le Premium est <strong>gratuit pendant la bêta</strong> — aucun prélèvement actif.</p>
+    <p class="pricing-sub">Analysez vos premières croquettes sans carte bancaire. Passez en Premium quand vous voulez.</p>
     <div class="pricing-cards">
       <div class="pricing-card">
         <div class="plan-name">Gratuit</div>
         <div class="plan-price">0€</div>
         <div class="plan-period">pour toujours</div>
         <ul class="plan-features">
-          <li><div class="feat-dot">✓</div> Score indicatif A à E</li>
-          <li><div class="feat-dot">✓</div> Recherche par nom</li>
-          <li><div class="feat-dot">✓</div> Scan code-barres</li>
-          <li><div class="feat-dot">✓</div> Historique local</li>
+          <li><div class="feat-dot">?</div> Score indicatif A à E</li>
+          <li><div class="feat-dot">?</div> Recherche par nom</li>
+          <li><div class="feat-dot">?</div> Scan code-barres</li>
+          <li><div class="feat-dot">?</div> Historique local</li>
         </ul>
-        <button class="plan-btn btn-free" onclick="document.getElementById('main-search').focus();window.scrollTo({top:0,behavior:'smooth'})">Commencer gratuitement</button>
+        <button class="plan-btn btn-free">Commencer gratuitement</button>
       </div>
       <div class="pricing-card pricing-card-pro">
-        <div class="pricing-popular">🚀 Bêta — actuellement gratuit</div>
+        <div class="pricing-popular">Fonctionnalités avancées</div>
         <div class="plan-name">Premium</div>
-        <div class="plan-price" style="color:var(--cream);font-size:22px;line-height:1.2">Gratuit<br><span style="font-size:13px;opacity:0.65;font-weight:400">pendant la bêta</span></div>
-        <div class="plan-period" style="margin-top:4px">Tarif prévisionnel au lancement : à partir de 1,99€ TTC/mois — aucun prélèvement actuellement</div>
+        <div class="plan-price" style="color:var(--cream)">1,99€</div>
+        <div class="plan-period">1,99€ TTC le 1er mois, puis 2,99€ TTC/mois — sans engagement</div>
         <ul class="plan-features">
-          <li><div class="feat-dot">✓</div> Historique mensuel d'alimentation (indicatif)</li>
-          <li><div class="feat-dot">✓</div> Profil animal personnalisé</li>
-          <li><div class="feat-dot">✓</div> Alertes rappels produits <span style="font-size:10px;opacity:0.7">(non contractuel — en dév.)</span></li>
-          <li><div class="feat-dot">✓</div> Alternatives par gamme de prix <span style="font-size:10px;opacity:0.7">(non contractuel — en dév.)</span></li>
-          <li><div class="feat-dot">✓</div> Support prioritaire par email</li>
+          <li><div class="feat-dot">?</div> Suivi mensuel nutritionnel</li>
+          <li><div class="feat-dot">?</div> Profil animal personnalisé</li>
+          <li><div class="feat-dot">?</div> Alertes rappels produits (en développement)</li>
+          <li><div class="feat-dot">?</div> Alternatives par gamme de prix (en développement)</li>
+          <li><div class="feat-dot">?</div> Support prioritaire par email</li>
         </ul>
-        <button class="plan-btn btn-pro" onclick="openAuth()">Accès gratuit — créer un compte</button>
+        <button class="plan-btn btn-pro">Essayer 7 jours gratuit</button>
         <div style="margin-top:14px;padding:12px;background:rgba(255,255,255,0.08);border-radius:10px;border:1px solid rgba(255,255,255,0.12)">
-          <div style="font-size:10px;color:rgba(250,248,242,0.65);line-height:1.6">
-            <strong style="color:rgba(250,248,242,0.85);display:block;margin-bottom:4px">⚠️ Information bêta :</strong>
-            · Le paiement n'est pas encore actif — aucune carte bancaire demandée<br>
-            · Toutes les fonctionnalités sont gratuites pendant la période bêta<br>
-            · Vous serez notifié avant toute mise en place de la facturation<br>
-            · Le tarif indiqué est prévisionnel et peut évoluer avant le lancement<br>
-            · Droit de rétractation 14 jours prévu au lancement (art. L.221-18 Code conso)
+          <div style="font-size:10px;color:rgba(250,248,242,0.55);line-height:1.6">
+            <strong style="color:rgba(250,248,242,0.75);display:block;margin-bottom:4px">Informations importantes :</strong>
+            · Essai gratuit 7 jours, puis facturation automatique de 1,99€ TTC le 1er mois<br>
+            · Renouvellement mensuel automatique à 2,99€ TTC/mois à date anniversaire<br>
+            · Résiliation possible à tout moment depuis votre compte, sans frais<br>
+            · <strong style="color:rgba(250,248,242,0.75)">Droit de rétractation 14 jours</strong> (L.221-18 Code conso) — <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-light)">crocscore.help@gmail.com</a><br>
+            · Aucun remboursement pour mois entamé après expiry du délai de rétractation<br>
+            · Paiement sécurisé — données bancaires non stockées par CrocScore<br>
+            · Prix TTC (TVA applicable selon votre pays de résidence UE)
           </div>
         </div>
       </div>
     </div>
     <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:20px;line-height:1.7">
       Scores indicatifs à titre informatif uniquement — données Open Pet Food Facts (ODbL) &amp; base CrocScore. Exactitude non garantie.<br>
-      Ne remplace pas l'avis d'un vétérinaire qualifié. · Aucune facturation active pendant la bêta · Support : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a><br>
-      Plateforme RLL UE : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener" style="color:var(--green-bright)">ec.europa.eu/consumers/odr</a> · Médiation : en cours de désignation
+      Ne remplace pas l'avis d'un vétérinaire qualifié. · Résiliation sans motif · Support : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a><br>
+      Conformément au Code de la consommation (art. L.221-18 et s.) — Plateforme RLL UE : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener" style="color:var(--green-bright)">ec.europa.eu/consumers/odr</a>
     </p>
   </div>
 </section>
@@ -1172,12 +940,12 @@ footer{background:#0d1a08;padding:40px 5%}
 <!-- POLITIQUE DE CONFIDENTIALITE -->
 <div id="modal-confidentialite" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
   <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
-    <button onclick="document.getElementById('modal-confidentialite').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e" aria-label="Fermer">×</button>
+    <button onclick="document.getElementById('modal-confidentialite').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">?</button>
     <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:8px">Politique de confidentialité</h2>
-    <p style="font-size:12px;color:#9b9b8e;margin-bottom:24px">Dernière mise à jour : 16 mai 2026 — Conforme RGPD (UE) 2016/679</p>
+    <p style="font-size:12px;color:#9b9b8e;margin-bottom:24px">Dernière mise à jour : mai 2026 — Conforme RGPD (UE) 2016/679</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">1. Responsable du traitement</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Le responsable du traitement de vos données personnelles est l'éditeur de CrocScore (auto-entreprise enregistrée en France — immatriculation en cours, SIRET communiqué dès obtention). Contact : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Le responsable du traitement de vos données personnelles est l'éditeur de CrocScore (auto-entreprise enregistrée en France — SIRET à compléter). Contact : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">2. Données collectées et bases légales (Art. 6 RGPD)</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px">Nous collectons uniquement les données suivantes :</p>
@@ -1190,23 +958,12 @@ footer{background:#0d1a08;padding:40px 5%}
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">3. Sous-traitants et partenaires</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px">Nous faisons appel aux sous-traitants suivants, chacun lié par un accord de traitement conforme au RGPD :</p>
-    <div style="overflow-x:auto;margin-bottom:12px">
-      <table style="width:100%;border-collapse:collapse;font-size:11.5px;color:#6b6b5e">
-        <thead><tr style="background:#f0ece0;text-align:left">
-          <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Sous-traitant</th>
-          <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Pays</th>
-          <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Finalité</th>
-          <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Données transmises</th>
-          <th style="padding:8px 10px;font-weight:600;color:#1a1a18">Base légale transfert</th>
-        </tr></thead>
-        <tbody>
-          <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px"><strong>Google LLC</strong> (Firebase Auth)</td><td style="padding:7px 10px">USA</td><td style="padding:7px 10px">Authentification</td><td style="padding:7px 10px">E-mail, UID</td><td style="padding:7px 10px">CCT (2021/914) + Data Privacy Framework</td></tr>
-          <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px"><strong>Vercel Inc.</strong></td><td style="padding:7px 10px">USA</td><td style="padding:7px 10px">Hébergement + analytics sans cookie</td><td style="padding:7px 10px">Logs IP anonymisés</td><td style="padding:7px 10px">CCT (2021/914) — intérêt légitime Art. 6.1.f</td></tr>
-          <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px"><strong>OneSignal Inc.</strong> (opt-in)</td><td style="padding:7px 10px">USA</td><td style="padding:7px 10px">Notifications push</td><td style="padding:7px 10px">Token push, consentement</td><td style="padding:7px 10px">Consentement Art. 6.1.a + CCT</td></tr>
-          <tr><td style="padding:7px 10px"><strong>Open Pet Food Facts</strong></td><td style="padding:7px 10px">France</td><td style="padding:7px 10px">API produits</td><td style="padding:7px 10px">IP lors des requêtes</td><td style="padding:7px 10px">Intérêt légitime Art. 6.1.f</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;padding-left:20px;margin-bottom:12px">
+      <li><strong>Firebase Authentication (Google LLC)</strong> — gestion des comptes. Données stockées dans les datacenters Google. <a href="https://firebase.google.com/support/privacy" target="_blank" style="color:#4a9422">Politique Google ?</a></li>
+      <li><strong>Vercel Inc.</strong> — hébergement de l'application. <a href="https://vercel.com/legal/privacy-policy" target="_blank" style="color:#4a9422">Politique Vercel ?</a></li>
+      <li><strong>OneSignal Inc.</strong> (si accepté) — notifications push. <a href="https://onesignal.com/privacy_policy" target="_blank" style="color:#4a9422">Politique OneSignal ?</a></li>
+      <li><strong>Open Pet Food Facts</strong> — API de données produits. Votre adresse IP peut être transmise lors des requêtes. <a href="https://world.openpetfoodfacts.org/privacy" target="_blank" style="color:#4a9422">Leur politique ?</a></li>
+    </ul>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Vos données ne sont jamais vendues, louées ou transmises à des tiers à des fins commerciales.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">4. Transferts hors Union Européenne</h3>
@@ -1229,7 +986,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <li><strong>Portabilité</strong> — recevoir vos données dans un format structuré (Art. 20)</li>
       <li><strong>Opposition</strong> — vous opposer à certains traitements (Art. 21)</li>
       <li><strong>Retrait du consentement</strong> — à tout moment via "?? Gérer mes cookies" en bas de page</li>
-      <li><strong>Réclamation CNIL</strong> — si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la CNIL : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer" style="color:#4a9422">cnil.fr/fr/plaintes</a></li>
+      <li><strong>Réclamation CNIL</strong> — si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la CNIL : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" style="color:#4a9422">cnil.fr/fr/plaintes</a></li>
     </ul>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">7. Cookies et traceurs</h3>
@@ -1252,7 +1009,7 @@ footer{background:#0d1a08;padding:40px 5%}
           <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">croc_cookies_choice</td><td style="padding:7px 10px">CrocScore (local)</td><td style="padding:7px 10px">Préférences cookies</td><td style="padding:7px 10px">13 mois</td><td style="padding:7px 10px">Essentiel</td></tr>
           <tr style="border-bottom:1px solid #f0ece0;background:#faf8f2"><td style="padding:7px 10px">Service Worker (/sw.js)</td><td style="padding:7px 10px">CrocScore</td><td style="padding:7px 10px">Cache hors-ligne</td><td style="padding:7px 10px">Révocation</td><td style="padding:7px 10px">Essentiel</td></tr>
           <tr style="border-bottom:1px solid #f0ece0"><td style="padding:7px 10px">OneSignal SDK</td><td style="padding:7px 10px">OneSignal Inc. (USA)</td><td style="padding:7px 10px">Notifications push</td><td style="padding:7px 10px">Révocation</td><td style="padding:7px 10px">Push (opt-in)</td></tr>
-          <tr><td style="padding:7px 10px">Vercel Analytics</td><td style="padding:7px 10px">Vercel Inc. (USA)</td><td style="padding:7px 10px">Métriques anonymes (sans cookie, IP anonymisée)</td><td style="padding:7px 10px">90 jours (agrégé)</td><td style="padding:7px 10px">Intérêt légitime Art. 6.1.f — sans cookie</td></tr>
+          <tr><td style="padding:7px 10px">Vercel Analytics</td><td style="padding:7px 10px">Vercel Inc. (USA)</td><td style="padding:7px 10px">Métriques anonymes</td><td style="padding:7px 10px">90 jours</td><td style="padding:7px 10px">Performance (opt-in)</td></tr>
         </tbody>
       </table>
     </div>
@@ -1272,7 +1029,7 @@ footer{background:#0d1a08;padding:40px 5%}
     <strong>Limitation de traitement (Art. 18 RGPD) :</strong> Vous pouvez demander la limitation du traitement de vos données pendant l'examen d'une contestation.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">10. Décisions automatisées et profilage</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore calcule des scores indicatifs de composition de manière automatisée à partir de données produits. Ces calculs <strong>n'ont aucun effet juridique</strong> sur vous et ne constituent pas un profilage au sens de l'Art. 22 RGPD. Ils sont fournis à titre purement indicatif et informatif.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore calcule des scores nutritionnels de manière automatisée à partir de données produits. Ces calculs <strong>n'ont aucun effet juridique</strong> sur vous et ne constituent pas un profilage au sens de l'Art. 22 RGPD. Ils sont fournis à titre purement indicatif et informatif.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a1a18;margin:20px 0 8px">11. Sécurité des données</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données :<br>
@@ -1289,7 +1046,7 @@ footer{background:#0d1a08;padding:40px 5%}
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7">
     Responsable du traitement : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a><br>
     Délai légal de réponse : 30 jours calendaires maximum (Art. 12.3 RGPD).<br>
-    Réclamation auprès de l'autorité de contrôle française : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer" style="color:#4a9422">cnil.fr/fr/plaintes</a><br>
+    Réclamation auprès de l'autorité de contrôle française : <a href="https://www.cnil.fr/fr/plaintes" target="_blank" style="color:#4a9422">cnil.fr/fr/plaintes</a><br>
     En cas de traitement transfrontalier, l'autorité chef de file est la CNIL (France).</p>
   </div>
 </div>
@@ -1297,45 +1054,42 @@ footer{background:#0d1a08;padding:40px 5%}
 <!-- MENTIONS LEGALES -->
 <div id="modal-mentions" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
   <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
-    <button onclick="document.getElementById('modal-mentions').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e" aria-label="Fermer">×</button>
+    <button onclick="document.getElementById('modal-mentions').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">?</button>
     <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:6px">Mentions légales</h2>
-    <p style="font-size:11px;color:#9b9b8e;margin-bottom:28px">Conformément à l'article 6 de la loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'Économie Numérique (LCEN) — Mise à jour : 16 mai 2026</p>
+    <p style="font-size:11px;color:#9b9b8e;margin-bottom:28px">Conformément à l'article 6 de la loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'Économie Numérique (LCEN) — Mise à jour : mai 2026</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">1. Éditeur du site</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Nom du service :</strong> CrocScore</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Forme juridique :</strong> Auto-entrepreneur (micro-entreprise) enregistré(e) en France</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>SIRET :</strong> En cours d'enregistrement (immatriculation en cours)</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Directeur de la publication :</strong> Le porteur du projet CrocScore (nom complet communiqué sur demande à crocscore.help@gmail.com — immatriculation en cours)</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Directeur de la publication :</strong> Le porteur du projet CrocScore</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Contact :</strong> <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">2. Hébergeur</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Vercel Inc.</strong></p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px">340 Pine Street, Suite 900<br>San Francisco, CA 94104 — États-Unis</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Site : <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" style="color:#4a9422">vercel.com</a></p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Site : <a href="https://vercel.com" target="_blank" style="color:#4a9422">vercel.com</a></p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">3. Propriété intellectuelle</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'ensemble des éléments constituant le site CrocScore — notamment le code source, le design, les textes, l'interface, l'algorithme de scoring de composition et la sélection des données — est protégé par les dispositions du Code de la propriété intellectuelle français (articles L.111-1 et suivants).</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'ensemble des éléments constituant le site CrocScore — notamment le code source, le design, les textes, l'interface, l'algorithme de scoring nutritionnel et la sélection des données — est protégé par les dispositions du Code de la propriété intellectuelle français (articles L.111-1 et suivants).</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Toute reproduction, représentation, modification, publication, adaptation ou exploitation, partielle ou totale, par quelque procédé que ce soit, sans l'autorisation préalable et écrite de l'éditeur, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">4. Source des données produits</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les données produits utilisées par CrocScore proviennent de trois sources distinctes :</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les données nutritionnelles des produits proviennent de deux sources :</p>
     <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
-      <li><strong>Base locale CrocScore (localdb.js — ~12 900 produits)</strong> : compositions des ingrédients issues d'informations publiques légalement obligatoires (étiquettes fabricants, conformément au règlement CE 767/2009). <em>Aucune valeur nutritionnelle chiffrée (protéines, lipides, glucides) n'est associée à ces produits.</em> Le score est calculé exclusivement sur l'analyse de la liste des ingrédients déclarés.</li>
-      <li><strong>Open Pet Food Facts — OPFF_DB (~632 produits)</strong> : base collaborative open source sous licence <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer" style="color:#4a9422">Open Database License (ODbL) v1.0</a>. Attribution : <a href="https://world.openpetfoodfacts.org" target="_blank" rel="noopener noreferrer" style="color:#4a9422">world.openpetfoodfacts.org</a>. Les données nutritionnelles de cette source sont réelles et issues des étiquettes.</li>
-      <li><strong>Open Pet Food Facts / Open Food Facts — MORE_DB (~1 460 produits)</strong> : données nutritionnelles réelles issues des bases ODbL d'Open Pet Food Facts et d'Open Food Facts. Attribution obligatoire ODbL : <a href="https://world.openfoodfacts.org" target="_blank" rel="noopener noreferrer" style="color:#4a9422">world.openfoodfacts.org</a> et <a href="https://world.openpetfoodfacts.org" target="_blank" rel="noopener noreferrer" style="color:#4a9422">world.openpetfoodfacts.org</a>.</li>
+      <li><strong>Base locale CrocScore</strong> : base de données propriétaire constituée à partir de données publiques sur les aliments pour animaux.</li>
+      <li><strong>Open Pet Food Facts</strong> : base collaborative open source disponible sous licence <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" style="color:#4a9422">Open Database License (ODbL)</a>. Site : <a href="https://world.openpetfoodfacts.org" target="_blank" style="color:#4a9422">world.openpetfoodfacts.org</a></li>
     </ul>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px"><strong>Conformité ODbL :</strong> CrocScore utilise les données ODbL sans API publique exposant la base brute (condition share-alike satisfaite). L'attribution est assurée par ces mentions légales et dans l'interface de l'application. CrocScore n'est pas affilié à Open Pet Food Facts ou Open Food Facts. Conformément à l'ODbL, toute redistribution de la base de données brute en dehors de l'application nécessiterait une licence ODbL identique.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'exactitude, l'exhaustivité et l'actualité des données ne sont pas garanties. Les formulations des produits peuvent évoluer sans que CrocScore en soit informé. Toute correction peut être demandée à <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a>.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore n'est pas affilié à Open Pet Food Facts. L'exactitude, l'exhaustivité et l'actualité des données ne sont pas garanties, ces données étant issues de contributions collaboratives.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">5. Utilisation des marques déposées</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore mentionne des noms de marques commerciales (Royal Canin, Purina, Hill's, Orijen, Pedigree, etc.) <strong>à des fins d'identification des produits uniquement</strong>, conformément à l'usage légal permettant la désignation d'un produit par son nom commercial.</p>
     <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
       <li>CrocScore n'est ni affilié, ni partenaire, ni approuvé par aucune de ces marques ;</li>
-      <li>Les scores affichés sont <strong>purement algorithmiques</strong>, basés exclusivement sur l'analyse de la composition déclarée (liste des ingrédients telle qu'affichée sur l'étiquette légale) — ils ne constituent pas un jugement de valeur sur la marque, sa politique qualité ou ses pratiques commerciales ;</li>
-      <li>CrocScore n'est <strong>pas un label officiel</strong> et n'est homologué par aucun organisme réglementaire (DGAL, ANSES, AFNOR ou équivalent) ;</li>
-      <li>Les listes d'ingrédients utilisées sont issues d'informations publiques réglementaires et peuvent ne pas refléter la formulation actuelle des produits ;</li>
-      <li>CrocScore ne prétend pas que les produits obtenant un score faible sont dangereux ou de mauvaise qualité — le score reflète uniquement l'analyse de la composition des ingrédients selon la méthodologie CrocScore, sans prétention à l'exhaustivité nutritionnelle ;</li>
-      <li><strong>Droit de correction :</strong> toute marque souhaitant signaler une inexactitude sur la liste des ingrédients d'un de ses produits ou demander la mise à jour de données peut contacter : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> — les corrections signalées sont traitées dans un délai de 30 jours.</li>
+      <li>Les scores affichés sont <strong>purement algorithmiques</strong>, basés exclusivement sur les macronutriments (protéines, lipides, glucides) et la composition déclarée — ils ne constituent pas un jugement de valeur sur la marque, sa politique qualité ou ses pratiques commerciales ;</li>
+      <li>Les données nutritionnelles utilisées sont issues de sources publiques et peuvent ne pas refléter la formulation actuelle des produits ;</li>
+      <li>CrocScore ne prétend pas que les produits obtenant un score faible sont dangereux ou de mauvaise qualité — le score reflète uniquement le ratio macronutriments selon la méthodologie CrocScore ;</li>
+      <li>Toute marque souhaitant signaler une inexactitude ou demander la correction de données peut contacter : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></li>
     </ul>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Les marques citées restent la propriété de leurs titulaires respectifs. Leur mention ne constitue en aucun cas un acte de dénigrement commercial au sens de l'article 1240 du Code civil.</p>
 
@@ -1351,63 +1105,47 @@ footer{background:#0d1a08;padding:40px 5%}
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'utilisateur reconnaît utiliser CrocScore sous sa seule et entière responsabilité.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">7. Avertissement santé animale</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore est un <strong>outil d'information indicatif</strong>. Les scores de composition des ingrédients fournis ne constituent en aucun cas un avis médical vétérinaire, un diagnostic ou une prescription alimentaire. Ils ne sauraient remplacer l'évaluation d'un professionnel de la nutrition animale ou vétérinaire. Pour toute question relative à la santé, l'alimentation ou le traitement de votre animal, consultez exclusivement un <strong>vétérinaire qualifié et diplômé</strong>. CrocScore décline toute responsabilité pour les décisions prises sur la seule base des informations affichées par l'application.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">CrocScore est un <strong>outil d'information indicatif</strong>. Les scores nutritionnels fournis ne constituent en aucun cas un avis médical vétérinaire, un diagnostic ou une prescription. Pour toute question relative à la santé, l'alimentation ou le traitement de votre animal, consultez exclusivement un <strong>vétérinaire qualifié et diplômé</strong>. CrocScore décline toute responsabilité pour les décisions prises sur la seule base des informations affichées par l'application.</p>
 
-    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">8. Méthodologie de scoring — transparence algorithmique</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:10px">Conformément au principe de transparence algorithmique, CrocScore publie ici les règles exactes de calcul du score de composition (A à E) :</p>
-    <ul style="font-size:13px;color:#6b6b5e;line-height:1.9;margin-bottom:12px;padding-left:20px">
-      <li><strong>Score de départ :</strong> 50 points</li>
-      <li><strong>Données nutritionnelles disponibles (sources ODbL uniquement) :</strong> protéines ≥ 30g/100g → +20 pts ; ≥ 20g → +10 pts ; &lt; 10g → −15 pts ; lipides entre 10–20g → +5 pts ; lipides &gt; 25g → −5 pts ; glucides &gt; 40g → −15 pts ; glucides &lt; 20g → +10 pts</li>
-      <li><strong>Premier ingrédient = viande nommée</strong> (poulet, bœuf, saumon, canard, agneau, thon, dinde, veau, poisson) : +15 pts</li>
-      <li><strong>Premier ingrédient = céréale ou sous-produit</strong> (maïs, blé, farine de céréales, sous-produits, dérivés) : −15 pts</li>
-      <li><strong>Céréales dans la composition</strong> (maïs, blé, céréales, amidon, gluten) : −5 pts par occurrence</li>
-      <li><strong>Au moins 2 viandes nommées dans la composition :</strong> +10 pts</li>
-      <li><strong>Score final :</strong> plafonné entre 5 et 99 — A (≥80), B (≥60), C (≥40), D (≥20), E (&lt;20)</li>
-    </ul>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px">Pour les ~12 900 produits de la base locale CrocScore, <strong>seuls les critères liés aux ingrédients</strong> (premier ingrédient, présence de céréales, diversité des protéines animales) sont appliqués — aucune valeur nutritionnelle chiffrée n'est utilisée ni affichée pour ces produits.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Cette méthodologie est indicative, non réglementaire, et ne prétend pas refléter l'intégralité de la valeur nutritionnelle d'un aliment pour animal. Elle vise uniquement à faciliter la comparaison relative de la composition déclarée.</p>
-
-    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">9. Droit applicable et juridiction</h3>
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">8. Droit applicable et juridiction</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Les présentes mentions légales sont soumises au droit français. En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable, les tribunaux français du ressort compétent seront seuls compétents.</p>
 
-    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">10. Contact</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:6px">Pour toute question relative aux présentes mentions légales : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7"><strong>Signalement d'erreur de composition (fabricants) :</strong> <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> — délai de traitement : 30 jours ouvrés.</p>
+    <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">9. Contact</h3>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Pour toute question relative aux présentes mentions légales : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
   </div>
 </div>
 
 <!-- CGU -->
 <div id="modal-cgu" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;overflow-y:auto">
   <div style="background:#faf8f2;max-width:680px;margin:40px auto;border-radius:20px;padding:40px;position:relative">
-    <button onclick="document.getElementById('modal-cgu').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e" aria-label="Fermer">×</button>
+    <button onclick="document.getElementById('modal-cgu').style.display='none'" style="position:absolute;top:20px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:#6b6b5e">?</button>
     <h2 style="font-family:'Fraunces',serif;font-size:26px;color:#1a3a0f;margin-bottom:6px">Conditions Générales d'Utilisation</h2>
-    <p style="font-size:11px;color:#9b9b8e;margin-bottom:28px">Version en vigueur au 16 mai 2026 — Tout changement vous sera notifié 15 jours à l'avance.</p>
+    <p style="font-size:11px;color:#9b9b8e;margin-bottom:28px">Version en vigueur au 1er mai 2026 — Tout changement vous sera notifié 15 jours à l'avance.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">1. Acceptation et opposabilité</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'accès et l'utilisation de CrocScore impliquent l'acceptation pleine et entière des présentes Conditions Générales d'Utilisation (CGU). Si vous n'acceptez pas ces conditions, vous devez cesser immédiatement d'utiliser le service.</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">L'acceptation des CGU vaut également acceptation de la <a href="#" onclick="var m=document.getElementById('modal-confidentialite');m.style.display='block';m.style.zIndex='2000';return false" style="color:#4a9422">Politique de confidentialité</a> et des <a href="#" onclick="var m=document.getElementById('modal-mentions');m.style.display='block';m.style.zIndex='2000';return false" style="color:#4a9422">Mentions légales</a>.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">2. Âge minimum requis</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'utilisation de CrocScore est réservée aux personnes ayant atteint l'<strong>âge de 15 ans révolus</strong>, conformément à l'article 8 du Règlement (UE) 2016/679 (RGPD) et à la loi française n° 78-17 du 6 janvier 1978 modifiée. La vérification de l'âge est effectuée lors de la création de compte via une case à cocher déclarative (Art. 8 RGPD).</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">L'utilisation de CrocScore est réservée aux personnes ayant atteint l'<strong>âge de 15 ans révolus</strong>, conformément à l'article 8 du Règlement (UE) 2016/679 (RGPD) et à la ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — loi française n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17). n°78-17). n°78-17). n° 78-17 du 6 janvier 1978 modifiée.</p>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Les mineurs de moins de 15 ans doivent obtenir le consentement de leur représentant légal avant d'utiliser le service. En accédant à CrocScore, vous déclarez avoir l'âge requis ou disposer de l'autorisation parentale nécessaire.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">3. Description du service</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est une application web d'information indicative sur la composition des aliments pour animaux de compagnie (chiens et chats). Elle fournit :</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">CrocScore est une application web d'information nutritionnelle pour animaux de compagnie (chiens et chats). Elle fournit :</p>
     <ul style="font-size:13px;color:#6b6b5e;line-height:1.8;margin-bottom:12px;padding-left:20px">
-      <li>des scores indicatifs basés sur l'analyse de la composition des aliments pour animaux ;</li>
+      <li>des scores nutritionnels indicatifs sur les aliments pour animaux ;</li>
       <li>une recherche par nom de produit ou scan de code-barres ;</li>
       <li>un historique local des produits analysés ;</li>
       <li>des fiches d'information sur les animaux enregistrés.</li>
     </ul>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Ces fonctionnalités sont fournies <strong>à titre purement informatif</strong> et ne constituent en aucun cas un avis médical, vétérinaire, nutritionnel ou diététique professionnel.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px"><strong>Méthodologie de scoring :</strong> Les scores sont calculés de manière <strong>purement algorithmique</strong> à partir de l'analyse de la liste des ingrédients déclarés (premier ingrédient, présence de céréales, diversité des protéines animales). CrocScore n'est pas un label officiel homologué. Les scores ne reflètent pas la position des fabricants, ne constituent pas un jugement de valeur sur la qualité globale du produit, et ne prennent pas en compte d'autres critères pertinents (palatabilité, digestibilité, besoins spécifiques de l'animal, etc.). La méthodologie complète est disponible dans les mentions légales, section 8.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Données produits et marques :</strong> Les noms de marques sont mentionnés à des fins d'identification uniquement, conformément à l'article L713-6 du Code de la propriété intellectuelle. Les listes d'ingrédients sont issues de données publiques réglementaires et peuvent ne pas refléter la formulation actuelle. Toute marque peut demander la correction ou le retrait de ses données en contactant <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> (délai de traitement : 30 jours).</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:8px"><strong>Méthodologie de scoring :</strong> Les scores sont calculés de manière <strong>purement algorithmique</strong> à partir des macronutriments déclarés (protéines, lipides, glucides) et de la composition en ingrédients. Ils ne reflètent pas la position des fabricants, ne constituent pas un jugement de valeur sur la qualité globale du produit, et ne prennent pas en compte d'autres critères pertinents (palatabilité, digestibilité, besoins spécifiques de l'animal, etc.).</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Données produits et marques :</strong> Les noms de marques sont mentionnés à des fins d'identification uniquement. Les données nutritionnelles sont issues de sources publiques et peuvent être approximatives ou ne pas refléter la formulation actuelle. Toute marque peut demander la correction ou le retrait de ses données en contactant <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a>.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">4. Abonnement et droit de rétractation</h3>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>⚠️ Période bêta — aucune facturation active :</strong> CrocScore est actuellement en phase bêta. Aucun prélèvement n'est effectué. Toutes les fonctionnalités, y compris celles listées comme "Premium", sont accessibles gratuitement pendant cette période. L'utilisateur sera informé, avec un préavis de <strong>30 jours minimum</strong>, avant toute mise en place d'une facturation. À ce moment, les présentes conditions d'abonnement entreront en vigueur.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Abonnement Premium (conditions futures) :</strong> Au lancement commercial, l'abonnement sera souscrit sans engagement de durée. Le prélèvement sera mensuel, à date anniversaire de souscription. La résiliation pourra intervenir à tout moment depuis l'espace personnel, avec prise d'effet à la fin de la période mensuelle en cours.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Droit de rétractation (au lancement) :</strong> Conformément à l'article L.221-18 du Code de la consommation et à la Directive européenne 2011/83/UE, vous disposerez d'un droit de rétractation de <strong>14 jours calendaires</strong> à compter de la souscription, sans avoir à justifier de motif. Pour exercer ce droit : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a>.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Exception :</strong> Conformément à l'article L.221-28 du Code de la consommation, si vous avez expressément demandé l'exécution immédiate du service et que celui-ci a été pleinement exécuté, le droit de rétractation ne peut être exercé. Le remboursement éventuel sera effectué dans les 14 jours suivant l'exercice du droit.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Abonnement Premium :</strong> L'abonnement est souscrit sans engagement de durée. Le prélèvement est mensuel, à date anniversaire de souscription. La résiliation peut intervenir à tout moment depuis l'espace personnel, avec prise d'effet à la fin de la période mensuelle en cours.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px"><strong>Droit de rétractation :</strong> Conformément à l'article L.221-18 du Code de la consommation et à la Directive européenne 2011/83/UE, vous disposez d'un droit de rétractation de <strong>14 jours calendaires</strong> à compter de la souscription, sans avoir à justifier de motif. Pour exercer ce droit, adressez un courrier électronique à <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> en indiquant votre demande de rétractation.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Exception :</strong> Conformément à l'article L.221-28 du Code de la consommation, si vous avez expressément demandé l'exécution immédiate du service et que celui-ci a été pleinement exécuté, le droit de rétractation ne peut être exercé. Le remboursement éventuel sera effectué dans un délai de 14 jours suivant l'exercice du droit de rétractation.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">5. Utilisations autorisées et interdites</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:10px">CrocScore est mis à disposition pour un usage personnel, non commercial. Sont notamment interdits :</p>
@@ -1428,8 +1166,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <li>l'inexactitude ou l'incomplétude des données nutritionnelles issues de bases collaboratives tierces ;</li>
       <li>toute décision prise par l'utilisateur sur la base des scores ou informations affichés ;</li>
       <li>toute perte de données résultant d'une suppression volontaire ou involontaire du stockage local ;</li>
-      <li>les interruptions, pannes ou indisponibilités du service, quelle qu'en soit la cause ;</li>
-      <li>la non-disponibilité ou le dysfonctionnement des fonctionnalités expressément marquées <em>en développement</em> (alertes rappels produits, alternatives par gamme de prix, comparaison côte à côte) — ces fonctionnalités sont non contractuelles et leur date de disponibilité n'est pas garantie.</li>
+      <li>les interruptions, pannes ou indisponibilités du service, quelle qu'en soit la cause.</li>
     </ul>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">En tout état de cause, la responsabilité de CrocScore ne saurait excéder le montant des sommes effectivement versées par l'utilisateur au titre de son abonnement au cours des trois derniers mois précédant le fait générateur du dommage.</p>
 
@@ -1451,8 +1188,7 @@ footer{background:#0d1a08;padding:40px 5%}
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">10. Droit applicable et juridiction compétente</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Les présentes CGU sont régies par le <strong>droit français</strong>. En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable dans un délai de 30 jours à compter de la notification écrite du différend, les <strong>tribunaux français compétents</strong> seront saisis.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:12px">Conformément aux articles L.611-1 et suivants du Code de la consommation, les consommateurs résidant dans l'Union européenne peuvent recourir à une procédure de médiation de la consommation. La Commission européenne met à disposition une plateforme de règlement en ligne des litiges (RLL) : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" style="color:#4a9422">ec.europa.eu/consumers/odr</a>.</p>
-    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px"><strong>Médiateur de la consommation :</strong> CrocScore s'engage à adhérer à un service de médiation de la consommation agréé conformément à l'article L.616-1 du Code de la consommation. Cette démarche est en cours. En attendant la désignation définitive, tout différend peut être soumis à l'adresse <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a> pour tentative de règlement amiable (délai de réponse : 30 jours ouvrés). Mise à jour de ces informations dès désignation effective du médiateur.</p>
+    <p style="font-size:13px;color:#6b6b5e;line-height:1.7;margin-bottom:20px">Conformément aux articles L.611-1 et suivants du Code de la consommation, les consommateurs résidant dans l'Union européenne peuvent recourir à une procédure de médiation de la consommation. La Commission européenne met à disposition une plateforme de règlement en ligne des litiges (RLL) : <a href="https://ec.europa.eu/consumers/odr" target="_blank" style="color:#4a9422">ec.europa.eu/consumers/odr</a>.</p>
 
     <h3 style="font-size:15px;font-weight:600;color:#1a3a0f;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(26,58,15,0.12)">11. Contact</h3>
     <p style="font-size:13px;color:#6b6b5e;line-height:1.7">Pour toute question relative aux présentes CGU : <a href="mailto:crocscore.help@gmail.com" style="color:#4a9422">crocscore.help@gmail.com</a></p>
@@ -1462,7 +1198,7 @@ footer{background:#0d1a08;padding:40px 5%}
 <!-- BANNIÈRE COOKIES -->
 <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1900;background:var(--white);border-top:1px solid rgba(26,58,15,0.12);box-shadow:0 -4px 24px rgba(0,0,0,0.1);padding:16px 20px 20px">
   <div style="max-width:640px;margin:0 auto">
-    <div style="font-size:14px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif;margin-bottom:5px">🍪 Cookies et traceurs</div>
+    <div style="font-size:14px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif;margin-bottom:5px">?? Cookies et traceurs</div>
     <div style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:6px">
       Nous utilisons des cookies <strong>essentiels</strong> (authentification Firebase, localStorage — base légale : intérêt légitime, Art. 6.1.f RGPD) et des traceurs <strong>optionnels</strong> (notifications push OneSignal — base légale : consentement, Art. 6.1.a RGPD). Sans votre accord, <em>aucun service tiers optionnel n'est chargé</em>.
     </div>
@@ -1474,7 +1210,7 @@ footer{background:#0d1a08;padding:40px 5%}
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button onclick="acceptAllCookies()" style="flex:1;min-width:110px;padding:11px 8px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Tout accepter</button>
       <button onclick="rejectAllCookies()" style="flex:1;min-width:110px;padding:11px 8px;background:var(--cream-dark);color:var(--text);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer">Tout refuser</button>
-      <button onclick="openCookieSettings()" style="flex:1;min-width:110px;padding:11px 8px;background:var(--white);color:var(--green-dark);border:1.5px solid rgba(26,58,15,0.25);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer">⚙️ Paramétrer</button>
+      <button onclick="openCookieSettings()" style="flex:1;min-width:110px;padding:11px 8px;background:var(--white);color:var(--green-dark);border:1.5px solid rgba(26,58,15,0.25);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer">? Paramétrer</button>
     </div>
   </div>
 </div>
@@ -1484,7 +1220,7 @@ footer{background:#0d1a08;padding:40px 5%}
   <div style="max-width:640px;margin:0 auto">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
       <div style="font-size:15px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif">Paramétrer mes cookies</div>
-      <button onclick="closeCookieSettings()" style="background:var(--cream-dark);border:none;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--text-muted)">← Retour</button>
+      <button onclick="closeCookieSettings()" style="background:var(--cream-dark);border:none;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--text-muted)">? Retour</button>
     </div>
     <div style="font-size:11px;color:var(--text-muted);margin-bottom:16px;line-height:1.5">Durée de conservation du consentement : 13 mois (CNIL). Vous pouvez modifier vos choix à tout moment via "Gérer mes cookies" en bas de page.</div>
 
@@ -1514,7 +1250,7 @@ footer{background:#0d1a08;padding:40px 5%}
           <span id="cookie-toggle-push-thumb" style="position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.25s;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></span>
         </label>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);line-height:1.6">Permet de recevoir des alertes CrocScore sur vos produits. OneSignal dépose un cookie tiers et enregistre un identifiant de notification. Durée : jusqu'à révocation. <a href="https://onesignal.com/privacy_policy" target="_blank" rel="noopener noreferrer" style="color:var(--green-bright)">Politique OneSignal ?</a></div>
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.6">Permet de recevoir des alertes CrocScore sur vos produits. OneSignal dépose un cookie tiers et enregistre un identifiant de notification. Durée : jusqu'à révocation. <a href="https://onesignal.com/privacy_policy" target="_blank" style="color:var(--green-bright)">Politique OneSignal ?</a></div>
     </div>
 
     <!-- 3. Performance / Vercel -->
@@ -1542,7 +1278,7 @@ footer{background:#0d1a08;padding:40px 5%}
         </div>
         <span style="font-size:11px;background:rgba(74,148,34,0.15);color:var(--green-dark);padding:3px 10px;border-radius:20px;font-weight:500">Lié aux essentiels</span>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);line-height:1.6">Lors d'une recherche ou d'un scan, une requête est envoyée à l'API Open Pet Food Facts pour identifier le produit. Votre adresse IP peut être collectée par ce tiers. Aucun cookie déposé par CrocScore à ce titre. <a href="https://world.openpetfoodfacts.org/privacy" target="_blank" rel="noopener noreferrer" style="color:var(--green-bright)">Leur politique ?</a></div>
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.6">Lors d'une recherche ou d'un scan, une requête est envoyée à l'API Open Pet Food Facts pour identifier le produit. Votre adresse IP peut être collectée par ce tiers. Aucun cookie déposé par CrocScore à ce titre. <a href="https://world.openpetfoodfacts.org/privacy" target="_blank" style="color:var(--green-bright)">Leur politique ?</a></div>
     </div>
 
     <a href="#" onclick="var m=document.getElementById('modal-confidentialite');m.style.display='block';m.style.zIndex='3000';return false" style="display:block;text-align:center;font-size:11px;color:var(--text-muted);text-decoration:underline;margin-bottom:14px">Lire la politique complète de confidentialité</a>
@@ -1561,22 +1297,22 @@ footer{background:#0d1a08;padding:40px 5%}
     <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5">Avant de commencer, quelques informations importantes :</div>
     <div style="background:var(--white);border-radius:14px;padding:16px;margin-bottom:20px;border:1px solid rgba(26,58,15,0.1)">
       <div style="display:flex;gap:10px;margin-bottom:12px">
-        <span style="font-size:18px;flex-shrink:0">⚠️</span>
+        <span style="font-size:18px;flex-shrink:0">??</span>
         <div style="font-size:13px;color:var(--text);line-height:1.6"><strong>Scores indicatifs uniquement</strong><br>Les scores CrocScore sont calculés à titre informatif et ne constituent <strong>pas un avis vétérinaire</strong>. Consultez toujours un vétérinaire pour la santé de votre animal.</div>
       </div>
       <div style="display:flex;gap:10px;margin-bottom:12px">
-        <span style="font-size:18px;flex-shrink:0">📊</span>
-        <div style="font-size:13px;color:var(--text);line-height:1.6"><strong>Données collaboratives</strong><br>Les informations proviennent d'<a href="https://world.openpetfoodfacts.org" target="_blank" rel="noopener noreferrer" style="color:var(--green-bright)">Open Pet Food Facts</a> (ODbL) et d'une base indicative. CrocScore ne garantit pas leur exactitude.</div>
+        <span style="font-size:18px;flex-shrink:0">??</span>
+        <div style="font-size:13px;color:var(--text);line-height:1.6"><strong>Données collaboratives</strong><br>Les informations proviennent d'<a href="https://world.openpetfoodfacts.org" target="_blank" style="color:var(--green-bright)">Open Pet Food Facts</a> (ODbL) et d'une base indicative. CrocScore ne garantit pas leur exactitude.</div>
       </div>
       <div style="display:flex;gap:10px">
-        <span style="font-size:18px;flex-shrink:0">🔒</span>
+        <span style="font-size:18px;flex-shrink:0">??</span>
         <div style="font-size:13px;color:var(--text);line-height:1.6"><strong>Vos données</strong><br>Votre historique est stocké localement sur votre appareil. Aucune donnée n'est vendue à des tiers.</div>
       </div>
     </div>
     <div style="background:var(--cream-dark);border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1px solid rgba(26,58,15,0.1)">
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:10px">
         <input type="checkbox" id="consent-age" style="margin-top:3px;accent-color:var(--green-dark);width:16px;height:16px;flex-shrink:0">
-        <span style="font-size:12px;color:var(--text);line-height:1.5;display:block;background:#fffbe6;border:1.5px solid #f0c030;border-radius:8px;padding:10px 12px;margin-top:4px">⚠️ <strong>Je certifie avoir 15 ans ou plus.</strong> Si je suis mineur(e), je déclare avoir obtenu le consentement de mon représentant légal, conformément à l'art. 8 RGPD et à la loi n° 78-17 du 6 janvier 1978. <em>Sans cette confirmation, l'inscription est impossible.</em></span>
+        <span style="font-size:12px;color:var(--text);line-height:1.5;display:block;background:#fffbe6;border:1.5px solid #f0c030;border-radius:8px;padding:10px 12px;margin-top:4px">?? <strong>Je certifie avoir 15 ans ou plus.</strong> Si je suis mineur(e), je déclare avoir obtenu le consentement écrit de mon représentant légal, conformément à l'art. 8 RGPD et à la ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — loi française n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17). n°78-17). n°78-17). n°78-17. <em>Sans cette confirmation, l'inscription est impossible.</em></span>
       </label>
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:10px">
         <input type="checkbox" id="consent-cgu" style="margin-top:3px;accent-color:var(--green-dark);width:16px;height:16px;flex-shrink:0">
@@ -1608,7 +1344,7 @@ footer{background:#0d1a08;padding:40px 5%}
       <li><a href="#" onclick="document.getElementById('modal-cgu').style.display='block';return false">CGU</a></li>
       <li><a href="mailto:crocscore.help@gmail.com">Contact</a></li>
       <li><a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a></li>
-      <li><a href="#" onclick="openCookieManager();return false">🍪 Cookies</a></li>
+      <li><a href="#" onclick="openCookieManager();return false">?? Cookies</a></li>
     </ul>
   </div>
   <p class="footer-disc">
@@ -1640,7 +1376,7 @@ auth.onAuthStateChanged(user => {
   const bnIcon = document.getElementById('bn-compte-icon');
   if(user) {
     const initial = (user.displayName || user.email || '?')[0].toUpperCase();
-    if(btn) btn.innerHTML = `<div class="nav-avatar">${escapeHtml(initial)}</div>`;
+    if(btn) btn.innerHTML = `<div class="nav-avatar">${initial}</div>`;
     if(bnIcon) bnIcon.textContent = initial;
   } else {
     if(btn) btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
@@ -1725,10 +1461,10 @@ async function signUp() {
     const cred = await auth.createUserWithEmailAndPassword(email, pw);
     if(name) await cred.user.updateProfile({displayName: name.substring(0, 50)});
     // Enregistrement horodaté du consentement CGU lors de la création de compte (Art. 7 RGPD)
-    safeSet('croc_account_consent', {
-      version: '1.1', date: Date.now(), dateISO: new Date().toISOString(),
+    localStorage.setItem('croc_account_consent', JSON.stringify({
+      version: '1.0', date: Date.now(), dateISO: new Date().toISOString(),
       ageConfirmed: true, cguAccepted: true, email: email
-    });
+    }));
     closeAuth();
   } catch(e) {
     console.error('[CrocScore Auth]', e.code);
@@ -1793,24 +1529,21 @@ async function signOut() {
   closeAccount();
 }
 async function deleteAccount() {
-  if(!confirm('Supprimer définitivement votre compte CrocScore ?\n\nConformément à l\'Art. 17 RGPD (droit à l\'effacement) :\n· Votre compte Firebase et vos données d\'authentification seront supprimés\n· Toutes vos données locales (historique, animaux, préférences) seront effacées de cet appareil\n\nCette action est irréversible.')) return;
+  if(!confirm('Supprimer définitivement votre compte CrocScore ?\n\nConformément à l\'Art. 17 RGPD (droit à l\'effacement), votre compte Firebase et vos données d\'authentification seront supprimés. Vos données locales (historique, animaux) resteront sur cet appareil jusqu\'à ce que vous les effaciez manuellement depuis les paramètres navigateur.\n\nCette action est irréversible.')) return;
   try {
-    // Suppression complète de toutes les données locales CrocScore (Art. 17 RGPD)
-    [
-      'croc_consent_v1', 'croc_account_consent', 'croc_cookies_choice',
-      'croc_history', 'croc_animals', 'croc_custom_products',
-      'croc_premium', 'croc_prefs', 'croc_scan_history', 'croc_weights'
-    ].forEach(function(k) { localStorage.removeItem(k); });
+    // Suppression des données locales liées au compte
+    localStorage.removeItem('croc_consent_v1');
+    localStorage.removeItem('croc_account_consent');
     await auth.currentUser.delete();
     closeAccount();
-    alert('Votre compte et toutes vos données ont été supprimés de cet appareil.\n\nConformément au RGPD (Art. 17), vos données d\'authentification Firebase ont également été effacées.\n\nSi vous avez des questions : crocscore.help@gmail.com');
+    alert('Votre compte a été supprimé. Conformément au RGPD, vos données d\'authentification ont été effacées.');
   } catch(e) {
-    alert('Pour supprimer votre compte, vous devez vous être connecté récemment.\nDéconnectez-vous, reconnectez-vous, puis réessayez.\n\nOu contactez : crocscore.help@gmail.com (réponse sous 30 jours — Art. 12 RGPD).');
+    alert('Pour supprimer votre compte, vous devez vous reconnecter récemment. Déconnectez-vous, reconnectez-vous, puis réessayez.\n\nOu contactez : crocscore.help@gmail.com (réponse sous 30 jours — Art. 12 RGPD).');
   }
 }
 function cancelSubscription() {
-  // Aucune facturation active pendant la bêta — cette fonction est non opérationnelle
-  alert('CrocScore est actuellement en bêta gratuite.\n\nAucun abonnement payant n\'est actif — vous ne serez jamais prélevé sans en être informé au préalable.\n\nContact : crocscore.help@gmail.com');
+  if(!confirm('Résilier votre abonnement Premium ?\n\nVotre accès Premium restera actif jusqu\'à la fin de la période mensuelle en cours. Aucun remboursement pour la période entamée (sauf exercice du droit de rétractation sous 14 jours — Art. L.221-18 Code conso).')) return;
+  alert('Résiliation prise en compte. Votre Premium reste actif jusqu\'à la fin de la période en cours.\n\nPour toute question : crocscore.help@gmail.com');
 }
 // Exportation des données locales — Art. 20 RGPD (droit à la portabilité)
 function exportMyData() {
@@ -1818,12 +1551,11 @@ function exportMyData() {
     exportDate: new Date().toISOString(),
     exportedBy: 'CrocScore — Droit à la portabilité Art. 20 RGPD',
     userEmail: auth.currentUser ? auth.currentUser.email : 'non connecté',
-    history: safeParse('croc_history', []),
-    animals: safeParse('croc_animals', []),
-    customProducts: safeParse('croc_custom_products', []),
-    weightHistory: safeParse('croc_weights', []),
-    cookiesChoice: safeParse('croc_cookies_choice', null),
-    consentRecord: safeParse('croc_consent_v1', null)
+    history: JSON.parse(localStorage.getItem('croc_history') || '[]'),
+    animals: JSON.parse(localStorage.getItem('croc_animals') || '[]'),
+    customProducts: JSON.parse(localStorage.getItem('croc_custom_products') || '[]'),
+    cookiesChoice: JSON.parse(localStorage.getItem('croc_cookies_choice') || 'null'),
+    consentRecord: JSON.parse(localStorage.getItem('croc_consent_v1') || 'null')
   };
   var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
   var url = URL.createObjectURL(blob);
@@ -1834,84 +1566,7 @@ function exportMyData() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, suivi du poids, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
-}
-
-// -- Robustesse : écriture localStorage sécurisée (gère QuotaExceededError + mode privé Safari) --
-function safeSet(key, value) {
-  try {
-    localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
-    return true;
-  } catch(e) {
-    // QuotaExceededError, SecurityError (mode privé Safari), etc.
-    return false;
-  }
-}
-
-// -- Robustesse : lecture localStorage sécurisée (évite crash si JSON corrompu) --
-function safeParse(key, fallback) {
-  try {
-    var raw = localStorage.getItem(key);
-    if (raw === null || raw === undefined) return fallback;
-    var v = JSON.parse(raw);
-    return (v === null || v === undefined) ? fallback : v;
-  } catch(e) {
-    // JSON corrompu (manipulation DevTools, ancien format, plantage écriture) — on retourne le défaut
-    return fallback;
-  }
-}
-
-// -- Thème clair/sombre ---------------------------------------------------
-function getCurrentTheme() {
-  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-}
-function applyTheme(theme) {
-  if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-  else document.documentElement.removeAttribute('data-theme');
-  // Mise à jour de la meta theme-color (barre adresse mobile)
-  var meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', theme === 'dark' ? '#14181a' : '#1a3a0f');
-  // Affichage icône appropriée (lune en mode clair pour basculer vers sombre, soleil en mode sombre)
-  var sun = document.getElementById('theme-icon-sun');
-  var moon = document.getElementById('theme-icon-moon');
-  if (sun && moon) {
-    sun.style.display = theme === 'dark' ? 'block' : 'none';
-    moon.style.display = theme === 'dark' ? 'none' : 'block';
-  }
-}
-function toggleTheme() {
-  var next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
-  applyTheme(next);
-  safeSet('croc_theme', next);
-}
-// Init icône au chargement (le thème lui-même est déjà appliqué dans le <head> avant le rendu)
-window.addEventListener('DOMContentLoaded', function() {
-  applyTheme(getCurrentTheme());
-});
-// Suit les changements système si l'utilisateur n'a pas fait de choix manuel
-if (window.matchMedia) {
-  var mql = window.matchMedia('(prefers-color-scheme: dark)');
-  var listener = function(e) {
-    if (!localStorage.getItem('croc_theme')) applyTheme(e.matches ? 'dark' : 'light');
-  };
-  if (mql.addEventListener) mql.addEventListener('change', listener);
-  else if (mql.addListener) mql.addListener(listener);
-}
-
-// -- Sécurité : échappement HTML pour prévenir XSS (données utilisateur + API tierce non sanitisée) --
-function escapeHtml(s) {
-  if (s === null || s === undefined) return '';
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-// Échappement spécifique pour valeurs placées dans onclick="..." (attribut JS)
-function escapeJsArg(s) {
-  if (s === null || s === undefined) return '';
-  return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
+  alert('Vos données ont été exportées en format JSON.\n\nCe fichier contient : historique d\'analyses, profils animaux, produits personnalisés, préférences cookies et enregistrement du consentement.\n\nConformément à l\'Art. 20 RGPD (droit à la portabilité).');
 }
 
 // -- Scoring ----------------------------------------------
@@ -1922,21 +1577,16 @@ function scoreProduct(p) {
   const proteins = nutr.proteins_100g || 0;
   const fat = nutr.fat_100g || 0;
   const carbs = nutr.carbohydrates_100g || 0;
-  const hasNutr = proteins > 0 || fat > 0 || carbs > 0;
-  if(hasNutr) {
-    if(proteins >= 30) score += 20; else if(proteins >= 20) score += 10; else if(proteins < 10) score -= 15;
-    if(fat >= 10 && fat <= 20) score += 5; else if(fat > 25) score -= 5;
-    if(carbs > 40) score -= 15; else if(carbs < 20) score += 10;
-  }
-  // Normalisation : remplace la ligature 'œ' par 'oe' pour matcher 'bœuf' / 'boeuf' indifféremment
-  const ingrNorm = ingr.replace(/œ/g, 'oe').replace(/æ/g, 'ae');
+  if(proteins >= 30) score += 20; else if(proteins >= 20) score += 10; else if(proteins < 10) score -= 15;
+  if(fat >= 10 && fat <= 20) score += 5; else if(fat > 25) score -= 5;
+  if(carbs > 40) score -= 15; else if(carbs < 20) score += 10;
   const goodMeat = ['poulet','boeuf','poisson','saumon','canard','agneau','thon','dinde','veau'];
-  const firstIngr = ingrNorm.split(',')[0] || '';
+  const firstIngr = ingr.split(',')[0] || '';
   if(goodMeat.some(g => firstIngr.includes(g))) score += 15;
   if(['maïs','blé','farine de céréales','sous-produits','dérivés'].some(b => firstIngr.includes(b))) score -= 15;
-  const cerealCount = (ingrNorm.match(/maïs|blé|céréales|amidon|gluten/g)||[]).length;
+  const cerealCount = (ingr.match(/maïs|blé|céréales|amidon|gluten/g)||[]).length;
   score -= cerealCount * 5;
-  if(goodMeat.filter(m => ingrNorm.includes(m)).length >= 2) score += 10;
+  if(goodMeat.filter(m => ingr.includes(m)).length >= 2) score += 10;
   score = Math.max(5, Math.min(99, Math.round(score)));
   let letter, bg, color;
   if(score>=80){letter='A';bg='#e8f5d8';color='#1a3a0f';}
@@ -1947,101 +1597,12 @@ function scoreProduct(p) {
   return {score, letter, bg, color};
 }
 
-// -- Source des données (modèle DogFoodAdvisor) -----------
-var VERIFIED_BRANDS = {
-  'royal canin':{'src':'royalcanin.com/fr','ver':'2026-05'},
-  'purina pro plan':{'src':'purina.fr','ver':'2026-05'},
-  'purina':{'src':'purina.fr','ver':'2026-05'},
-  "hill's science plan":{'src':'hillspet.fr','ver':'2026-05'},
-  "hill's prescription diet":{'src':'hillspet.fr','ver':'2026-05'},
-  'hills':{'src':'hillspet.fr','ver':'2026-05'},
-  'orijen':{'src':'orijen.ca','ver':'2026-05'},
-  'acana':{'src':'acana.com','ver':'2026-05'},
-  'farmina':{'src':'farmina.com','ver':'2026-05'},
-  'eukanuba':{'src':'eukanuba.eu','ver':'2026-05'},
-  'iams':{'src':'iams.com','ver':'2026-05'},
-  'ziwi':{'src':'ziwipets.com','ver':'2026-05'},
-  'instinct':{'src':'instinct.com','ver':'2026-05'},
-  'wellness':{'src':'wellnesspetfood.com','ver':'2026-05'},
-  'blue buffalo':{'src':'bluebuffalo.com','ver':'2026-05'},
-  'merrick':{'src':'merrickpetcare.com','ver':'2026-05'},
-  'taste of the wild':{'src':'tasteofthewild.com','ver':'2026-05'},
-  'burns':{'src':'burnspet.co.uk','ver':'2026-05'},
-  'arden grange':{'src':'ardengrange.com','ver':'2026-05'},
-  "lily's kitchen":{'src':'lilyskitchen.co.uk','ver':'2026-05'},
-  'canagan':{'src':'canagan.co.uk','ver':'2026-05'},
-  'forthglade':{'src':'forthglade.com','ver':'2026-05'},
-  'edgard & cooper':{'src':'edgardcooper.com','ver':'2026-05'},
-  'edgard cooper':{'src':'edgardcooper.com','ver':'2026-05'},
-  'yarrah':{'src':'yarrah.com','ver':'2026-05'},
-  'bozita':{'src':'bozita.com','ver':'2026-05'},
-  'carnilove':{'src':'carnilove.com','ver':'2026-05'},
-  'josera':{'src':'josera.de','ver':'2026-05'},
-  'monge':{'src':'monge.it','ver':'2026-05'},
-  'virbac':{'src':'virbac.com','ver':'2026-05'},
-  'animonda':{'src':'animonda.de','ver':'2026-05'},
-  'brit':{'src':'brit-petfood.com','ver':'2026-05'},
-  'pro pac':{'src':'propacpetfood.com','ver':'2026-05'},
-  'nutrivet':{'src':'nutrivet.fr','ver':'2026-05'},
-  'specific':{'src':'specificpetfood.com','ver':'2026-05'}
-};
-
-function getProductMeta(p) {
-  if (p._custom) return {type:'custom',src:null,ver:null};
-  var brand = (p.brands||'').toLowerCase().trim();
-  var keys = Object.keys(VERIFIED_BRANDS);
-  for (var i=0;i<keys.length;i++) {
-    if (brand.indexOf(keys[i])!==-1 || keys[i].indexOf(brand)!==-1) {
-      return {type:'verified',src:VERIFIED_BRANDS[keys[i]].src,ver:VERIFIED_BRANDS[keys[i]].ver};
-    }
-  }
-  return {type:'community',src:'world.openpetfoodfacts.org',ver:null};
-}
-
-function isDataStale(ver) {
-  if (!ver) return false;
-  var p=ver.split('-'), d=new Date(+p[0],+p[1]-1,1), now=new Date();
-  return (now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth())>=12;
-}
-
-function formatVer(ver) {
-  if (!ver) return '';
-  var p=ver.split('-');
-  var m=['jan.','fév.','mars','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];
-  return m[+p[1]-1]+' '+p[0];
-}
-
-function buildSourceHTML(meta, productName) {
-  var html='', sub=encodeURIComponent('Erreur données : '+(productName||'produit')),
-      bod=encodeURIComponent('Bonjour,\n\nErreur sur : '+(productName||'')+'\n\nDétail :\n');
-  if (meta.type==='verified') {
-    html='<span class="src-badge verified">'
-      +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
-      +'Vérifié · '+escapeHtml(meta.src)+(meta.ver?' · '+formatVer(meta.ver):'')+' · Données publiques CE 767/2009'
-      +'</span>';
-    if (isDataStale(meta.ver)) html+='<div class="src-stale">⚠️ Formule non revérifiée depuis plus de 12 mois — consultez l\'étiquette du produit.</div>';
-  } else if (meta.type==='community') {
-    html='<span class="src-badge community">🌐 Données communautaires · Open Pet Food Facts (ODbL)</span>';
-  } else {
-    html='<span class="src-badge custom">✏️ Saisi manuellement — non vérifié</span>';
-  }
-  html+='<br><a href="mailto:crocscore.help@gmail.com?subject='+sub+'&body='+bod+'" class="src-report">'
-    +'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-    +'Signaler une erreur sur ce produit</a>';
-  return html;
-}
-
 // -- Affichage résultat ------------------------------------
 function displayProduct(p, fallbackName) {
   const nutr = p.nutriments || {};
   const scored = scoreProduct(p);
   const ingr = (p.ingredients_text || '').toLowerCase();
-  var _pName = p.product_name || fallbackName;
-  document.getElementById('result-name').textContent = _pName;
-  var _brandEl = document.getElementById('result-brand');
-  if (_brandEl) _brandEl.textContent = p.brands || '';
-  var _srcEl = document.getElementById('result-source');
-  if (_srcEl) { var _meta = getProductMeta(p); _srcEl.innerHTML = buildSourceHTML(_meta, _pName); }
+  document.getElementById('result-name').textContent = p.product_name || fallbackName;
   const badge = document.querySelector('.result-score-big');
   badge.textContent = scored.letter;
   badge.style.background = scored.bg;
@@ -2049,29 +1610,22 @@ function displayProduct(p, fallbackName) {
   const prot = Math.min(100, Math.round((nutr.proteins_100g||0)*2.5));
   const fat  = Math.min(100, Math.round((nutr.fat_100g||0)*3));
   const carb = Math.min(100, Math.round((nutr.carbohydrates_100g||0)*1.2));
-  const hasNutrDisplay = prot > 0 || fat > 0 || carb > 0;
   const meatCount = ['poulet','boeuf','saumon','canard','agneau','dinde'].filter(m=>ingr.includes(m)).length;
   const meat = Math.min(100, meatCount*30);
   const rows = document.querySelectorAll('.crit-row');
-  [[0,fat,hasNutrDisplay],[1,carb,hasNutrDisplay],[2,45,true],[3,meat,true]].forEach(([i,v,show])=>{
+  [[0,fat],[1,carb],[2,45],[3,meat]].forEach(([i,v])=>{
     if(!rows[i]) return;
-    if(!show){rows[i].querySelector('.crit-fill2').style.width='0%';rows[i].querySelector('span:last-child').textContent='N/D';return;}
     rows[i].querySelector('.crit-fill2').style.width = v+'%';
     rows[i].querySelector('span:last-child').textContent = v+'%';
   });
   const rs = document.getElementById('result-section');
   rs.classList.add('visible');
   setTimeout(() => rs.scrollIntoView({behavior:'smooth', block:'start'}), 100);
-  var _animals = safeParse('croc_animals', []);
+  var _animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
   var _curAnimal = _statsAnimal || (_animals.length ? _animals[0].name : null);
-  var _histName = p.product_name || fallbackName;
-  var _hist = safeParse('croc_history', []);
-  // Déduplication par nom — cohérent avec renderAnalyserResult, évite le bloat localStorage
-  _hist = _hist.filter(function(h){ return h.name !== _histName; });
-  _hist.push({name: _histName, brand: p.brands||'', score: scored.score, letter: scored.letter, bg: scored.bg, color: scored.color, date: Date.now(), dateLabel: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
-  // Limite à 50 entrées (cohérent avec renderAnalyserResult)
-  if (_hist.length > 50) _hist = _hist.slice(-50);
-  safeSet('croc_history', _hist);
+  var _hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
+  _hist.push({name: p.product_name||fallbackName, score: scored.score, date: new Date().toLocaleDateString('fr-FR'), animal: _curAnimal, proteins: nutr.proteins_100g||0, fat: nutr.fat_100g||0, carbs: nutr.carbohydrates_100g||0});
+  localStorage.setItem('croc_history', JSON.stringify(_hist));
 }
 
 // -- Base de données locale (définie dans localdb.js) ---------------
@@ -2081,20 +1635,20 @@ if (typeof MORE_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, MORE_DB);
 function searchLocalDB(query) {
   if (!query || query.length < 2) return null;
   var q = query.toLowerCase().trim();
-  var exact = LOCAL_DB.find(function(p){ return (p.product_name||'').toLowerCase() === q; });
+  var exact = LOCAL_DB.find(function(p){ return p.product_name.toLowerCase() === q; });
   if (exact) return exact;
   var words = q.split(/\s+/).filter(function(w){ return w.length > 1; });
   var match = LOCAL_DB.find(function(p){
-    var n = (p.product_name||'').toLowerCase(), b = (p.brands||'').toLowerCase();
+    var n = p.product_name.toLowerCase(), b = (p.brands||'').toLowerCase();
     return words.every(function(w){ return n.includes(w) || b.includes(w); });
   });
   if (match) return match;
   // Recherche dans les produits custom de l'utilisateur
-  var custom = safeParse('croc_custom_products', []);
-  var customExact = custom.find(function(p){ return (p.product_name||'').toLowerCase() === q; });
+  var custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+  var customExact = custom.find(function(p){ return p.product_name.toLowerCase() === q; });
   if (customExact) return customExact;
   return custom.find(function(p){
-    var n = (p.product_name||'').toLowerCase();
+    var n = p.product_name.toLowerCase();
     return words.every(function(w){ return n.includes(w); });
   }) || null;
 }
@@ -2117,7 +1671,7 @@ function showManualForm(productName) {
     +'</div>'
     +'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:3px">Ingrédients (optionnel)</label><input id="mf-ingr" type="text" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>'
     +'<div style="display:flex;gap:10px;align-items:center">'
-    +'<button onclick="submitManualForm(\''+escapeJsArg(productName||'')+'\')" style="padding:10px 20px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer">Analyser</button>'
+    +'<button onclick="submitManualForm(\''+( (productName||'').replace(/'/g,"\\'") )+'\')" style="padding:10px 20px;background:var(--green-dark);color:var(--cream);border:none;border-radius:10px;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer">Analyser</button>'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer"><input type="checkbox" id="mf-save" checked style="accent-color:var(--green-bright)"> Enregistrer pour la prochaine fois</label>'
     +'</div>';
   var scoreCard = rs.querySelector('.result-score-card');
@@ -2134,10 +1688,10 @@ function submitManualForm(productName) {
   var save = document.getElementById('mf-save').checked;
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
-    var custom = safeParse('croc_custom_products', []);
-    if (!custom.find(function(p){ return (p.product_name||'').toLowerCase()===productName.toLowerCase(); })) {
+    var custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    if (!custom.find(function(p){ return p.product_name.toLowerCase()===productName.toLowerCase(); })) {
       custom.push(product);
-      safeSet('croc_custom_products', custom);
+      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
     }
   }
   var block = document.getElementById('manual-form-block');
@@ -2245,9 +1799,8 @@ function showSrmFound(product, barcode) {
   const scored = scoreProduct(product);
   document.getElementById('srm-title').textContent = 'Produit trouvé';
   document.getElementById('srm-body').innerHTML =
-    '<div class="srm-found-name">' + escapeHtml(name) + '</div>'
-    + (brand ? '<div class="srm-found-brand">' + escapeHtml(brand) + '</div>' : '')
-    + '<div style="margin-bottom:10px">' + buildSourceHTML(getProductMeta(product), name) + '</div>'
+    '<div class="srm-found-name">' + name + '</div>'
+    + (brand ? '<div class="srm-found-brand">' + brand + '</div>' : '')
     + '<div class="srm-score-row">'
     +   '<div class="srm-score-badge" style="background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
     +   '<div><div style="font-size:15px;font-weight:600;color:var(--text)">Score ' + scored.score + '/100</div>'
@@ -2261,9 +1814,9 @@ function showSrmFound(product, barcode) {
 function showSrmNotFound(barcode) {
   document.getElementById('srm-title').textContent = 'Produit inconnu';
   document.getElementById('srm-body').innerHTML =
-    '<div class="srm-notfound-icon">🔍</div>'
+    '<div class="srm-notfound-icon">??</div>'
     + '<div class="srm-notfound-title">Produit non trouvé</div>'
-    + '<div class="srm-notfound-sub">Code-barres : ' + escapeHtml(barcode) + '<br>Renseignez les infos pour obtenir un score.</div>'
+    + '<div class="srm-notfound-sub">Code-barres : ' + barcode + '<br>Renseignez les infos pour obtenir un score.</div>'
     + '<div class="srm-field"><label>Nom du produit</label><input id="srm-name" type="text" placeholder="ex: Royal Canin Adult…"></div>'
     + '<div class="srm-row3">'
     +   '<div class="srm-field"><label>Protéines (g/100g)</label><input id="srm-prot" type="number" step="0.1" min="0" max="100" placeholder="ex: 30"></div>'
@@ -2274,7 +1827,7 @@ function showSrmNotFound(barcode) {
     + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px;cursor:pointer">'
     +   '<input type="checkbox" id="srm-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil'
     + '</label>'
-    + '<button class="srm-btn-primary" onclick="submitSrmForm(\'' + escapeJsArg(barcode) + '\')">Analyser</button>'
+    + '<button class="srm-btn-primary" onclick="submitSrmForm(\'' + barcode.replace(/'/g,"\\'") + '\')">Analyser</button>'
     + '<button class="srm-btn-secondary" onclick="closeSrm()">Annuler</button>';
 }
 function submitSrmForm(barcode) {
@@ -2286,10 +1839,10 @@ function submitSrmForm(barcode) {
   const save = document.getElementById('srm-save').checked;
   const product = {product_name:name, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && name) {
-    const custom = safeParse('croc_custom_products', []);
-    if (!custom.find(p => (p.product_name||'').toLowerCase() === name.toLowerCase())) {
+    const custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    if (!custom.find(p => p.product_name.toLowerCase() === name.toLowerCase())) {
       custom.push(product);
-      safeSet('croc_custom_products', custom);
+      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
     }
   }
   closeSrm();
@@ -2337,8 +1890,8 @@ if('serviceWorker' in navigator){
   });
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
-      .then(reg => { reg.update(); })
-      .catch(() => {});
+      .then(reg => { reg.update(); console.log('SW enregistré'); })
+      .catch(err => console.log('SW erreur:', err));
   });
 }
 
@@ -2425,15 +1978,15 @@ OneSignalDeferred.push(async function(OneSignal) {
 <!-- MODAL CONNEXION -->
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box">
-    <button class="auth-close" onclick="closeAuth()" aria-label="Fermer">×</button>
+    <button class="auth-close" onclick="closeAuth()">?</button>
     <div class="auth-logo">CrocScore</div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Se connecter</button>
       <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Créer un compte</button>
     </div>
     <div id="form-signin">
-      <div class="auth-field"><label>Email</label><input type="email" id="signin-email" placeholder="votre@email.com" autocomplete="email"/></div>
-      <div class="auth-field"><label>Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signin-password" placeholder="Votre mot de passe" autocomplete="current-password"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signin-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="signin-email" placeholder="votre@email.com"/></div>
+      <div class="auth-field"><label>Mot de passe</label><div class="auth-pw-wrap"><input type="password" id="signin-password" placeholder="Votre mot de passe"/><button type="button" class="auth-pw-toggle" onclick="togglePw('signin-password',this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
       <span class="auth-forgot" onclick="forgotPassword()">Mot de passe oublié ?</span>
       <button class="auth-btn" id="signin-btn" onclick="signIn()">Se connecter</button>
       <div class="auth-error" id="signin-error"></div>
@@ -2447,7 +2000,7 @@ OneSignalDeferred.push(async function(OneSignal) {
       <div style="background:var(--cream-dark);border-radius:10px;padding:12px 14px;margin-bottom:14px">
         <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-bottom:8px">
           <input type="checkbox" id="signup-age-check" style="margin-top:2px;accent-color:var(--green-dark);flex-shrink:0">
-          <span style="font-size:11px;color:var(--text);line-height:1.5;display:block;background:#fffbe6;border:1.5px solid #f0c030;border-radius:8px;padding:8px 10px;margin-top:4px">&#9888;&#xFE0F; <strong>Je certifie avoir 15 ans ou plus.</strong> Si mineur(e), consentement du représentant légal requis (art. 8 RGPD &mdash; loi française n&deg;78-17).</span>
+          <span style="font-size:11px;color:var(--text);line-height:1.5;display:block;background:#fffbe6;border:1.5px solid #f0c030;border-radius:8px;padding:8px 10px;margin-top:4px">?? <strong>Je certifie avoir 15 ans ou plus.</strong> Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — ⚠️ Je certifie avoir 15 ans ou plus. Si mineur(e), consentement du représentant légal requis (art. 8 RGPD — loi française n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17 n°78-17). n°78-17). n°78-17). n°78-17).</span>
         </label>
         <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
           <input type="checkbox" id="signup-cgu-check" style="margin-top:2px;accent-color:var(--green-dark);flex-shrink:0">
@@ -2465,7 +2018,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 <div class="account-panel" id="account-panel">
   <div class="account-panel-header">
     <span class="account-panel-title">Mon compte</span>
-    <button class="account-panel-close" onclick="closeAccount()" aria-label="Fermer">×</button>
+    <button class="account-panel-close" onclick="closeAccount()">?</button>
   </div>
   <div class="account-avatar-big" id="account-avatar-letter">?</div>
   <div class="account-user-name" id="account-display-name">—</div>
@@ -2505,14 +2058,14 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 <div class="scan-modal" id="scan-modal">
   <div class="scan-header">
-    <span class="scan-title">📷 Scanner le code-barres</span>
-    <button class="scan-close" onclick="closeScan()" aria-label="Fermer le scanner">×</button>
+    <span class="scan-title">?? Scanner le code-barres</span>
+    <button class="scan-close" onclick="closeScan()">?</button>
   </div>
   <div class="scan-body">
     <div id="scan-reader"></div>
   </div>
   <div class="scan-tip">Pointez la caméra vers le code-barres du produit</div>
-  <div style="font-size:10px;color:rgba(255,255,255,0.35);text-align:center;padding:6px 16px 12px;line-height:1.5">🔒 La caméra est utilisée uniquement pour lire le code-barres. Aucune image n'est transmise ni stockée par CrocScore. Traitement 100% local sur votre appareil.</div>
+  <div style="font-size:10px;color:rgba(255,255,255,0.35);text-align:center;padding:6px 16px 12px;line-height:1.5">?? La caméra est utilisée uniquement pour lire le code-barres. Aucune image n'est transmise ni stockée par CrocScore. Traitement 100% local sur votre appareil.</div>
 </div>
 
 <div class="scan-loading" id="scan-loading">
@@ -2526,7 +2079,7 @@ OneSignalDeferred.push(async function(OneSignal) {
   <div class="srm-handle"></div>
   <div class="srm-head">
     <span class="srm-title" id="srm-title">Résultat du scan</span>
-    <button class="srm-close" onclick="closeSrm()" aria-label="Fermer">×</button>
+    <button class="srm-close" onclick="closeSrm()">?</button>
   </div>
   <div class="srm-body" id="srm-body"></div>
 </div>
@@ -2580,10 +2133,10 @@ OneSignalDeferred.push(async function(OneSignal) {
       </div>
       <div class="prem-price-block">
         <div>
-          <div class="prem-price-main"><span class="prem-price-num" style="font-size:22px">Gratuit</span><span class="prem-price-period"> pendant la bêta</span></div>
-          <div class="prem-price-then">Tarif prévisionnel : à partir de 1,99€ TTC/mois · aucun prélèvement actuellement</div>
+          <div class="prem-price-main"><span class="prem-price-num">1,99€</span><span class="prem-price-period"> TTC le 1er mois</span></div>
+          <div class="prem-price-then">puis 2,99€ TTC/mois · sans engagement · résiliable en 1 clic</div>
         </div>
-        <div class="prem-trial" style="background:rgba(74,148,34,0.25);border-color:rgba(74,148,34,0.4);color:#a8d878">🚀 Bêta</div>
+        <div class="prem-trial">7 jours gratuits</div>
       </div>
     </div>
     <div class="prem-modal-body">
@@ -2622,18 +2175,15 @@ OneSignalDeferred.push(async function(OneSignal) {
           <div><div class="prem-feat-title">Support prioritaire</div><div class="prem-feat-desc">Traitement prioritaire des demandes. Contact : crocscore.help@gmail.com</div></div>
         </div>
       </div>
-      <div style="margin:0 0 16px;padding:10px 14px;background:#fff8e1;border-radius:8px;border-left:3px solid #f59e0b;font-size:11.5px;color:#78580a;line-height:1.6">
-        <strong>&#9888;&#xFE0F; Fonctionnalités en cours de développement :</strong> Les alertes rappels produits, les alternatives par gamme de prix et la comparaison côte à côte sont des fonctionnalités non contractuelles, actuellement en cours de développement. Leur disponibilité n'est pas garantie dans les délais mentionnés. L'abonnement Premium vous donne accès aux fonctionnalités disponibles — conformément à l'art. L.217-3 Code conso.
-      </div>
       <div class="prem-cta">
-        <button class="prem-cta-btn" onclick="closePremModal();openAuth()">Créer mon compte — accès gratuit bêta</button>
+        <button class="prem-cta-btn" onclick="closePremModal();document.getElementById('tarifs').scrollIntoView({behavior:'smooth'})">Commencer l'essai gratuit de 7 jours ?</button>
         <div class="prem-cta-notes">
           <span class="prem-cta-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sans carte bancaire</span>
           <span class="prem-cta-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sans engagement</span>
           <span class="prem-cta-note"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Résiliation en 1 clic</span>
         </div>
         <div style="margin-top:12px;padding:10px 12px;background:#f0ece0;border-radius:10px;font-size:10px;color:#6b6b5e;line-height:1.6;text-align:left">
-          <strong>⚠️ Bêta — aucune facturation active :</strong> Le paiement n'est pas encore disponible. Toutes les fonctionnalités sont gratuites pendant la bêta. Vous serez informé avant toute mise en place d'une facturation. Le tarif prévisionnel (à partir de 1,99€ TTC/mois) n'est qu'indicatif et peut évoluer. Scores indicatifs uniquement — ne remplace pas un vétérinaire. Contact : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a>
+          <strong>Informations légales :</strong> Après l'essai gratuit, facturation automatique de 1,99€ TTC le 1er mois puis 2,99€ TTC/mois à date anniversaire. <strong>Droit de rétractation 14 jours</strong> (art. L.221-18 Code conso). Résiliation sans frais ni motif depuis votre compte. Aucun remboursement pour mois entamé après expiry du délai légal. Paiement sécurisé — données bancaires non conservées par CrocScore. Scores indicatifs uniquement — ne remplace pas un vétérinaire. Contact : <a href="mailto:crocscore.help@gmail.com" style="color:var(--green-bright)">crocscore.help@gmail.com</a>
         </div>
       </div>
     </div>
@@ -2708,27 +2258,23 @@ OneSignalDeferred.push(async function(OneSignal) {
     </div>
     <!-- Search bar -->
     <div style="display:flex;gap:8px;padding-bottom:16px">
-      <input id="analyser-search-input" type="text" placeholder="Nom du produit, marque…" aria-label="Rechercher un aliment pour animal"
-        style="flex:1;padding:11px 16px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:white;background:rgba(255,255,255,0.15);outline:none;min-width:0"
-        onkeydown="if(event.key==='Enter')doAnalyserSearch()">
+      <input id="analyser-search-input" type="text" placeholder="Nom du produit, marque…"
+        style="flex:1;padding:11px 16px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:rgba(255,255,255,0.15);color:white;outline:none;min-width:0"
+        onkeydown="if(event.key==='Enter')doAnalyserSearch()"
+        oninput="this.style.color='white'"
+        placeholder-style="color:rgba(255,255,255,0.6)">
       <button onclick="doAnalyserSearch()" style="flex-shrink:0;background:white;border:none;border-radius:12px;padding:11px 18px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--green-dark);cursor:pointer">Analyser</button>
     </div>
   </div>
 
   <!-- Bandeau méthodologie -->
   <div style="background:#f0f7e8;border-bottom:1px solid rgba(74,148,34,0.15);padding:7px 20px;flex-shrink:0;text-align:center">
-    <span style="font-size:10px;color:#4a7a20;font-family:'DM Sans',sans-serif;line-height:1.4">Scores <strong>indicatifs et non contractuels</strong> — basés sur l'analyse des ingrédients déclarés. Données à titre informatif. <a href="mailto:crocscore.help@gmail.com" style="color:#4a7a20;text-decoration:underline">Signaler une erreur de composition</a></span>
+    <span style="font-size:10px;color:#4a7a20;font-family:'DM Sans',sans-serif;line-height:1.4">Scores <strong>indicatifs et non contractuels</strong> — basés sur macronutriments uniquement. Données approximatives. <a href="mailto:crocscore.help@gmail.com" style="color:#4a7a20;text-decoration:underline">Signaler une erreur</a></span>
   </div>
 
   <!-- Content -->
   <div id="analyser-content" style="flex:1;overflow-y:auto;padding:20px;max-width:640px;margin:0 auto;width:100%;box-sizing:border-box"></div>
 </div>
-
-<!-- Bouton bascule thème clair/sombre -->
-<button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Basculer entre mode clair et mode sombre" title="Mode clair / sombre">
-  <svg id="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  <svg id="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-</button>
 
 <div class="bottom-nav" role="navigation">
   <button class="bn-item active" id="bn-accueil" onclick="bnActivate('bn-accueil');window.scrollTo({top:0,behavior:'smooth'})">
@@ -2784,7 +2330,7 @@ var _statsAnimal = null;
 function openStatsPanel() {
   document.getElementById('stats-overlay').style.display = 'flex';
   document.body.style.overflow = 'hidden';
-  var animals = safeParse('croc_animals', []);
+  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
   _statsAnimal = animals.length ? animals[0].name : null;
   renderStatsTabs();
   renderStats();
@@ -2795,12 +2341,12 @@ function closeStatsPanel() {
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
 }
 function renderStatsTabs() {
-  var animals = safeParse('croc_animals', []);
+  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
   var tabsEl = document.getElementById('stats-animal-tabs');
   if (!animals.length) { tabsEl.innerHTML = ''; return; }
   tabsEl.innerHTML = animals.map(function(a) {
     var active = a.name === _statsAnimal;
-    return '<button onclick="selectStatsAnimal(\'' + escapeJsArg(a.name) + '\')" style="flex-shrink:0;padding:8px 18px;border-radius:10px 10px 0 0;border:none;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:' + (active?'600':'400') + ';cursor:pointer;background:' + (active?'var(--cream)':'rgba(255,255,255,0.15)') + ';color:' + (active?'var(--green-dark)':'rgba(250,248,242,0.7)') + ';transition:all 0.18s">' + escapeHtml(a.name) + '</button>';
+    return '<button onclick="selectStatsAnimal(\'' + a.name + '\')" style="flex-shrink:0;padding:8px 18px;border-radius:10px 10px 0 0;border:none;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:' + (active?'600':'400') + ';cursor:pointer;background:' + (active?'var(--cream)':'rgba(255,255,255,0.15)') + ';color:' + (active?'var(--green-dark)':'rgba(250,248,242,0.7)') + ';transition:all 0.18s">' + a.name + '</button>';
   }).join('');
 }
 function selectStatsAnimal(name) {
@@ -2809,12 +2355,11 @@ function selectStatsAnimal(name) {
   renderStatsTabs();
   renderStats();
 }
-// Seuils alignés sur scoreProduct() et scoreLetter() — A/B = vert, C = orange, D/E = rouge
-function scoreColor(s) { return s >= 60 ? '#4a9422' : s >= 40 ? '#e08a00' : '#c44020'; }
+function scoreColor(s) { return s >= 70 ? '#4a9422' : s >= 40 ? '#e08a00' : '#c44020'; }
 function scoreLetter(s) { return s >= 80 ? 'A' : s >= 60 ? 'B' : s >= 40 ? 'C' : s >= 20 ? 'D' : 'E'; }
 function renderStats() {
-  var animals = safeParse('croc_animals', []);
-  var allAnalyses = safeParse('croc_history', []);
+  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  var allAnalyses = JSON.parse(localStorage.getItem('croc_history') || '[]');
   var el = document.getElementById('stats-content');
   if (!animals.length) {
     el.innerHTML = '<div style="text-align:center;padding:60px 20px"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--green-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:20px"><circle cx="5" cy="8" r="2"/><circle cx="9.5" cy="5.5" r="2"/><circle cx="14.5" cy="5.5" r="2"/><circle cx="19" cy="8" r="2"/><path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z"/></svg><div style="font-family:\'Fraunces\',serif;font-size:20px;color:var(--green-dark);margin-bottom:8px">Aucun animal</div><div style="font-size:14px;color:var(--text-muted);margin-bottom:28px;line-height:1.6">Ajoutez votre animal pour suivre<br>l\'évolution de son alimentation.</div><button onclick="closeStatsPanel();openAddAnimal()" style="padding:13px 32px;background:var(--green-dark);color:var(--cream);border:none;border-radius:12px;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:500;cursor:pointer">+ Ajouter un animal</button></div>';
@@ -2847,19 +2392,19 @@ function renderStats() {
   html += '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;color:' + gaugeColor + ';line-height:1">' + (avgScore !== null ? avgScore : '—') + '</div><div style="font-size:10px;color:var(--text-muted)">/100</div></div></div>';
   html += '<div style="flex:1">';
   html += '<div style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:' + gaugeColor + ';color:white;font-family:\'Fraunces\',serif;font-size:22px;font-weight:700;margin-bottom:10px">' + letter + '</div>';
-  html += '<div style="font-size:13px;color:var(--text-muted);line-height:1.5">' + (avgScore === null ? 'Aucune analyse pour cet animal.' : avgScore >= 80 ? 'Score moyen élevé selon notre algorithme indicatif.' : avgScore >= 60 ? 'Score moyen correct selon notre algorithme indicatif.' : avgScore >= 40 ? 'Score moyen selon notre algorithme indicatif.' : 'Score moyen faible selon notre algorithme indicatif — consultez un vétérinaire.') + '</div>';
+  html += '<div style="font-size:13px;color:var(--text-muted);line-height:1.5">' + (avgScore === null ? 'Aucune analyse pour cet animal.' : avgScore >= 70 ? 'Score moyen élevé selon notre algorithme indicatif.' : avgScore >= 40 ? 'Score moyen correct selon notre algorithme indicatif.' : 'Score moyen faible selon notre algorithme indicatif — consultez un vétérinaire.') + '</div>';
   html += '</div></div></div>';
 
   // Fiche animal
   html += '<div style="background:var(--green-dark);border-radius:20px;padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:20px">';
   html += '<div style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="8" r="2"/><circle cx="9.5" cy="5.5" r="2"/><circle cx="14.5" cy="5.5" r="2"/><circle cx="19" cy="8" r="2"/><path d="M12 10c-4 0-7 2.5-6.5 6.5C6 20 9 21 12 21s6-1 6.5-4.5C19 12.5 16 10 12 10z"/></svg></div>';
-  html += '<div style="flex:1"><div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500">' + escapeHtml(a.name) + '</div>';
-  html += '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-top:2px">' + (a.type ? escapeHtml(a.type.charAt(0).toUpperCase()+a.type.slice(1)) : '') + (a.breed?' · '+escapeHtml(a.breed):'') + '</div>';
+  html += '<div style="flex:1"><div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500">' + a.name + '</div>';
+  html += '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-top:2px">' + (a.type ? a.type.charAt(0).toUpperCase()+a.type.slice(1) : '') + (a.breed?' · '+a.breed:'') + '</div>';
   html += '<div style="display:flex;gap:16px;margin-top:10px">';
   if (a.age) html += '<div style="text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:15px;color:var(--cream)">' + a.age + ' an' + (a.age>1?'s':'') + '</div><div style="font-size:10px;color:rgba(250,248,242,0.5)">Âge</div></div>';
   if (a.weight) html += '<div style="text-align:center"><div style="font-family:\'Fraunces\',serif;font-size:15px;color:var(--cream)">' + a.weight + ' kg</div><div style="font-size:10px;color:rgba(250,248,242,0.5)">Poids</div></div>';
   html += '</div></div>';
-  html += '<button onclick="deleteAnimal(\'' + escapeJsArg(a.name) + '\')" style="background:rgba(255,255,255,0.1);border:none;border-radius:8px;padding:6px 10px;color:rgba(250,248,242,0.5);font-family:\'DM Sans\',sans-serif;font-size:11px;cursor:pointer">Supprimer</button>';
+  html += '<button onclick="deleteAnimal(\'' + a.name + '\')" style="background:rgba(255,255,255,0.1);border:none;border-radius:8px;padding:6px 10px;color:rgba(250,248,242,0.5);font-family:\'DM Sans\',sans-serif;font-size:11px;cursor:pointer">Supprimer</button>';
   html += '</div>';
 
   // Graphique évolution du score
@@ -2889,7 +2434,7 @@ function renderStats() {
   html += '</div>';
 
   // Graphique évolution du poids
-  var weights = safeParse('croc_weights', []).filter(function(w){ return w.animal === a.name; });
+  var weights = JSON.parse(localStorage.getItem('croc_weights') || '[]').filter(function(w){ return w.animal === a.name; });
   html += '<div style="background:var(--white);border-radius:20px;border:1px solid rgba(26,58,15,0.08);padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(26,58,15,0.06)">';
   html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">';
   html += '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted)">Évolution du poids</div>';
@@ -2899,7 +2444,7 @@ function renderStats() {
   html += '<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">';
   html += '<div style="flex:1;min-width:80px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Poids (kg)</label><input id="weight-input-val" type="number" step="0.1" min="0" placeholder="4.5" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>';
   html += '<div style="flex:1.5;min-width:110px"><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px">Date</label><input id="weight-input-date" type="date" style="width:100%;padding:8px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none"></div>';
-  html += '<button onclick="saveWeight(\'' + escapeJsArg(a.name) + '\')" style="padding:9px 16px;background:var(--green-dark);color:var(--cream);border:none;border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0">Enregistrer</button>';
+  html += '<button onclick="saveWeight(\'' + a.name + '\')" style="padding:9px 16px;background:var(--green-dark);color:var(--cream);border:none;border-radius:8px;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0">Enregistrer</button>';
   html += '</div></div>';
   if (weights.length < 2) {
     html += '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Enregistrez au moins 2 mesures pour voir l\'évolution.</div>';
@@ -2919,10 +2464,8 @@ function renderStats() {
       var border = i > 0 ? 'border-top:1px solid rgba(26,58,15,0.06);' : '';
       html += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;' + border + '">';
       html += '<div style="width:32px;height:32px;border-radius:8px;background:' + col + ';display:flex;align-items:center;justify-content:center;color:white;font-family:\'Fraunces\',serif;font-size:14px;font-weight:700;flex-shrink:0">' + lt + '</div>';
-      html += '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(h.name||'Produit') + '</div>';
-      // Affichage date — supporte timestamp (Date.now()), chaîne fr-FR, ou dateLabel
-      var dLabel = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date);
-      if (dLabel) html += '<div style="font-size:11px;color:var(--text-muted);margin-top:1px">' + escapeHtml(dLabel) + '</div>';
+      html += '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (h.name||'Produit') + '</div>';
+      if (h.date) html += '<div style="font-size:11px;color:var(--text-muted);margin-top:1px">' + h.date + '</div>';
       html += '</div>';
       html += '<div style="font-weight:700;color:' + col + ';font-size:14px;flex-shrink:0">' + sc + '<span style="font-size:10px;font-weight:400;color:var(--text-muted)">/100</span></div>';
       html += '</div>';
@@ -2936,7 +2479,7 @@ function renderStats() {
   if (analyses.length >= 2 && typeof Chart !== 'undefined') {
     var canvas = document.getElementById('stats-chart');
     if (canvas) {
-      var labels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date); return d || ('Analyse '+(i+1)); });
+      var labels = analyses.map(function(h,i){ return h.date || ('Analyse '+(i+1)); });
       var scores = analyses.map(function(h){ return h.score || 0; });
       _statsCharts.push(new Chart(canvas, {
         type: 'line',
@@ -2972,7 +2515,7 @@ function renderStats() {
   if (hasNutrData && analyses.length >= 2 && typeof Chart !== 'undefined') {
     var nutrCanvas = document.getElementById('stats-nutr-chart');
     if (nutrCanvas) {
-      var nutrLabels = analyses.map(function(h,i){ var d = h.dateLabel || (typeof h.date === 'number' ? new Date(h.date).toLocaleDateString('fr-FR') : h.date); return d || ('Analyse '+(i+1)); });
+      var nutrLabels = analyses.map(function(h,i){ return h.date || ('Analyse '+(i+1)); });
       _statsCharts.push(new Chart(nutrCanvas, {
         type: 'line',
         data: {
@@ -3027,9 +2570,9 @@ function renderStats() {
 }
 function deleteAnimal(name) {
   if (!confirm('Supprimer ' + name + ' ?')) return;
-  var animals = safeParse('croc_animals', []);
-  safeSet('croc_animals', animals.filter(function(a){return a.name!==name}));
-  var remaining = safeParse('croc_animals', []);
+  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
+  localStorage.setItem('croc_animals', JSON.stringify(animals.filter(function(a){return a.name!==name})));
+  var remaining = JSON.parse(localStorage.getItem('croc_animals') || '[]');
   _statsAnimal = remaining.length ? remaining[0].name : null;
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
   renderStatsTabs();
@@ -3045,10 +2588,10 @@ function saveWeight(animalName) {
   if (!val || isNaN(parseFloat(val))) return;
   var dateLabel = dateInput ? new Date(dateInput).toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
   var isoDate = dateInput || new Date().toISOString().split('T')[0];
-  var ws = safeParse('croc_weights', []);
+  var ws = JSON.parse(localStorage.getItem('croc_weights') || '[]');
   ws.push({ animal: animalName, weight: parseFloat(val), date: dateLabel, isoDate: isoDate });
   ws.sort(function(a,b){ return a.isoDate.localeCompare(b.isoDate); });
-  safeSet('croc_weights', ws);
+  localStorage.setItem('croc_weights', JSON.stringify(ws));
   _statsCharts.forEach(function(c){ c.destroy(); }); _statsCharts = [];
   renderStats();
 }
@@ -3065,7 +2608,7 @@ function closeAddAnimal() {
 function saveAnimal() {
   var name = document.getElementById('animal-name').value.trim();
   if (!name) { document.getElementById('animal-name').focus(); return; }
-  var animals = safeParse('croc_animals', []);
+  var animals = JSON.parse(localStorage.getItem('croc_animals') || '[]');
   animals.push({
     name: name,
     type: document.getElementById('animal-type').value,
@@ -3073,7 +2616,7 @@ function saveAnimal() {
     age: document.getElementById('animal-age').value,
     weight: document.getElementById('animal-weight').value
   });
-  safeSet('croc_animals', animals);
+  localStorage.setItem('croc_animals', JSON.stringify(animals));
   closeAddAnimal();
   ['animal-name','animal-breed','animal-age','animal-weight'].forEach(function(id){document.getElementById(id).value='';});
 }
@@ -3106,27 +2649,16 @@ function checkConsent() {
 function acceptConsent() {
   // Stockage horodaté du consentement avec version (Art. 7 RGPD — preuve de consentement)
   var consentRecord = {
-    version: '1.1',
+    version: '1.0',
     date: Date.now(),
     dateISO: new Date().toISOString(),
     userAgent: navigator.userAgent.substring(0, 80),
     language: navigator.language || 'fr',
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown',
     ageConfirmed: true,
     cguAccepted: true,
-    cguVersion: '2026-05-16',
     scoreDisclaimerRead: true
   };
-  safeSet('croc_consent_v1', consentRecord);
-  // Persistance Firebase si connecté — preuve de consentement durable (Art. 7 RGPD)
-  try {
-    var u = auth && auth.currentUser;
-    if (u) {
-      u.updateProfile({ displayName: u.displayName || 'user' }).catch(function(){});
-      // Stockage du timestamp de consentement dans les customClaims n'est pas possible côté client
-      // Le consentRecord localStorage sert de preuve principale — Firebase Auth conserve l'email
-    }
-  } catch(e) {}
+  localStorage.setItem('croc_consent_v1', JSON.stringify(consentRecord));
   document.getElementById('consent-overlay').style.display = 'none';
   if (!localStorage.getItem('croc_cookies_choice')) {
     document.getElementById('cookie-banner').style.display = 'block';
@@ -3144,7 +2676,7 @@ function acceptConsentChecked() {
 }
 function _cookieSave(prefs) {
   prefs.date = Date.now();
-  safeSet('croc_cookies_choice', prefs);
+  localStorage.setItem('croc_cookies_choice', JSON.stringify(prefs));
 }
 function _cookieApply(prefs) {
   if (prefs.push) {
@@ -3209,19 +2741,6 @@ function openCookieManager() {
 }
 window.addEventListener('load', checkConsent);
 
-// Gestion du raccourci PWA "Analyser un produit" (manifest.json shortcuts)
-window.addEventListener('load', function() {
-  try {
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('action') === 'search') {
-      setTimeout(function() {
-        var el = document.getElementById('main-search');
-        if (el) { el.focus(); el.scrollIntoView({behavior:'smooth', block:'center'}); }
-      }, 400);
-    }
-  } catch(e) {}
-});
-
 function openAnalyserPanel() {
   var el = document.getElementById('analyser-overlay');
   el.style.display = 'flex';
@@ -3281,11 +2800,11 @@ function renderAnalyserResult(p, name) {
   var isCustom = !!p._custom;
 
   // Historique
-  var hist = safeParse('croc_history', []);
+  var hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
   hist = hist.filter(function(h){ return h.name !== productName; });
   hist.unshift({name:productName, brand:brand, score:scored.score, letter:scored.letter, bg:scored.bg, color:scored.color, date:Date.now()});
   if (hist.length > 50) hist.pop();
-  safeSet('croc_history', hist);
+  localStorage.setItem('croc_history', JSON.stringify(hist));
 
   var bars = [
     ['Protéines', prot, '#4a9422'],
@@ -3314,8 +2833,8 @@ function renderAnalyserResult(p, name) {
     '<div style="background:var(--green-dark);border-radius:20px;padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:16px">'
     + '<div style="width:72px;height:72px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:32px;font-weight:600;flex-shrink:0;background:' + scored.bg + ';color:' + scored.color + '">' + scored.letter + '</div>'
     + '<div style="flex:1;min-width:0">'
-    + '<div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(productName) + '</div>'
-    + (brand ? '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-bottom:6px">' + escapeHtml(brand) + '</div>' : '<div style="margin-bottom:6px"></div>')
+    + '<div style="font-family:\'Fraunces\',serif;font-size:18px;color:var(--cream);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + productName + '</div>'
+    + (brand ? '<div style="font-size:12px;color:rgba(250,248,242,0.6);margin-bottom:6px">' + brand + '</div>' : '<div style="margin-bottom:6px"></div>')
     + '<div style="display:flex;align-items:baseline;gap:4px">'
     + '<span style="font-size:26px;font-weight:700;color:white;font-family:\'Fraunces\',serif">' + scored.score + '</span>'
     + '<span style="font-size:13px;color:rgba(255,255,255,0.5)">/100</span>'
@@ -3339,7 +2858,7 @@ function renderAnalyserResult(p, name) {
     + (p.ingredients_text
       ? '<div style="background:var(--white);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid rgba(26,58,15,0.07)">'
         + '<div style="font-size:13px;font-weight:600;color:var(--text);font-family:\'DM Sans\',sans-serif;margin-bottom:8px">Ingrédients</div>'
-        + '<div style="font-size:13px;color:var(--text-muted);line-height:1.6;font-family:\'DM Sans\',sans-serif">' + escapeHtml(p.ingredients_text) + '</div>'
+        + '<div style="font-size:13px;color:var(--text-muted);line-height:1.6;font-family:\'DM Sans\',sans-serif">' + p.ingredients_text + '</div>'
         + '</div>'
       : '')
 
@@ -3347,7 +2866,7 @@ function renderAnalyserResult(p, name) {
     + (isEstimated
       ? '<div style="background:#fff3cd;border-radius:14px;padding:16px;margin-bottom:16px;border:2px solid #f0ad00">'
         + '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">'
-        + '<span style="font-size:24px;flex-shrink:0">⚠️</span>'
+        + '<span style="font-size:24px;flex-shrink:0">??</span>'
         + '<div>'
         + '<div style="font-size:15px;color:#7a5000;font-weight:700;font-family:\'DM Sans\',sans-serif;margin-bottom:6px">Valeurs estimées — non vérifiées</div>'
         + '<div style="font-size:14px;color:#7a5000;line-height:1.6;font-family:\'DM Sans\',sans-serif">'
@@ -3378,7 +2897,7 @@ function renderAnalyserResult(p, name) {
     // Disclaimer principal
     + '<div style="background:#fff8e6;border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1px solid rgba(232,184,75,0.3)">'
     + '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">'
-    + '<span style="font-size:16px;flex-shrink:0">⚠️</span>'
+    + '<span style="font-size:16px;flex-shrink:0">??</span>'
     + '<div style="font-size:11px;color:#8b6a00;line-height:1.5"><strong>Score indicatif, non contractuel.</strong> Données issues d\'<a href="https://world.openpetfoodfacts.org" target="_blank" rel="noopener" style="color:#8b6a00;text-decoration:underline">Open Pet Food Facts</a> (licence ODbL) et d\'une base collaborative — exactitude, exhaustivité et actualité <strong>non garanties</strong>. Ce score ne constitue pas un avis médical ou vétérinaire. Ne remplace pas l\'avis d\'un <strong>vétérinaire qualifié et diplômé</strong>. CrocScore décline toute responsabilité quant aux décisions prises sur la base de ces informations.</div>'
     + '</div>'
     + '<div style="font-size:10px;color:#a07820;line-height:1.4;border-top:1px solid rgba(232,184,75,0.2);padding-top:8px">CrocScore — Outil informatif uniquement · <a href="mailto:crocscore.help@gmail.com" style="color:#8b6a00">crocscore.help@gmail.com</a> · <a href="https://www.cnil.fr" target="_blank" rel="noopener" style="color:#8b6a00">CNIL</a></div>'
@@ -3391,9 +2910,9 @@ function renderAnalyserResult(p, name) {
 
 function renderAnalyserNotFound(name) {
   document.getElementById('analyser-content').innerHTML =
-    '<div style="text-align:center;padding:32px 0 20px;font-size:40px">🔍</div>'
+    '<div style="text-align:center;padding:32px 0 20px;font-size:40px">??</div>'
     + '<div style="font-size:16px;font-weight:600;color:var(--text);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:4px">Produit introuvable</div>'
-    + (name ? '<div style="font-size:11px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:6px;font-family:monospace;background:var(--cream-dark);display:inline-block;padding:2px 10px;border-radius:6px;margin:0 auto 12px;display:block">Code scanné : ' + escapeHtml(name) + '</div>' : '')
+    + (name ? '<div style="font-size:11px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:6px;font-family:monospace;background:var(--cream-dark);display:inline-block;padding:2px 10px;border-radius:6px;margin:0 auto 12px;display:block">Code scanné : ' + name + '</div>' : '')
     + '<div style="font-size:13px;color:var(--text-muted);text-align:center;font-family:\'DM Sans\',sans-serif;margin-bottom:24px">Renseignez les infos pour obtenir votre CrocScore.</div>'
     + '<div style="background:var(--white);border-radius:16px;padding:20px;border:1px solid rgba(26,58,15,0.07)">'
     + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">'
@@ -3408,8 +2927,8 @@ function renderAnalyserNotFound(name) {
     + '<input id="an-ingr" type="text" placeholder="ex: poulet, riz, maïs…" style="width:100%;padding:9px 10px;border:1.5px solid rgba(26,58,15,0.15);border-radius:9px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none;box-sizing:border-box"></div>'
     + '<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:12px;cursor:pointer;font-family:\'DM Sans\',sans-serif">'
     + '<input type="checkbox" id="an-save" checked style="accent-color:var(--green-bright)"> Enregistrer sur cet appareil (localStorage uniquement — non transmis)</label>'
-    + '<div style="font-size:10px;color:var(--text-light);line-height:1.5;margin-bottom:12px;padding:8px 10px;background:var(--cream);border-radius:8px">💡 Score calculé à partir des valeurs saisies. Résultat purement indicatif, non contractuel. Ne remplace pas l\'avis d\'un vétérinaire qualifié. Données stockées uniquement sur votre appareil (RGPD Art. 5.1.c).</div>'
-    + '<button onclick="submitAnalyserForm(\'' + escapeJsArg(name) + '\')" style="width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:11px;font-family:\'DM Sans\',sans-serif;font-size:15px;font-weight:500;cursor:pointer;box-sizing:border-box">Analyser</button>'
+    + '<div style="font-size:10px;color:var(--text-light);line-height:1.5;margin-bottom:12px;padding:8px 10px;background:var(--cream);border-radius:8px">?? Score calculé à partir des valeurs saisies. Résultat purement indicatif, non contractuel. Ne remplace pas l\'avis d\'un vétérinaire qualifié. Données stockées uniquement sur votre appareil (RGPD Art. 5.1.c).</div>'
+    + '<button onclick="submitAnalyserForm(\'' + name.replace(/'/g, "\\'") + '\')" style="width:100%;padding:13px;background:var(--green-dark);color:var(--cream);border:none;border-radius:11px;font-family:\'DM Sans\',sans-serif;font-size:15px;font-weight:500;cursor:pointer;box-sizing:border-box">Analyser</button>'
     + '</div>';
 }
 
@@ -3421,21 +2940,21 @@ function submitAnalyserForm(productName) {
   var save = document.getElementById('an-save').checked;
   var product = {product_name: productName, nutriments:{proteins_100g:prot, fat_100g:fat, carbohydrates_100g:carb}, ingredients_text:ingr, _custom:true};
   if (save && productName) {
-    var custom = safeParse('croc_custom_products', []);
-    if (!custom.find(function(p){ return (p.product_name||'').toLowerCase() === productName.toLowerCase(); })) {
+    var custom = JSON.parse(localStorage.getItem('croc_custom_products') || '[]');
+    if (!custom.find(function(p){ return p.product_name.toLowerCase() === productName.toLowerCase(); })) {
       custom.push(product);
-      safeSet('croc_custom_products', custom);
+      localStorage.setItem('croc_custom_products', JSON.stringify(custom));
     }
   }
   renderAnalyserResult(product, productName);
 }
 
 function renderAnalyserHistory() {
-  var hist = safeParse('croc_history', []);
+  var hist = JSON.parse(localStorage.getItem('croc_history') || '[]');
   if (!hist.length) {
     document.getElementById('analyser-content').innerHTML =
       '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center">'
-      + '<div style="font-size:52px;margin-bottom:16px">🐾</div>'
+      + '<div style="font-size:52px;margin-bottom:16px">??</div>'
       + '<div style="font-family:\'Fraunces\',serif;font-size:20px;font-weight:500;color:var(--text);margin-bottom:8px">Analysez un aliment</div>'
       + '<div style="font-size:14px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif;line-height:1.5">Tapez un nom de produit ou scannez<br>le code-barres d\'une boîte.</div>'
       + '</div>';
@@ -3443,20 +2962,16 @@ function renderAnalyserHistory() {
   }
   var items = hist.slice(0, 15).map(function(h) {
     var age = '';
-    // Supporte timestamp numérique OU chaîne fr-FR (ancien format de displayProduct)
-    var ts = typeof h.date === 'number' ? h.date : null;
-    if (ts) {
-      var diff = Math.round((Date.now() - ts) / 60000);
+    if (h.date) {
+      var diff = Math.round((Date.now() - h.date) / 60000);
       age = diff < 2 ? 'à l\'instant' : diff < 60 ? 'il y a ' + diff + ' min' :
             diff < 1440 ? 'il y a ' + Math.round(diff/60) + 'h' : 'il y a ' + Math.round(diff/1440) + 'j';
-    } else if (h.dateLabel || (typeof h.date === 'string')) {
-      age = h.dateLabel || h.date;
     }
     return '<div style="background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid rgba(26,58,15,0.07)">'
-      + '<div style="width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;flex-shrink:0;background:' + escapeHtml(h.bg||'#e8f5d8') + ';color:' + escapeHtml(h.color||'#1a3a0f') + '">' + escapeHtml(h.letter||'?') + '</div>'
+      + '<div style="width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:\'Fraunces\',serif;font-size:22px;font-weight:600;flex-shrink:0;background:' + (h.bg||'#e8f5d8') + ';color:' + (h.color||'#1a3a0f') + '">' + (h.letter||'?') + '</div>'
       + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:\'DM Sans\',sans-serif">' + escapeHtml(h.name||'Produit') + '</div>'
-      + '<div style="font-size:12px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif">' + (h.brand ? escapeHtml(h.brand) + ' · ' : '') + escapeHtml(age) + '</div>'
+      + '<div style="font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:\'DM Sans\',sans-serif">' + (h.name||'Produit') + '</div>'
+      + '<div style="font-size:12px;color:var(--text-muted);font-family:\'DM Sans\',sans-serif">' + (h.brand ? h.brand + ' · ' : '') + age + '</div>'
       + '</div>'
       + '<div style="font-size:16px;font-weight:700;color:var(--text);font-family:\'Fraunces\',serif">' + (h.score||'—') + '</div>'
       + '</div>';
@@ -3467,6 +2982,8 @@ function renderAnalyserHistory() {
 }
 
 </script>
+
+<script src="premium-anims.js" defer></script>
 
 </body>
 </html>

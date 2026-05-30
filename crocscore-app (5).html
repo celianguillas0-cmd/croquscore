@@ -1,0 +1,4318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>CrocScore — Analyseur de croquettes pour chiens et chats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <style data-src="tokens.css">
+/* CrocScore — Design tokens (light + dark) */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* ─── Light theme (default) ──────────────────────────────────── */
+  --cs-green-dark: #1a3a0f;
+  --cs-green-mid: #2d6016;
+  --cs-green-bright: #4a9422;
+  --cs-green-light: #a8d878;
+  --cs-green-pale: #e8f5d8;
+  --cs-cream: #faf8f2;
+  --cs-cream-dark: #f0ece0;
+  --cs-white: #ffffff;
+  --cs-text: #1a1a18;
+  --cs-text-muted: #6b6b5e;
+  --cs-text-light: #9b9b8e;
+
+  /* Aliases sémantiques (utilisés par les composants) */
+  --cs-bg: var(--cs-cream);
+  --cs-bg-deep: #f3eee2;
+  --cs-surface: var(--cs-white);
+  --cs-surface-2: var(--cs-cream-dark);
+  --cs-ink: var(--cs-text);
+  --cs-ink-2: #2a2a25;
+  --cs-muted: var(--cs-text-muted);
+  --cs-faint: var(--cs-text-light);
+  --cs-border: rgba(26, 58, 15, 0.10);
+  --cs-border-strong: rgba(26, 58, 15, 0.18);
+  --cs-accent: var(--cs-green-bright);
+  --cs-accent-ink: var(--cs-green-dark);
+  --cs-accent-tint: var(--cs-green-pale);
+  --cs-accent-tint-2: #d4ecb8;
+  --cs-shadow-rgb: 26, 58, 15;
+
+  /* Score A→E — couleurs exactes du site */
+  --cs-grade-a-bg: #e8f5d8; --cs-grade-a-fg: #1a3a0f;
+  --cs-grade-b-bg: #d4f0a0; --cs-grade-b-fg: #2d6016;
+  --cs-grade-c-bg: #fdedc0; --cs-grade-c-fg: #8b5e0a;
+  --cs-grade-d-bg: #fdd8b0; --cs-grade-d-fg: #8b3a0a;
+  --cs-grade-e-bg: #f8c8c8; --cs-grade-e-fg: #b43020;
+
+  /* Type */
+  --cs-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --cs-serif: 'Fraunces', 'Times New Roman', serif;
+  --cs-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --cs-r-sm: 8px; --cs-r-md: 12px; --cs-r-lg: 16px; --cs-r-xl: 20px;
+
+  /* Gradient signature */
+  --cs-grad: linear-gradient(135deg, #4a9422 0%, #2d6016 100%);
+  --cs-grad-hover: linear-gradient(135deg, #5aaa2e 0%, #3a7020 100%);
+
+  /* Color scheme hint to the browser */
+  color-scheme: light;
+}
+
+/* ─── Dark theme ────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --cs-green-dark: #c8e8a8;       /* used as primary green text */
+  --cs-green-mid: #a8d878;
+  --cs-green-bright: #8fc868;
+  --cs-green-light: #b8e088;
+  --cs-green-pale: rgba(168, 216, 120, 0.14);
+  --cs-cream: #15140f;
+  --cs-cream-dark: #1f1d17;
+  --cs-white: #1c1a14;
+  --cs-text: #f0ece0;
+  --cs-text-muted: #9d9888;
+  --cs-text-light: #6b6859;
+
+  --cs-bg: #15140f;
+  --cs-bg-deep: #0e0d09;
+  --cs-surface: #1f1d17;
+  --cs-surface-2: #2a2620;
+  --cs-ink: #f0ece0;
+  --cs-ink-2: #d8d4c5;
+  --cs-muted: #9d9888;
+  --cs-faint: #6b6859;
+  --cs-border: rgba(232, 226, 216, 0.08);
+  --cs-border-strong: rgba(232, 226, 216, 0.16);
+  --cs-accent: #a8d878;
+  --cs-accent-ink: #c8e8a8;
+  --cs-accent-tint: rgba(168, 216, 120, 0.14);
+  --cs-accent-tint-2: rgba(168, 216, 120, 0.22);
+  --cs-shadow-rgb: 0, 0, 0;
+
+  /* Grade colors stay vibrant but with darker backgrounds */
+  --cs-grade-a-bg: #2a4818; --cs-grade-a-fg: #c8e8a8;
+  --cs-grade-b-bg: #324a18; --cs-grade-b-fg: #b4dc78;
+  --cs-grade-c-bg: #4a3d10; --cs-grade-c-fg: #f0c860;
+  --cs-grade-d-bg: #4a2a10; --cs-grade-d-fg: #f0a060;
+  --cs-grade-e-bg: #4a1c14; --cs-grade-e-fg: #f08070;
+
+  color-scheme: dark;
+}
+
+.cs-root {
+  font-family: var(--cs-sans);
+  color: var(--cs-ink);
+  background: var(--cs-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.6;
+  transition: background-color 0.4s ease, color 0.3s ease;
+}
+
+.cs-serif { font-family: var(--cs-serif); font-weight: 500; letter-spacing: -0.02em; }
+.cs-mono { font-family: var(--cs-mono); font-feature-settings: "tnum", "zero"; }
+
+/* Placeholder pour images manquantes */
+.cs-placeholder {
+  background-color: var(--cs-cream-dark);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(var(--cs-shadow-rgb), 0.08) 0 1px,
+    transparent 1px 8px
+  );
+  color: var(--cs-text-light);
+  font-family: var(--cs-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+}
+
+button { font-family: inherit; }
+.cs-root *::selection { background: var(--cs-green-bright); color: var(--cs-cream); }
+
+</style>
+  <style data-src="prototype.css">
+/* CrocScore — Prototype interactif (animations + interactions) */
+
+/* ─── Base & device frame ───────────────────────────────────────── */
+html, body {
+  margin: 0; padding: 0; min-height: 100%;
+  background:
+    radial-gradient(1200px 800px at 80% -10%, rgba(74,148,34,0.15) 0%, transparent 60%),
+    radial-gradient(900px 700px at -10% 100%, rgba(168,216,120,0.18) 0%, transparent 55%),
+    var(--cs-cream);
+  font-family: var(--cs-sans);
+  color: var(--cs-text);
+  overflow-x: hidden;
+  transition: background-color 0.4s ease;
+}
+[data-theme="dark"] body, body[data-theme="dark"] {
+  background:
+    radial-gradient(1200px 800px at 80% -10%, rgba(168,216,120,0.07) 0%, transparent 60%),
+    radial-gradient(900px 700px at -10% 100%, rgba(74,148,34,0.1) 0%, transparent 55%),
+    #0a0908;
+}
+
+.cs-stage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+}
+
+/* Phone frame visible only on desktop */
+.cs-phone {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: min(920px, 100vh);
+  background: var(--cs-cream);
+  border-radius: 48px;
+  overflow: hidden;
+  box-shadow:
+    0 30px 80px -10px rgba(var(--cs-shadow-rgb), 0.35),
+    0 8px 24px rgba(var(--cs-shadow-rgb), 0.12),
+    0 0 0 12px #1a1812,
+    0 0 0 13px rgba(168, 216, 120, 0.15);
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.4s ease;
+}
+
+/* Host for absolutely-positioned screens so the tab bar can sit below them */
+.cs-screen-host {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Mobile: no frame, edge-to-edge */
+@media (max-width: 540px) {
+  body { background: var(--cs-cream); }
+  [data-theme="dark"] body, body[data-theme="dark"] { background: #0a0908; }
+  .cs-stage { padding: 0; min-height: 100dvh; height: 100dvh; }
+  .cs-phone {
+    max-width: 100%;
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Tablet : phone frame with notch (look coque iPhone) */
+@media (min-width: 541px) and (max-width: 899px) {
+  .cs-phone::before {
+    content: '';
+    position: absolute; top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 110px; height: 30px;
+    background: #1a1812;
+    border-radius: 22px;
+    z-index: 100;
+  }
+}
+
+/* Desktop (>=900px) : plein écran, pas de coque */
+@media (min-width: 900px) {
+  body { background: var(--cs-cream); }
+  [data-theme="dark"] body, body[data-theme="dark"] { background: #0a0908; }
+  .cs-stage { padding: 0; min-height: 100vh; height: 100vh; align-items: stretch; }
+  .cs-phone {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .cs-phone::before { display: none; }
+  /* Contenu centré pour la lisibilité (mais le tab bar reste pleine largeur) */
+  .cs-screen-scroll { max-width: 760px; margin: 0 auto; width: 100%; }
+  .cs-screen { background: var(--cs-bg); }
+}
+
+/* ─── Screen / page system ──────────────────────────────────────── */
+.cs-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--cs-cream);
+}
+
+.cs-screen-scroll {
+  flex: 1; overflow-y: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.cs-screen-scroll::-webkit-scrollbar { display: none; }
+
+.cs-status-pad { height: env(safe-area-inset-top, 50px); min-height: 50px; }
+
+/* Page transitions */
+.cs-screen.enter-right { animation: enterRight .42s cubic-bezier(.22,.9,.3,1) both; }
+.cs-screen.enter-left { animation: enterLeft .42s cubic-bezier(.22,.9,.3,1) both; }
+.cs-screen.enter-fade { animation: enterFade .35s ease-out both; }
+.cs-screen.exit-left { animation: exitLeft .35s cubic-bezier(.4,0,.7,.2) both; }
+.cs-screen.exit-right { animation: exitRight .35s cubic-bezier(.4,0,.7,.2) both; }
+.cs-screen.exit-fade { animation: exitFade .25s ease-in both; }
+
+@keyframes enterRight { from { transform: translateX(100%); opacity: 0.6; } to { transform: none; opacity: 1; } }
+@keyframes enterLeft { from { transform: translateX(-100%); opacity: 0.6; } to { transform: none; opacity: 1; } }
+@keyframes enterFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes exitLeft { from { transform: none; opacity: 1; } to { transform: translateX(-30%); opacity: 0.4; } }
+@keyframes exitRight { from { transform: none; opacity: 1; } to { transform: translateX(30%); opacity: 0.4; } }
+@keyframes exitFade { from { opacity: 1; } to { opacity: 0; } }
+
+/* ─── Entrance animations ───────────────────────────────────────── */
+.cs-fade-up { animation: fadeUp .6s cubic-bezier(.22,.9,.3,1) both; }
+.cs-fade-in { animation: fadeIn .5s ease-out both; }
+.cs-pop-in { animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both; }
+.cs-slide-up { animation: slideUp .5s cubic-bezier(.22,.9,.3,1) both; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+
+/* Stagger helpers */
+.cs-stagger > * { animation-delay: calc(var(--i, 0) * 60ms + 80ms); }
+
+/* ─── Score reveal animation ────────────────────────────────────── */
+@keyframes ringFill {
+  from { stroke-dashoffset: var(--ring-c); }
+  to { stroke-dashoffset: var(--ring-target); }
+}
+@keyframes letterPop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes bar-fill {
+  from { width: 0; }
+  to { width: var(--bar-w); }
+}
+@keyframes count-up { from { opacity: 0; } to { opacity: 1; } }
+
+.cs-score-reveal .cs-ring-fg {
+  animation: ringFill 1.2s cubic-bezier(.22,.9,.3,1) .15s both;
+}
+.cs-score-reveal .cs-grade-letter {
+  animation: letterPop .8s cubic-bezier(.34,1.56,.64,1) .8s both;
+}
+.cs-score-reveal .cs-score-num {
+  animation: count-up .6s ease-out 1.1s both;
+}
+.cs-bar > i {
+  animation: bar-fill 1s cubic-bezier(.22,.9,.3,1) both;
+}
+
+/* ─── Scan animation ────────────────────────────────────────────── */
+@keyframes scanLaser {
+  0% { transform: translateY(-90px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(90px); opacity: 0; }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 216, 120, 0.5); }
+  50% { box-shadow: 0 0 0 18px rgba(168, 216, 120, 0); }
+}
+.cs-laser { animation: scanLaser 1.6s ease-in-out infinite; }
+.cs-pulse { animation: pulse-glow 2s ease-out infinite; }
+
+@keyframes corner-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+.cs-reticle-corner { animation: corner-pulse 1.6s ease-in-out infinite; }
+
+/* Scan success burst */
+@keyframes success-burst {
+  0% { transform: scale(0); opacity: 0; }
+  40% { transform: scale(1.4); opacity: 0.6; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.cs-success-burst {
+  position: absolute; inset: 50% 50%; width: 80px; height: 80px;
+  margin: -40px 0 0 -40px;
+  border: 3px solid var(--cs-green-light);
+  border-radius: 50%;
+  animation: success-burst .9s ease-out both;
+}
+
+/* ─── Pressable elements ────────────────────────────────────────── */
+.cs-press {
+  transition: transform .18s ease, box-shadow .2s ease, background .15s ease;
+  cursor: pointer;
+}
+.cs-press:active { transform: scale(0.97); }
+
+.cs-card-press {
+  transition: transform .25s cubic-bezier(.22,.9,.3,1), box-shadow .25s ease, border-color .15s;
+  cursor: pointer;
+}
+.cs-card-press:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(26,58,15,0.10); }
+.cs-card-press:active { transform: scale(0.98); }
+
+/* ─── Tab bar ───────────────────────────────────────────────────── */
+.cs-tab-bar {
+  display: flex;
+  align-items: center; justify-content: space-around;
+  padding: 10px 14px calc(env(safe-area-inset-bottom, 0px) + 12px);
+  background: rgba(250,248,242,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(26,58,15,0.08);
+  position: relative; z-index: 10;
+}
+.cs-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 14px;
+  color: var(--cs-text-light);
+  font-size: 11px; font-weight: 500;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: color .18s ease, background .18s ease, transform .18s ease;
+  flex: 1; min-width: 0;
+}
+.cs-tab.is-active { color: var(--cs-green-dark); }
+.cs-tab.is-active .cs-tab-icon {
+  background: var(--cs-green-pale);
+  color: var(--cs-green-dark);
+}
+.cs-tab:active { transform: scale(0.93); }
+.cs-tab-icon {
+  width: 36px; height: 28px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cs-text-muted);
+  transition: background .2s ease, color .18s;
+}
+
+/* Big primary scan button */
+.cs-tab-scan {
+  width: 56px; height: 56px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #4a9422 0%, #2d6016 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  box-shadow: 0 8px 22px rgba(74,148,34,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .2s ease;
+  position: relative;
+  margin-top: -22px;
+}
+.cs-tab-scan:active { transform: scale(0.93); }
+.cs-tab-scan::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 22px;
+  border: 2px solid rgba(74,148,34,0.2);
+  animation: scan-ring 2.4s ease-out infinite;
+}
+@keyframes scan-ring {
+  0% { transform: scale(0.9); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* ─── Floating shimmer (skeleton) ───────────────────────────────── */
+@keyframes shimmer {
+  from { background-position: -200px 0; }
+  to { background-position: 200px 0; }
+}
+.cs-shimmer {
+  background: linear-gradient(90deg,
+    rgba(26,58,15,0.06) 0%,
+    rgba(26,58,15,0.12) 50%,
+    rgba(26,58,15,0.06) 100%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 8px;
+}
+
+/* ─── Hero parallax decorations ─────────────────────────────────── */
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0,0) rotate(0); }
+  33% { transform: translate(8px, -10px) rotate(2deg); }
+  66% { transform: translate(-6px, 8px) rotate(-2deg); }
+}
+.cs-blob { animation: blobFloat 8s ease-in-out infinite; }
+
+/* ─── Sheet (bottom modal) ──────────────────────────────────────── */
+.cs-sheet-overlay {
+  position: absolute; inset: 0;
+  background: rgba(20,18,14,0.45);
+  backdrop-filter: blur(8px);
+  z-index: 20;
+  animation: fadeIn .25s ease-out;
+}
+.cs-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: var(--cs-cream);
+  border-radius: 28px 28px 0 0;
+  z-index: 21;
+  padding: 8px 18px 24px;
+  box-shadow: 0 -20px 60px rgba(26,58,15,0.2);
+  animation: sheetSlide .42s cubic-bezier(.22,.9,.3,1) both;
+}
+@keyframes sheetSlide { from { transform: translateY(100%); } to { transform: none; } }
+.cs-sheet-handle {
+  width: 38px; height: 4px; background: rgba(26,58,15,0.18);
+  border-radius: 999px; margin: 0 auto 12px;
+}
+
+/* ─── Toast / feedback ──────────────────────────────────────────── */
+@keyframes toastIn { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+.cs-toast {
+  position: absolute; bottom: 100px; left: 50%;
+  padding: 10px 18px;
+  background: rgba(20,18,14,0.92);
+  color: white;
+  border-radius: 999px;
+  font-size: 13px; font-weight: 500;
+  z-index: 30;
+  animation: toastIn .35s cubic-bezier(.22,.9,.3,1) both;
+  display: flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(20px);
+}
+
+/* ─── Premium ribbon ────────────────────────────────────────────── */
+.cs-premium-ribbon {
+  background: linear-gradient(135deg, #1a3a0f 0%, #2d6016 100%);
+  color: var(--cs-cream);
+  border-radius: 18px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.cs-premium-ribbon::after {
+  content: ''; position: absolute;
+  top: -30%; right: -10%;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(168,216,120,0.3) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* ─── Animated brand mark for splash ────────────────────────────── */
+@keyframes spinIn {
+  from { transform: rotate(-120deg) scale(0.5); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.cs-mark-anim { animation: spinIn .8s cubic-bezier(.34,1.56,.64,1) both; }
+
+</style>
+  <style data-src="prototype-anims.css">
+/* CrocScore — Animations premium (compléments à prototype.css) */
+
+/* ─── Background mesh animé ────────────────────────────────────────── */
+.cs-mesh-bg {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(60% 50% at 20% 20%, rgba(168,216,120,0.18) 0%, transparent 60%),
+    radial-gradient(50% 40% at 80% 70%, rgba(74,148,34,0.14) 0%, transparent 60%),
+    radial-gradient(40% 60% at 50% 100%, rgba(232,245,216,0.6) 0%, transparent 70%);
+  animation: mesh-shift 18s ease-in-out infinite;
+}
+[data-theme="dark"] .cs-mesh-bg {
+  background:
+    radial-gradient(60% 50% at 20% 20%, rgba(168,216,120,0.1) 0%, transparent 60%),
+    radial-gradient(50% 40% at 80% 70%, rgba(74,148,34,0.12) 0%, transparent 60%);
+}
+@keyframes mesh-shift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(2%, -1%) scale(1.04); }
+  66% { transform: translate(-1%, 2%) scale(0.98); }
+}
+
+/* ─── Hero text reveal (mot par mot) ──────────────────────────────── */
+.cs-word {
+  opacity: 0;
+  transform: translateY(18px);
+  display: inline-block;
+  animation: word-reveal .65s cubic-bezier(.22, .9, .3, 1) forwards;
+  animation-delay: calc(var(--w, 0) * 70ms + 100ms);
+  will-change: transform, opacity;
+}
+@keyframes word-reveal {
+  to { opacity: 1; transform: none; }
+}
+
+/* ─── Ripple effect ───────────────────────────────────────────────── */
+.cs-ripple-host {
+  position: relative;
+  overflow: hidden;
+}
+.cs-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.22;
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple .7s cubic-bezier(.22, .9, .3, 1) forwards;
+}
+@keyframes ripple {
+  to { transform: scale(2.4); opacity: 0; }
+}
+
+/* ─── Magnetic / Tilt cards ───────────────────────────────────────── */
+.cs-tilt {
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(0) rotateY(0) translate3d(0, 0, 0);
+  transition: transform .35s cubic-bezier(.22, .9, .3, 1);
+  will-change: transform;
+}
+
+/* ─── Particle burst (for high scores) ────────────────────────────── */
+.cs-particles {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: visible;
+}
+.cs-particle {
+  position: absolute; top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: particle-burst 1.4s cubic-bezier(.22, .9, .3, 1) forwards;
+}
+@keyframes particle-burst {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  100% {
+    transform: translate(
+      calc(-50% + var(--px, 0px)),
+      calc(-50% + var(--py, 0px))
+    ) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* Confetti rectangles for grade A */
+.cs-confetti {
+  position: absolute;
+  width: 8px; height: 14px;
+  top: 50%; left: 50%;
+  transform-origin: center;
+  pointer-events: none;
+  border-radius: 2px;
+  animation: confetti-fall 2s cubic-bezier(.22, .9, .3, 1) forwards;
+}
+@keyframes confetti-fall {
+  0% {
+    transform: translate(-50%, -50%) rotate(0) scale(0);
+    opacity: 0;
+  }
+  10% { opacity: 1; transform: translate(-50%, -50%) rotate(180deg) scale(1); }
+  100% {
+    transform: translate(
+      calc(-50% + var(--cx, 0px)),
+      calc(-50% + var(--cy, 200px))
+    ) rotate(720deg) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* ─── Splash cinématique ──────────────────────────────────────────── */
+.cs-splash-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(168,216,120,0.25) 0%, transparent 50%),
+    radial-gradient(circle at 30% 80%, rgba(74,148,34,0.3) 0%, transparent 50%);
+  animation: splash-bg-pulse 3s ease-in-out infinite;
+}
+@keyframes splash-bg-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.cs-splash-rings {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; height: 200px;
+}
+.cs-splash-ring {
+  position: absolute; inset: 0;
+  border: 2px solid rgba(168,216,120,0.25);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: splash-ring 1.4s cubic-bezier(.22, .9, .3, 1) forwards;
+}
+.cs-splash-ring:nth-child(1) { animation-delay: 0s; }
+.cs-splash-ring:nth-child(2) { animation-delay: .2s; }
+.cs-splash-ring:nth-child(3) { animation-delay: .4s; }
+@keyframes splash-ring {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.cs-splash-scanline {
+  position: absolute;
+  top: 35%; left: 50%;
+  transform: translateX(-50%);
+  width: 140px; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #a8d878 50%, transparent 100%);
+  box-shadow: 0 0 18px #a8d878;
+  animation: splash-scan 1.6s cubic-bezier(.5, 0, .5, 1) forwards;
+}
+@keyframes splash-scan {
+  0% { transform: translate(-50%, -40px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translate(-50%, 60px); opacity: 0; }
+}
+
+/* ─── Theme switch circular reveal ────────────────────────────────── */
+@supports (clip-path: circle(0%)) {
+  .cs-theme-reveal {
+    animation: theme-reveal .7s cubic-bezier(.22, .9, .3, 1);
+  }
+  @keyframes theme-reveal {
+    from {
+      clip-path: circle(0% at var(--cs-theme-x, 50%) var(--cs-theme-y, 50%));
+    }
+    to {
+      clip-path: circle(150% at var(--cs-theme-x, 50%) var(--cs-theme-y, 50%));
+    }
+  }
+}
+
+/* ─── Animated counters (number stats) ────────────────────────────── */
+.cs-count-up {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Sparkle effect (premium card) ───────────────────────────────── */
+.cs-sparkle-host {
+  position: relative;
+  overflow: hidden;
+}
+.cs-sparkle {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: #a8d878;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 8px #a8d878;
+  animation: sparkle 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ─── Chart line draw ─────────────────────────────────────────────── */
+.cs-chart-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: chart-draw 2s cubic-bezier(.22, .9, .3, 1) .15s forwards;
+}
+.cs-chart-area {
+  opacity: 0;
+  animation: chart-area .8s ease-out 1.2s forwards;
+}
+.cs-chart-dot {
+  opacity: 0;
+  transform-origin: center;
+  animation: chart-dot .4s cubic-bezier(.34, 1.56, .64, 1) forwards;
+}
+@keyframes chart-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes chart-area {
+  to { opacity: 1; }
+}
+@keyframes chart-dot {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Number ticker (digits flip) ─────────────────────────────────── */
+.cs-num-ticker {
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Smooth card lift ────────────────────────────────────────────── */
+.cs-lift {
+  transition: transform .35s cubic-bezier(.22, .9, .3, 1),
+              box-shadow .35s cubic-bezier(.22, .9, .3, 1);
+}
+@media (hover: hover) {
+  .cs-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 36px rgba(var(--cs-shadow-rgb, 26, 58, 15), 0.12);
+  }
+}
+
+/* ─── Animated icon containers ───────────────────────────────────── */
+.cs-icon-float {
+  animation: icon-float 4s ease-in-out infinite;
+}
+@keyframes icon-float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-4px) rotate(-2deg); }
+}
+
+/* ─── Active tab indicator (sliding pill) ─────────────────────────── */
+.cs-tab-bar {
+  position: relative;
+}
+.cs-tab-indicator {
+  position: absolute;
+  background: var(--cs-accent-tint);
+  border-radius: 12px;
+  transition: transform .4s cubic-bezier(.22, .9, .3, 1),
+              width .4s cubic-bezier(.22, .9, .3, 1),
+              opacity .25s ease;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+.cs-tab-indicator.is-ready { opacity: 1; }
+.cs-tab.is-active { background: transparent !important; position: relative; z-index: 1; }
+.cs-tab.is-active .cs-tab-icon { background: transparent !important; }
+
+/* ─── Big "+1 cran" badge animation ───────────────────────────────── */
+.cs-pop-badge {
+  animation: pop-badge .8s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+@keyframes pop-badge {
+  0% { opacity: 0; transform: scale(0.4) translateY(8px); }
+  60% { transform: scale(1.1) translateY(-2px); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* ─── Page entrance: blur fade ────────────────────────────────────── */
+.cs-blur-in {
+  animation: blur-in .8s cubic-bezier(.22, .9, .3, 1) both;
+}
+@keyframes blur-in {
+  from { opacity: 0; filter: blur(8px); transform: translateY(10px); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+
+/* ─── Focus state glow on inputs ──────────────────────────────────── */
+.cs-glow-focus {
+  transition: box-shadow .25s ease, border-color .2s;
+}
+.cs-glow-focus:focus-within {
+  border-color: var(--cs-accent) !important;
+  box-shadow: 0 0 0 4px rgba(74, 148, 34, 0.12);
+}
+
+/* ─── Marquee for moving brand strip ──────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.cs-marquee {
+  display: flex;
+  animation: marquee 24s linear infinite;
+}
+
+/* ─── Spinner (search / loading) ──────────────────────────────────── */
+@keyframes cs-spin { to { transform: rotate(360deg); } }
+.cs-spin { animation: cs-spin .7s linear infinite; }
+
+/* ─── Hover gradient text ─────────────────────────────────────────── */
+.cs-grad-text {
+  background: linear-gradient(135deg, #4a9422 0%, #2d6016 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ─── Reduce motion support ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+</style>
+
+  <!-- Real backend scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="/localdb.js"></script>
+  <script src="/opff_db.js"></script>
+  <script src="/more_products.js"></script>
+  <script>
+    // Firebase init (même config que ton site)
+    try {
+      var firebaseConfig = {
+        apiKey: "AIzaSyDLMmJf5JXlssTlITICWmZMqeAUxtq0ZZo",
+        authDomain: "crocscore.firebaseapp.com",
+        projectId: "crocscore",
+        storageBucket: "crocscore.firebasestorage.app",
+        messagingSenderId: "638665500993",
+        appId: "1:638665500993:web:6fdc0cd375c0e6358719c0"
+      };
+      firebase.initializeApp(firebaseConfig);
+      window._csAuth = firebase.auth();
+    } catch (e) { console.warn('Firebase init failed:', e); }
+
+    // DB unifiée (LOCAL_DB + OPFF_DB + MORE_DB) — comme dans index.html
+    try {
+      if (typeof OPFF_DB !== 'undefined' && typeof LOCAL_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, OPFF_DB);
+      if (typeof MORE_DB !== 'undefined' && typeof LOCAL_DB !== 'undefined') LOCAL_DB.push.apply(LOCAL_DB, MORE_DB);
+    } catch (e) { console.warn('DB merge skipped:', e); }
+  </script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+      <rect width="200" height="200" fill="#1a3a0f"/>
+      <circle cx="100" cy="100" r="60" fill="none" stroke="#a8d878" stroke-width="10" stroke-linecap="round" stroke-dasharray="280 100" transform="rotate(-90 100 100)"/>
+      <circle cx="148" cy="64" r="11" fill="#a8d878"/>
+      <text x="100" y="115" text-anchor="middle" font-family="serif" font-size="36" font-weight="600" fill="#faf8f2" font-style="italic">B</text>
+    </svg>
+  </template>
+
+  <div id="root"></div>
+
+  <script type="text/babel" data-src="components/ui.jsx">
+// CrocScore — primitives UI alignées sur l'identité de crocscore.vercel.app
+// Tokens viennent de tokens.css
+
+const cs = {
+  // Couleurs vives du site
+  greenDark: 'var(--cs-green-dark)',
+  greenMid: 'var(--cs-green-mid)',
+  greenBright: 'var(--cs-green-bright)',
+  greenLight: 'var(--cs-green-light)',
+  greenPale: 'var(--cs-green-pale)',
+  cream: 'var(--cs-cream)',
+  creamDark: 'var(--cs-cream-dark)',
+  white: 'var(--cs-white)',
+  // Aliases sémantiques
+  bg: 'var(--cs-bg)',
+  surface: 'var(--cs-surface)',
+  surface2: 'var(--cs-surface-2)',
+  ink: 'var(--cs-ink)',
+  ink2: 'var(--cs-ink-2)',
+  muted: 'var(--cs-muted)',
+  faint: 'var(--cs-faint)',
+  border: 'var(--cs-border)',
+  borderStrong: 'var(--cs-border-strong)',
+  accent: 'var(--cs-accent)',
+  accentInk: 'var(--cs-accent-ink)',
+  accentTint: 'var(--cs-accent-tint)',
+  // Type
+  sans: 'var(--cs-sans)',
+  serif: 'var(--cs-serif)',
+  mono: 'var(--cs-mono)',
+  grad: 'var(--cs-grad)',
+};
+
+// ─── Score A→E ───────────────────────────────────────────────────────────
+function csGradeFromScore(score) {
+  if (score >= 80) return 'A';
+  if (score >= 65) return 'B';
+  if (score >= 50) return 'C';
+  if (score >= 35) return 'D';
+  return 'E';
+}
+function csGradeColors(letter) {
+  return {
+    A: { bg: 'var(--cs-grade-a-bg)', fg: 'var(--cs-grade-a-fg)', label: 'Élevé' },
+    B: { bg: 'var(--cs-grade-b-bg)', fg: 'var(--cs-grade-b-fg)', label: 'Correct' },
+    C: { bg: 'var(--cs-grade-c-bg)', fg: 'var(--cs-grade-c-fg)', label: 'Moyen' },
+    D: { bg: 'var(--cs-grade-d-bg)', fg: 'var(--cs-grade-d-fg)', label: 'Faible' },
+    E: { bg: 'var(--cs-grade-e-bg)', fg: 'var(--cs-grade-e-fg)', label: 'Très faible' },
+  }[letter] || { bg: '#eee', fg: '#333', label: '—' };
+}
+
+// Compat helpers (anciens noms utilisés dans les écrans)
+function csScoreColor(score) { return csGradeColors(csGradeFromScore(score)).fg; }
+function csScoreLabel(score) { return csGradeColors(csGradeFromScore(score)).label; }
+const CSScoreRing = (props) => <CSGradeRing {...props} />;
+
+// ─── Logo ────────────────────────────────────────────────────────────────
+function CSLogoMark({ size = 36 }) {
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: size * 0.28,
+      background: cs.greenPale,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flex: '0 0 auto',
+    }}>
+      <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M21 12a9 9 0 1 1-3.2-6.9" stroke="var(--cs-green-bright)" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+        <circle cx="20.5" cy="6" r="2.1" fill="var(--cs-green-bright)" />
+      </svg>
+    </div>
+  );
+}
+function CSWordmark({ size = 20, mono = false }) {
+  // Reproduction du logo de la nav du site
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <CSLogoMark size={size + 16} />
+      <span style={{
+        fontFamily: cs.serif, fontWeight: 600, fontSize: size,
+        color: cs.greenDark, letterSpacing: '-0.3px',
+      }}>
+        Croc<span style={{ color: cs.greenBright }}>Score</span>
+      </span>
+    </div>
+  );
+}
+
+// ─── Button ──────────────────────────────────────────────────────────────
+function CSButton({ children, variant = 'primary', size = 'md', icon, trailing, style = {}, onClick }) {
+  const sizes = {
+    sm: { padY: 8, padX: 14, fs: 13, gap: 6, r: 9 },
+    md: { padY: 11, padX: 22, fs: 14, gap: 8, r: 10 },
+    lg: { padY: 13, padX: 28, fs: 15, gap: 10, r: 12 },
+  }[size];
+  const variants = {
+    primary: { background: cs.grad, color: cs.cream, border: 'none',
+      boxShadow: '0 3px 12px rgba(74,148,34,0.3)' },
+    dark: { background: cs.greenDark, color: cs.cream, border: 'none' },
+    secondary: { background: cs.white, color: cs.greenDark,
+      border: '1.5px solid rgba(26,58,15,0.15)' },
+    ghost: { background: 'transparent', color: cs.greenDark, border: 'none' },
+  }[variant];
+  return (
+    <button onClick={onClick} style={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      gap: sizes.gap, padding: `${sizes.padY}px ${sizes.padX}px`,
+      fontFamily: cs.sans, fontSize: sizes.fs, fontWeight: 600,
+      letterSpacing: '0.01em', borderRadius: sizes.r, cursor: 'pointer',
+      ...variants, ...style,
+    }}>
+      {icon} {children} {trailing}
+    </button>
+  );
+}
+
+// ─── Card ────────────────────────────────────────────────────────────────
+function CSCard({ children, style = {}, padding = 24, dark = false }) {
+  return (
+    <div style={{
+      background: dark ? cs.greenDark : cs.white,
+      border: dark ? 'none' : `1px solid ${cs.border}`,
+      borderRadius: 20,
+      padding,
+      color: dark ? cs.cream : cs.ink,
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+// ─── Badge / Pill ────────────────────────────────────────────────────────
+function CSPill({ children, tone = 'neutral', style = {} }) {
+  const tones = {
+    neutral: { bg: cs.creamDark, color: cs.ink2, border: 'transparent' },
+    accent: { bg: cs.greenPale, color: cs.greenMid, border: 'rgba(74,148,34,0.2)' },
+    outline: { bg: 'transparent', color: cs.ink2, border: 'rgba(26,58,15,0.18)' },
+    dark: { bg: 'rgba(168,216,120,0.18)', color: cs.greenLight, border: 'transparent' },
+    warn: { bg: '#fdedc0', color: '#8b5e0a', border: 'transparent' },
+  }[tone];
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '4px 12px', fontSize: 12, fontWeight: 500,
+      borderRadius: 20, background: tones.bg, color: tones.color,
+      border: `1px solid ${tones.border}`, fontFamily: cs.sans,
+      ...style,
+    }}>
+      {children}
+    </span>
+  );
+}
+
+// ─── Grade pill A→E (style du site) ──────────────────────────────────────
+function CSGradePill({ letter = 'B', size = 48, showLabel = false }) {
+  const c = csGradeColors(letter);
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '50%',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: cs.serif, fontSize: size * 0.46, fontWeight: 600,
+      background: c.bg, color: c.fg, flex: '0 0 auto', lineHeight: 1,
+    }}>
+      {letter}
+    </div>
+  );
+}
+
+// Big grade ring : pour les pages de résultat
+function CSGradeRing({ score = 78, size = 200, strokeWidth = 14 }) {
+  const letter = csGradeFromScore(score);
+  const c = csGradeColors(letter);
+  const r = (size - strokeWidth) / 2;
+  const C = 2 * Math.PI * r;
+  const offset = C - (Math.min(Math.max(score, 0), 100) / 100) * C;
+  return (
+    <div style={{ position: 'relative', width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size / 2} cy={size / 2} r={r}
+          stroke="rgba(26,58,15,0.07)" strokeWidth={strokeWidth} fill="none" />
+        <circle cx={size / 2} cy={size / 2} r={r}
+          stroke={c.fg} strokeWidth={strokeWidth} fill="none"
+          strokeLinecap="round" strokeDasharray={C} strokeDashoffset={offset}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      </svg>
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <div style={{
+          fontFamily: cs.serif, fontSize: size * 0.45, fontWeight: 600,
+          color: c.fg, lineHeight: 0.9,
+        }}>{letter}</div>
+        <div style={{
+          fontFamily: cs.sans, fontSize: size * 0.07, fontWeight: 500,
+          color: cs.muted, letterSpacing: '0.04em', marginTop: 6,
+        }}>
+          {Math.round(score)} <span style={{ color: cs.faint }}>/100</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Placeholder ─────────────────────────────────────────────────────────
+function CSPlaceholder({ label = 'photo', style = {}, children }) {
+  return (
+    <div className="cs-placeholder" style={{
+      borderRadius: 12, width: '100%', height: '100%', minHeight: 60,
+      ...style,
+    }}>
+      {children || label}
+    </div>
+  );
+}
+
+// ─── Icons (1.8 stroke, style du site) ───────────────────────────────────
+const csIcon = (paths, vb = '0 0 24 24') => ({ size = 18, color = 'currentColor', style = {} } = {}) => (
+  <svg width={size} height={size} viewBox={vb} fill="none"
+    stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+    style={style} aria-hidden="true">{paths}</svg>
+);
+const CSIconScan = csIcon(<><path d="M4 8V6a2 2 0 0 1 2-2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M20 16v2a2 2 0 0 1-2 2h-2" /><path d="M8 20H6a2 2 0 0 1-2-2v-2" /><path d="M4 12h16" /></>);
+const CSIconPaw = csIcon(<><circle cx="7" cy="9" r="1.6" /><circle cx="17" cy="9" r="1.6" /><circle cx="4.5" cy="14" r="1.3" /><circle cx="19.5" cy="14" r="1.3" /><path d="M8.5 17.5c0-2 1.5-3.5 3.5-3.5s3.5 1.5 3.5 3.5c0 1.7-1.5 2.5-3.5 2.5s-3.5-.8-3.5-2.5Z" /></>);
+const CSIconChart = csIcon(<><path d="M4 20V8" /><path d="M10 20V4" /><path d="M16 20v-8" /><path d="M22 20H2" /></>);
+const CSIconShield = csIcon(<><path d="M12 3 4 6v6c0 4.5 3.4 8.5 8 9 4.6-.5 8-4.5 8-9V6l-8-3Z" /><path d="M9 12.5 11 14.5 15.5 10" /></>);
+const CSIconUser = csIcon(<><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></>);
+const CSIconBell = csIcon(<><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z" /><path d="M10 19a2 2 0 0 0 4 0" /></>);
+const CSIconSearch = csIcon(<><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></>);
+const CSIconPlus = csIcon(<><path d="M12 5v14" /><path d="M5 12h14" /></>);
+const CSIconArrow = csIcon(<><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></>);
+const CSIconCheck = csIcon(<><path d="m5 13 4 4L19 7" /></>);
+const CSIconInfo = csIcon(<><circle cx="12" cy="12" r="9" /><path d="M12 11v6" /><path d="M12 8h.01" /></>);
+const CSIconCamera = csIcon(<><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" /><circle cx="12" cy="13" r="3.5" /></>);
+const CSIconHistory = csIcon(<><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /><path d="M12 7v5l3 2" /></>);
+const CSIconSettings = csIcon(<><circle cx="12" cy="12" r="3" /><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2-1.2L14 3h-4l-.6 2.6a7 7 0 0 0-2 1.2L5.1 5.9l-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-.9a7 7 0 0 0 2 1.2L10 21h4l.6-2.6a7 7 0 0 0 2-1.2l2.3.9 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z" /></>);
+const CSIconBag = csIcon(<><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></>);
+const CSIconExternal = csIcon(<><path d="M14 4h6v6" /><path d="M20 4 10 14" /><path d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5" /></>);
+const CSIconLock = csIcon(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>);
+const CSIconHeart = csIcon(<><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10Z" /></>);
+const CSIconWeight = csIcon(<><path d="M5 7h14l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7Z" /><path d="M9 7a3 3 0 0 1 6 0" /><path d="M9 12h3l1 4" /></>);
+const CSIconSparkle = csIcon(<><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" /></>);
+
+Object.assign(window, {
+  cs, csGradeFromScore, csGradeColors,
+  csScoreColor, csScoreLabel, CSScoreRing,
+  CSLogoMark, CSWordmark, CSButton, CSCard, CSPill,
+  CSGradePill, CSGradeRing, CSPlaceholder,
+  CSIconScan, CSIconPaw, CSIconChart, CSIconShield, CSIconUser, CSIconBell,
+  CSIconSearch, CSIconPlus, CSIconArrow, CSIconCheck, CSIconInfo,
+  CSIconCamera, CSIconHistory, CSIconSettings, CSIconBag, CSIconExternal,
+  CSIconLock, CSIconHeart, CSIconWeight, CSIconSparkle,
+});
+
+</script>
+  <script type="text/babel" data-src="prototype/real-backend.jsx">
+// CrocScore — Vrai backend (DB + scoring + Firebase Auth + Html5Qrcode)
+// Source de vérité unique : le code de index.html
+
+// ─── Scoring (copié exactement de index.html) ────────────────────────
+function realScoreProduct(p) {
+  let score = 50;
+  const ingr = (p.ingredients_text || '').toLowerCase();
+  const nutr = p.nutriments || {};
+  const proteins = nutr.proteins_100g || 0;
+  const fat = nutr.fat_100g || 0;
+  const carbs = nutr.carbohydrates_100g || 0;
+  if (proteins >= 30) score += 20;
+  else if (proteins >= 20) score += 10;
+  else if (proteins < 10) score -= 15;
+  if (fat >= 10 && fat <= 20) score += 5;
+  else if (fat > 25) score -= 5;
+  if (carbs > 40) score -= 15;
+  else if (carbs < 20) score += 10;
+  const goodMeat = ['poulet','boeuf','poisson','saumon','canard','agneau','thon','dinde','veau'];
+  const firstIngr = ingr.split(',')[0] || '';
+  if (goodMeat.some(g => firstIngr.includes(g))) score += 15;
+  if (['maïs','blé','farine de céréales','sous-produits','dérivés'].some(b => firstIngr.includes(b))) score -= 15;
+  const cerealCount = (ingr.match(/maïs|blé|céréales|amidon|gluten/g) || []).length;
+  score -= cerealCount * 5;
+  if (goodMeat.filter(m => ingr.includes(m)).length >= 2) score += 10;
+  score = Math.max(5, Math.min(99, Math.round(score)));
+  let letter, bg, color;
+  if (score >= 80)      { letter = 'A'; bg = '#e8f5d8'; color = '#1a3a0f'; }
+  else if (score >= 60) { letter = 'B'; bg = '#d4f0a0'; color = '#2d6016'; }
+  else if (score >= 40) { letter = 'C'; bg = '#fdedc0'; color = '#8b5e0a'; }
+  else if (score >= 20) { letter = 'D'; bg = '#fdd8b0'; color = '#8b3a0a'; }
+  else                  { letter = 'E'; bg = '#f8c8c8'; color = '#b46400'; }
+  return { score, letter, bg, color };
+}
+
+// ─── Produits custom (saisis manuellement, stockés localement) ───────
+function realGetCustomProducts() {
+  try { return JSON.parse(localStorage.getItem('croc_custom_products') || '[]'); }
+  catch (e) { return []; }
+}
+
+// ─── Recherche locale par nom (DB + produits custom) ─────────────────
+function realSearchByName(query) {
+  if (!query || query.length < 2) return null;
+  const baseDb = (typeof LOCAL_DB !== 'undefined') ? LOCAL_DB : [];
+  const db = baseDb.concat(realGetCustomProducts());
+  if (!db.length) return null;
+  const q = query.toLowerCase().trim();
+  const exact = db.find(p => (p.product_name || '').toLowerCase() === q);
+  if (exact) return exact;
+  const words = q.split(/\s+/).filter(w => w.length > 1);
+  return db.find(p => {
+    const n = (p.product_name || '').toLowerCase();
+    const b = (p.brands || '').toLowerCase();
+    return words.every(w => n.includes(w) || b.includes(w));
+  }) || null;
+}
+
+// ─── Recherche texte : local (DB + custom) puis OPFF search API ──────
+// Retourne { product, source } ou null. Reproduit doSearch() de index.html.
+async function realSearchByText(query) {
+  if (!query || !query.trim()) return null;
+  const val = query.trim();
+  // 1. Base locale + produits custom
+  const local = realSearchByName(val);
+  if (local) return { product: local, source: 'local' };
+  // 2. API Open Pet Food Facts (recherche plein texte)
+  try {
+    const res = await fetch(
+      'https://world.openpetfoodfacts.org/cgi/search.pl?search_terms='
+      + encodeURIComponent(val) + '&search_simple=1&action=process&json=1&page_size=1'
+    );
+    const data = await res.json();
+    if (data.products && data.products.length > 0) {
+      return { product: data.products[0], source: 'api' };
+    }
+  } catch (e) {}
+  return null; // → l'appelant ouvrira la saisie manuelle
+}
+
+// ─── Construire un produit à partir d'une saisie manuelle ────────────
+// Reproduit submitManualForm() de index.html. Sauvegarde optionnelle.
+function realBuildManualProduct({ name, prot, fat, carb, ingr, save }) {
+  const product = {
+    product_name: name || 'Produit saisi',
+    nutriments: {
+      proteins_100g: parseFloat(prot) || 0,
+      fat_100g: parseFloat(fat) || 0,
+      carbohydrates_100g: parseFloat(carb) || 0,
+    },
+    ingredients_text: ingr || '',
+    _custom: true,
+  };
+  if (save && name) {
+    try {
+      const custom = realGetCustomProducts();
+      if (!custom.find(p => (p.product_name || '').toLowerCase() === name.toLowerCase())) {
+        custom.push(product);
+        localStorage.setItem('croc_custom_products', JSON.stringify(custom));
+      }
+    } catch (e) {}
+  }
+  return realProductToView(product, name);
+}
+
+// ─── Export RGPD (Art. 20 — portabilité) ─────────────────────────────
+// Reproduit exportMyData() de index.html : télécharge un JSON.
+function realExportData() {
+  let user = null;
+  try {
+    if (window._csAuth && window._csAuth.currentUser) {
+      const u = window._csAuth.currentUser;
+      user = { name: u.displayName, email: u.email, uid: u.uid };
+    }
+  } catch (e) {}
+  const data = {
+    exportDate: new Date().toISOString(),
+    rgpd: 'Export généré conformément à l\'Art. 20 RGPD (droit à la portabilité).',
+    compte: user,
+    consentement: safeParse('croc_account_consent'),
+    cookies: safeParse('cs_cookies_choice'),
+    theme: localStorageGet('cs_theme'),
+    produitsPersonnalises: realGetCustomProducts(),
+    historiqueLocal: safeParse('croc_scan_history') || [],
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'mes-donnees-crocscore-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  return true;
+}
+
+function safeParse(key) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; }
+  catch (e) { return null; }
+}
+function localStorageGet(key) {
+  try { return localStorage.getItem(key); } catch (e) { return null; }
+}
+
+// ─── Recherche par code-barres : local puis OPFF API ─────────────────
+async function realFetchByBarcode(barcode) {
+  const db = (typeof LOCAL_DB !== 'undefined') ? LOCAL_DB : [];
+  const local = db.find(p => p.barcode === barcode);
+  if (local) return { product: local, source: 'local' };
+  try {
+    const r = await fetch('https://world.openpetfoodfacts.org/api/v0/product/' + barcode + '.json');
+    const data = await r.json();
+    if (data.status === 1 && data.product) {
+      const name = data.product.product_name || barcode;
+      const localByName = realSearchByName(name);
+      return { product: localByName || data.product, source: 'api', barcode };
+    }
+  } catch (e) {}
+  return null;
+}
+
+// ─── Mapping produit → format ResultView ─────────────────────────────
+// Le ResultView du prototype attend : { ean, brand, name, size, score, macros, ingredients, verdict, additives }
+function realProductToView(p, fallbackName) {
+  const scored = realScoreProduct(p);
+  const nutr = p.nutriments || {};
+  const ingr = (p.ingredients_text || '').toLowerCase();
+  const meatList = ['poulet','boeuf','saumon','canard','agneau','dinde','poisson','thon','veau'];
+  const meatCount = meatList.filter(m => ingr.includes(m)).length;
+  const verdict = scored.letter === 'A' ? 'Excellente composition, équilibre nutritionnel optimal.'
+                : scored.letter === 'B' ? 'Bonne composition globale, légères réserves.'
+                : scored.letter === 'C' ? 'Composition correcte mais améliorable.'
+                : scored.letter === 'D' ? 'Composition faible, à compléter ou éviter.'
+                                        : 'Composition très défavorable, à éviter pour la santé de votre animal.';
+  return {
+    ean: p.barcode || '—',
+    brand: p.brands || 'Marque inconnue',
+    name: p.product_name || fallbackName || 'Produit',
+    size: p.quantity || '',
+    score: scored.score,
+    letter: scored.letter,
+    bg: scored.bg,
+    fgColor: scored.color,
+    macros: {
+      prot: Math.round(nutr.proteins_100g || 0),
+      fat: Math.round(nutr.fat_100g || 0),
+      carb: Math.round(nutr.carbohydrates_100g || 0),
+      meat: Math.min(100, meatCount * 25),
+    },
+    ingredients: p.ingredients_text || 'Composition non disponible',
+    additives: p.additives_tags && p.additives_tags.length
+      ? p.additives_tags.length + ' additifs détectés'
+      : 'Aucun additif technologique détecté',
+    verdict,
+  };
+}
+
+// ─── Firebase Auth helpers ───────────────────────────────────────────
+async function realSignIn(email, password) {
+  if (!window._csAuth) throw new Error('Firebase non disponible. Réessayez dans un instant.');
+  const cred = await window._csAuth.signInWithEmailAndPassword(email, password);
+  return cred.user;
+}
+
+async function realSignUp({ email, password, name }) {
+  if (!window._csAuth) throw new Error('Firebase non disponible. Réessayez dans un instant.');
+  const cred = await window._csAuth.createUserWithEmailAndPassword(email, password);
+  if (name && cred.user) {
+    try { await cred.user.updateProfile({ displayName: name.substring(0, 50) }); } catch (e) {}
+  }
+  // Trace du consentement CGU (Art. 7 RGPD)
+  try {
+    localStorage.setItem('croc_account_consent', JSON.stringify({
+      version: '1.0', date: Date.now(), dateISO: new Date().toISOString(),
+      ageConfirmed: true, cguAccepted: true, email,
+    }));
+  } catch (e) {}
+  return cred.user;
+}
+
+async function realSignOut() {
+  if (!window._csAuth) return;
+  await window._csAuth.signOut();
+}
+
+async function realResetPassword(email) {
+  if (!window._csAuth) throw new Error('Firebase non disponible.');
+  await window._csAuth.sendPasswordResetEmail(email);
+}
+
+function realAuthErrorMessage(code) {
+  const msgs = {
+    'auth/email-already-in-use': 'Cet email est déjà utilisé. Connectez-vous ou utilisez "Mot de passe oublié".',
+    'auth/invalid-email': 'Adresse email invalide.',
+    'auth/weak-password': 'Mot de passe trop faible (6 caractères minimum).',
+    'auth/user-not-found': 'Aucun compte trouvé avec cet email.',
+    'auth/wrong-password': 'Mot de passe incorrect.',
+    'auth/invalid-credential': 'Email ou mot de passe incorrect.',
+    'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.',
+    'auth/network-request-failed': 'Problème de connexion réseau.',
+  };
+  return msgs[code] || ('Erreur d\'authentification (' + (code || 'inconnue') + ')');
+}
+
+// ─── Subscribe to auth state changes ─────────────────────────────────
+function realOnAuthChange(cb) {
+  if (!window._csAuth) return () => {};
+  return window._csAuth.onAuthStateChanged(function(user) {
+    if (user) {
+      cb({
+        name: user.displayName || (user.email || '').split('@')[0],
+        email: user.email,
+        uid: user.uid,
+        plan: 'free',
+      });
+    } else {
+      cb(null);
+    }
+  });
+}
+
+// ─── Html5Qrcode wrapper (real camera scan) ──────────────────────────
+function realStartScanner(elementId, onDetected, onError) {
+  if (typeof Html5Qrcode === 'undefined') {
+    onError && onError(new Error('Scanner indisponible'));
+    return null;
+  }
+  const scanner = new Html5Qrcode(elementId);
+  scanner.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 250, height: 150 } },
+    (decodedText) => { onDetected && onDetected(decodedText); },
+    () => {}
+  ).catch((err) => { onError && onError(err); });
+  return scanner;
+}
+
+function realStopScanner(scanner) {
+  if (scanner) {
+    try { scanner.stop().catch(() => {}); } catch (e) {}
+  }
+}
+
+// Expose globally
+Object.assign(window, {
+  realScoreProduct, realSearchByName, realSearchByText, realFetchByBarcode, realProductToView,
+  realGetCustomProducts, realBuildManualProduct, realExportData,
+  realSignIn, realSignUp, realSignOut, realResetPassword, realAuthErrorMessage,
+  realOnAuthChange, realStartScanner, realStopScanner,
+});
+
+</script>
+  <script type="text/babel" data-src="prototype/anim-helpers.jsx">
+// CrocScore — Animation helpers (hooks + utility components)
+
+const { useEffect: useEffectAnim, useRef: useRefAnim, useState: useStateAnim } = React;
+
+// ─── Count-up animated number ────────────────────────────────────────
+function CSCountUp({ to = 100, duration = 1400, delay = 0, suffix = '', prefix = '' }) {
+  const [val, setVal] = useStateAnim(0);
+  useEffectAnim(() => {
+    let raf;
+    const start = performance.now() + delay;
+    const from = 0;
+    function tick(t) {
+      if (t < start) { raf = requestAnimationFrame(tick); return; }
+      const p = Math.min(1, (t - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVal(from + (to - from) * eased);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+    return () => raf && cancelAnimationFrame(raf);
+  }, [to, duration, delay]);
+  return (
+    <span className="cs-count-up">
+      {prefix}{Math.round(val)}{suffix}
+    </span>
+  );
+}
+
+// ─── Word-by-word reveal ─────────────────────────────────────────────
+function CSWordReveal({ children, baseDelay = 0, style }) {
+  if (typeof children !== 'string') return <span>{children}</span>;
+  const words = children.split(/(\s+)/);
+  let wordIndex = 0;
+  return (
+    <span style={style}>
+      {words.map((w, i) => {
+        if (/^\s+$/.test(w)) return <span key={i}>{w}</span>;
+        const idx = wordIndex++;
+        return (
+          <span key={i} className="cs-word" style={{ '--w': idx + baseDelay }}>
+            {w}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+// ─── Ripple on click ─────────────────────────────────────────────────
+function csRipple(e) {
+  const el = e.currentTarget;
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  const rip = document.createElement('span');
+  rip.className = 'cs-ripple';
+  const size = Math.max(r.width, r.height) * 1.4;
+  rip.style.width = rip.style.height = size + 'px';
+  const cx = (e.clientX || (r.left + r.width / 2)) - r.left - size / 2;
+  const cy = (e.clientY || (r.top + r.height / 2)) - r.top - size / 2;
+  rip.style.left = cx + 'px';
+  rip.style.top = cy + 'px';
+  el.appendChild(rip);
+  setTimeout(() => rip.remove(), 700);
+}
+
+// ─── Magnetic / Tilt card on hover (desktop only) ───────────────────
+function useCsTilt(maxTilt = 6, scale = 1.01) {
+  const ref = useRefAnim(null);
+  useEffectAnim(() => {
+    const el = ref.current; if (!el) return;
+    if (window.matchMedia('(hover: none)').matches) return;
+    let raf;
+    function onMove(e) {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      const tiltX = (y - 0.5) * -maxTilt;
+      const tiltY = (x - 0.5) * maxTilt;
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        el.style.transform = `perspective(900px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${scale})`;
+      });
+    }
+    function onLeave() {
+      if (raf) cancelAnimationFrame(raf);
+      el.style.transform = '';
+    }
+    el.addEventListener('mousemove', onMove);
+    el.addEventListener('mouseleave', onLeave);
+    return () => {
+      el.removeEventListener('mousemove', onMove);
+      el.removeEventListener('mouseleave', onLeave);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [maxTilt, scale]);
+  return ref;
+}
+
+// ─── Particle burst (used on great scores) ───────────────────────────
+function ParticleBurst({ count = 18, color = '#a8d878', show = true, palette }) {
+  if (!show) return null;
+  const colors = palette || [color];
+  return (
+    <div className="cs-particles">
+      {Array.from({ length: count }).map((_, i) => {
+        const angle = (i / count) * Math.PI * 2;
+        const distance = 70 + Math.random() * 50;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        const c = colors[i % colors.length];
+        return (
+          <div key={i} className="cs-particle" style={{
+            background: c,
+            boxShadow: '0 0 6px ' + c,
+            '--px': tx + 'px',
+            '--py': ty + 'px',
+            animationDelay: (Math.random() * 0.15) + 's',
+          }} />
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Confetti for grade A ────────────────────────────────────────────
+function ConfettiBurst({ count = 24, show = true }) {
+  if (!show) return null;
+  const colors = ['#a8d878', '#4a9422', '#fdedc0', '#d4f0a0', '#e8f5d8'];
+  return (
+    <div className="cs-particles">
+      {Array.from({ length: count }).map((_, i) => {
+        const angle = (-Math.PI / 2) + (Math.random() - 0.5) * Math.PI;
+        const distance = 100 + Math.random() * 120;
+        const cx = Math.cos(angle) * distance;
+        const cy = Math.sin(angle) * distance + Math.random() * 60;
+        return (
+          <div key={i} className="cs-confetti" style={{
+            background: colors[i % colors.length],
+            '--cx': cx + 'px',
+            '--cy': cy + 'px',
+            animationDelay: (Math.random() * 0.3) + 's',
+          }} />
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Sparkle (decoration on premium card) ────────────────────────────
+function Sparkles({ count = 6 }) {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="cs-sparkle" style={{
+          top: (10 + Math.random() * 80) + '%',
+          left: (5 + Math.random() * 90) + '%',
+          animationDelay: (i * 0.4 + Math.random() * 0.5) + 's',
+          animationDuration: (2 + Math.random() * 2) + 's',
+        }} />
+      ))}
+    </>
+  );
+}
+
+// ─── Theme transition (circular wipe) ────────────────────────────────
+function csAnimateThemeChange(e, applyTheme) {
+  // If View Transitions API is available, use it (smoother)
+  if (document.startViewTransition) {
+    try {
+      const x = e?.clientX ?? window.innerWidth / 2;
+      const y = e?.clientY ?? window.innerHeight / 2;
+      document.documentElement.style.setProperty('--cs-theme-x', x + 'px');
+      document.documentElement.style.setProperty('--cs-theme-y', y + 'px');
+      document.startViewTransition(() => applyTheme());
+      return;
+    } catch (err) {}
+  }
+  // Fallback: clip-path animation on the phone container
+  const phone = document.querySelector('.cs-phone');
+  if (phone) {
+    const r = phone.getBoundingClientRect();
+    const x = ((e?.clientX ?? r.left + r.width / 2) - r.left);
+    const y = ((e?.clientY ?? r.top + r.height / 2) - r.top);
+    phone.style.setProperty('--cs-theme-x', x + 'px');
+    phone.style.setProperty('--cs-theme-y', y + 'px');
+    applyTheme();
+    phone.classList.remove('cs-theme-reveal');
+    void phone.offsetWidth; // reflow
+    phone.classList.add('cs-theme-reveal');
+    setTimeout(() => phone.classList.remove('cs-theme-reveal'), 800);
+  } else {
+    applyTheme();
+  }
+}
+
+Object.assign(window, {
+  CSCountUp, CSWordReveal, csRipple, useCsTilt,
+  ParticleBurst, ConfettiBurst, Sparkles, csAnimateThemeChange,
+});
+
+</script>
+  <script type="text/babel" data-src="prototype/app.jsx">
+// CrocScore — Prototype interactif (avec dark mode, auth, compte, légal)
+
+const { useState, useEffect, useRef, useMemo } = React;
+
+// ─── Catalogue de produits scannables ─────────────────────────────────
+const CATALOG = [
+  { ean: '3000000123456', brand: 'Marque exemple', name: 'Adulte — Saumon & riz', size: '12 kg', score: 78,
+    macros: { prot: 32, fat: 17, carb: 28, meat: 52 },
+    ingredients: 'Saumon (52 %), riz brun, pommes de terre, huile de saumon, fibres végétales',
+    verdict: 'Bonne composition globale, présence de saumon confirmée.',
+    additives: 'Conservateurs naturels (extraits de romarin)',
+  },
+  { ean: '3000000987654', brand: 'Premium Pet', name: 'Sensitive Light', size: '8 kg', score: 65,
+    macros: { prot: 24, fat: 12, carb: 38, meat: 35 },
+    ingredients: 'Poulet (35 %), maïs, riz, pulpe de betterave, levure',
+    verdict: 'Ratio céréales un peu élevé, viande identifiée correcte.',
+    additives: 'Antioxydants techniques (BHA mentionné)',
+  },
+  { ean: '3000000111222', brand: 'Pure Origins', name: 'Pure Lamb Adult', size: '10 kg', score: 88,
+    macros: { prot: 38, fat: 18, carb: 22, meat: 65 },
+    ingredients: 'Agneau (65 %), patate douce, lentilles, huile de saumon',
+    verdict: 'Excellente composition, viande dominante, sans céréales.',
+    additives: 'Aucun additif technologique détecté',
+  },
+];
+
+// ─── Theme management ────────────────────────────────────────────────
+function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem('cs_theme') || 'light'; }
+    catch (e) { return 'light'; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('cs_theme', theme); } catch (e) {}
+  }, [theme]);
+  return [theme, setTheme];
+}
+
+// ─── User state — bridge to real Firebase Auth ───────────────────────
+function useAuth() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    // Try subscribing to real Firebase Auth
+    if (typeof window.realOnAuthChange === 'function') {
+      const unsub = window.realOnAuthChange((u) => setUser(u));
+      return unsub;
+    }
+    // Fallback: localStorage
+    try {
+      const stored = localStorage.getItem('cs_user');
+      if (stored) setUser(JSON.parse(stored));
+    } catch (e) {}
+  }, []);
+  function signIn(profile) { setUser(profile); }
+  function signOut() {
+    if (typeof window.realSignOut === 'function') {
+      window.realSignOut().catch(() => {});
+    }
+    setUser(null);
+  }
+  return [user, signIn, signOut];
+}
+
+// ─── App root ────────────────────────────────────────────────────────
+function App() {
+  const [view, setView] = useState({ name: 'home', dir: 'fade' });
+  const [scanned, setScanned] = useState(CATALOG[0]);
+  const [splash, setSplash] = useState(true);
+  const [toast, setToast] = useState(null);
+  const [activeAnimal, setActiveAnimal] = useState('Pumba');
+  const [theme, setTheme] = useTheme();
+  const [user, signIn, signOut] = useAuth();
+  const [showCookies, setShowCookies] = useState(false);
+
+  // Apply theme via data attribute
+  useEffect(() => { /* applied via render */ }, [theme]);
+
+  // Splash → Home, puis cookie banner
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSplash(false);
+      try {
+        const saved = localStorage.getItem('cs_cookies_choice');
+        if (!saved) setTimeout(() => setShowCookies(true), 600);
+      } catch (e) {}
+    }, 1600);
+    return () => clearTimeout(t);
+  }, []);
+
+  function showToast(msg, icon) {
+    setToast({ msg, icon });
+    setTimeout(() => setToast(null), 2200);
+  }
+
+  function go(name, dir = 'right') { setView({ name, dir }); }
+  function startScan() { go('scan', 'right'); }
+  function completeScan(product) {
+    setScanned(product);
+    setTimeout(() => go('result', 'right'), 700);
+  }
+
+  // Recherche par nom (DB locale + custom + OPFF API)
+  const [searchBusy, setSearchBusy] = useState(false);
+  const [manualName, setManualName] = useState('');
+  async function runSearch(query) {
+    if (!query || !query.trim()) return;
+    setSearchBusy(true);
+    try {
+      const result = await window.realSearchByText(query);
+      if (result && result.product) {
+        const view = window.realProductToView(result.product, query);
+        setScanned(view);
+        go('result', 'right');
+      } else {
+        // Pas trouvé → saisie manuelle
+        setManualName(query.trim());
+        go('manual', 'right');
+      }
+    } catch (e) {
+      setManualName(query.trim());
+      go('manual', 'right');
+    } finally {
+      setSearchBusy(false);
+    }
+  }
+  function openManual(name) {
+    setManualName(name || '');
+    go('manual', 'right');
+  }
+  function submitManual(data) {
+    const view = window.realBuildManualProduct(data);
+    setScanned(view);
+    go('result', 'right');
+    showToast('Analyse calculée', 'check');
+  }
+
+  function acceptCookies(prefs) {
+    try {
+      localStorage.setItem('cs_cookies_choice', JSON.stringify({ ...prefs, date: Date.now() }));
+    } catch (e) {}
+    setShowCookies(false);
+    showToast('Préférences enregistrées', 'check');
+  }
+
+  return (
+    <div className="cs-stage">
+      <div className="cs-phone cs-root" data-theme={theme}>
+        {splash && <SplashScreen />}
+
+        {!splash && (
+          <>
+            <div className="cs-screen-host">
+              {view.name === 'home' && <HomeView key="home" onScan={startScan} onGo={go} user={user}
+                onSearch={runSearch} searchBusy={searchBusy} />}
+              {view.name === 'scan' && <ScanView key="scan" onBack={() => go('home', 'left')}
+                onComplete={completeScan} onManual={openManual} activeAnimal={activeAnimal} dir={view.dir} />}
+              {view.name === 'manual' && <ManualEntryView key="manual" name={manualName}
+                onBack={() => go('home', 'left')} onSubmit={submitManual} dir={view.dir} />}
+              {view.name === 'result' && <ResultView key="result" product={scanned}
+                onBack={() => go('home', 'left')}
+                onSave={() => { showToast("Ajouté à l'historique", 'check'); go('home', 'left'); }}
+                dir={view.dir} />}
+              {view.name === 'animals' && <AnimalsView key="animals" onBack={() => go('home', 'left')}
+                onPick={(name) => { setActiveAnimal(name); go('pet', 'right'); }} dir={view.dir} />}
+              {view.name === 'pet' && <PetView key="pet" name={activeAnimal}
+                onBack={() => go('animals', 'left')} dir={view.dir} />}
+              {view.name === 'account' && <AccountView key="account" user={user}
+                onSignOut={() => { signOut(); showToast('Déconnecté', 'check'); }}
+                onGo={go} dir={view.dir} />}
+              {view.name === 'auth' && <AuthView key="auth" onBack={() => go('home', 'left')}
+                onSignIn={(u) => { signIn(u); showToast('Bienvenue ' + u.name, 'check'); go('account', 'left'); }}
+                onGo={go} dir={view.dir} />}
+              {view.name === 'settings' && <SettingsView key="settings" theme={theme} setTheme={setTheme}
+                onBack={() => go('account', 'left')} onGo={go} dir={view.dir} />}
+              {view.name === 'pricing' && <PricingView key="pricing" onBack={() => go('account', 'left')}
+                dir={view.dir} onSubscribe={() => showToast('Démo — abonnement non actif', 'check')} />}
+              {view.name === 'legal' && <LegalView key="legal" onBack={() => go('account', 'left')}
+                onCookieReset={() => { try { localStorage.removeItem('cs_cookies_choice'); } catch(e){} setShowCookies(true); }}
+                dir={view.dir} />}
+            </div>
+
+            <TabBar current={view.name} onGo={go} onScan={startScan} user={user} />
+          </>
+        )}
+
+        {showCookies && <CookieBanner onChoice={acceptCookies} onCustomize={() => setShowCookies('settings')} />}
+
+        {toast && (
+          <div className="cs-toast">
+            {toast.icon === 'check' && <CSIconCheck size={14} color="#a8d878" />}
+            {toast.msg}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Splash ──────────────────────────────────────────────────────────
+function SplashScreen() {
+  return (
+    <div className="cs-screen" style={{
+      background: 'linear-gradient(160deg, #1a3a0f 0%, #2d6016 100%)',
+      color: '#fff', display: 'flex',
+      alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+      gap: 20, position: 'absolute', inset: 0, overflow: 'hidden',
+    }}>
+      {/* Animated background pulses */}
+      <div className="cs-splash-bg" />
+
+      {/* Expanding rings around logo */}
+      <div className="cs-splash-rings">
+        <div className="cs-splash-ring" />
+        <div className="cs-splash-ring" />
+        <div className="cs-splash-ring" />
+      </div>
+
+      {/* Scanner line passing over logo */}
+      <div className="cs-splash-scanline" />
+
+      {/* Logo */}
+      <div className="cs-mark-anim" style={{
+        width: 90, height: 90, borderRadius: 24,
+        background: 'rgba(168,216,120,0.18)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: 'inset 0 0 0 1px rgba(168,216,120,0.25), 0 8px 30px rgba(168,216,120,0.15)',
+        position: 'relative', zIndex: 2,
+      }}>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <path d="M21 12a9 9 0 1 1-3.2-6.9" stroke="#a8d878" strokeWidth="2.4" strokeLinecap="round" />
+          <circle cx="20.5" cy="6" r="2.1" fill="#a8d878" />
+        </svg>
+      </div>
+
+      {/* Wordmark with word reveal */}
+      <div className="cs-fade-up" style={{ animationDelay: '.35s', position: 'relative', zIndex: 2 }}>
+        <div style={{ fontFamily: cs.serif, fontSize: 32, fontWeight: 500, letterSpacing: '-0.5px' }}>
+          Croc<span style={{ color: '#a8d878' }}>Score</span>
+        </div>
+      </div>
+
+      {/* Tagline */}
+      <div className="cs-fade-up" style={{
+        animationDelay: '.55s',
+        fontSize: 12, color: 'rgba(232,245,216,0.6)',
+        letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 500,
+        position: 'relative', zIndex: 2,
+      }}>
+        Analyseur de croquettes
+      </div>
+    </div>
+  );
+}
+
+// ─── Top bar (back + title) ──────────────────────────────────────────
+function TopBar({ title, onBack, right }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '8px 16px 12px', gap: 12, position: 'relative', zIndex: 5,
+    }}>
+      {onBack ? (
+        <button className="cs-press" onClick={onBack} style={{
+          width: 40, height: 40, borderRadius: 999,
+          background: cs.surface, border: `1px solid ${cs.border}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', color: cs.ink,
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+            <path d="m15 6-6 6 6 6" />
+          </svg>
+        </button>
+      ) : <div style={{ width: 40 }} />}
+
+      <div style={{
+        fontFamily: cs.serif, fontSize: 18, fontWeight: 500,
+        color: cs.ink, letterSpacing: '-0.2px',
+      }}>{title}</div>
+
+      <div style={{ width: 40, display: 'flex', justifyContent: 'flex-end' }}>{right}</div>
+    </div>
+  );
+}
+
+// ─── Tab bar ─────────────────────────────────────────────────────────
+function TabBar({ current, onGo, onScan, user }) {
+  const tabs = [
+    { id: 'home', label: 'Accueil', icon: (a) => <HomeIcon active={a} /> },
+    { id: 'animals', label: 'Animaux', icon: (a) => <CSIconPaw size={20} color={a ? cs.accent : cs.muted} /> },
+  ];
+  const tabsRight = [
+    { id: 'pet', label: 'Suivi', icon: (a) => <CSIconChart size={20} color={a ? cs.accent : cs.muted} /> },
+    { id: user ? 'account' : 'auth', label: user ? 'Compte' : 'Compte', icon: (a) => <CSIconUser size={20} color={a ? cs.accent : cs.muted} /> },
+  ];
+
+  return (
+    <div className="cs-tab-bar">
+      {tabs.map(t => (
+        <div key={t.id} className={'cs-tab ' + (current === t.id ? 'is-active' : '')}
+          onClick={() => onGo(t.id, current === 'home' ? 'right' : 'left')}>
+          <div className="cs-tab-icon">{t.icon(current === t.id)}</div>
+          <div>{t.label}</div>
+        </div>
+      ))}
+      <div className="cs-tab-scan" onClick={onScan}>
+        <CSIconScan size={24} color="#fff" />
+      </div>
+      {tabsRight.map(t => (
+        <div key={t.id} className={'cs-tab ' + (current === t.id || (t.id === 'account' && current === 'auth') ? 'is-active' : '')}
+          onClick={() => onGo(t.id, 'right')}>
+          <div className="cs-tab-icon">{t.icon(current === t.id || (t.id === 'account' && current === 'auth'))}</div>
+          <div>{t.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function HomeIcon({ active }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke={active ? cs.accent : cs.muted} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 11 12 4l9 7v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8Z" />
+      <path d="M9 21v-6h6v6" />
+    </svg>
+  );
+}
+
+// ─── Cookie banner (CNIL) ────────────────────────────────────────────
+function CookieBanner({ onChoice, onCustomize }) {
+  return (
+    <>
+      <div className="cs-sheet-overlay" />
+      <div className="cs-sheet" style={{ paddingBottom: 24 }}>
+        <div className="cs-sheet-handle" />
+        <div style={{ padding: '4px 6px 0' }}>
+          <div style={{
+            fontFamily: cs.serif, fontSize: 22, fontWeight: 500,
+            color: cs.ink, letterSpacing: '-0.3px', lineHeight: 1.2,
+          }}>
+            Vous gardez <em style={{ fontStyle: 'italic', color: cs.accent }}>le contrôle</em>.
+          </div>
+          <p style={{ fontSize: 13, color: cs.muted, lineHeight: 1.55, margin: '12px 0 0' }}>
+            CrocScore utilise des cookies strictement nécessaires au fonctionnement.
+            Avec votre accord, nous activons des cookies de mesure d'audience (anonymes).
+            Vous pouvez modifier votre choix à tout moment depuis « Paramètres ».
+          </p>
+          <div style={{ fontSize: 11, color: cs.faint, marginTop: 10 }}>
+            Consentement valable 13 mois (CNIL) · Aucune donnée vendue à des tiers.
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 16 }}>
+            <CSButton variant="secondary" size="sm" style={{ justifyContent: 'center' }}
+              onClick={() => onChoice({ analytics: false, notif: false })}>Refuser</CSButton>
+            <CSButton variant="secondary" size="sm" style={{ justifyContent: 'center' }}
+              onClick={() => onChoice({ analytics: true, notif: false })}>Choisir</CSButton>
+            <CSButton variant="primary" size="sm" style={{ justifyContent: 'center' }}
+              onClick={() => onChoice({ analytics: true, notif: true })}>Tout accepter</CSButton>
+          </div>
+          <div style={{ fontSize: 10, color: cs.faint, marginTop: 10, textAlign: 'center', fontStyle: 'italic' }}>
+            « Refuser » est aussi visible et accessible que « Accepter » — délibération CNIL n°2020-091.
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+window.App = App;
+window.SplashScreen = SplashScreen;
+window.TopBar = TopBar;
+window.TabBar = TabBar;
+window.CookieBanner = CookieBanner;
+window.CATALOG = CATALOG;
+
+</script>
+  <script type="text/babel" data-src="prototype/home.jsx">
+// CrocScore — Prototype : vue Home (landing/dashboard hybride)
+
+function HomeView({ onScan, onGo, onSearch, searchBusy }) {
+  const cardRef1 = useCsTilt(4, 1.01);
+  const cardRef2 = useCsTilt(3, 1.005);
+  const [q, setQ] = useState('');
+  return (
+    <div className="cs-screen enter-fade" style={{ position: 'relative' }}>
+      <div className="cs-mesh-bg" />
+
+      <div className="cs-status-pad" />
+
+      <div style={{ padding: '4px 20px 0', display: 'flex',
+        alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
+        <CSWordmark size={18} />
+        <button className="cs-press cs-ripple-host" onClick={csRipple} style={{
+          width: 38, height: 38, borderRadius: 999,
+          background: cs.surface, border: `1px solid ${cs.border}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          position: 'relative', color: cs.ink2,
+        }}>
+          <CSIconBell size={16} color={cs.accentInk} />
+          <span style={{ position: 'absolute', top: 8, right: 9,
+            width: 7, height: 7, background: cs.accent, borderRadius: 999,
+            border: `2px solid ${cs.surface}` }}></span>
+        </button>
+      </div>
+
+      <div className="cs-screen-scroll" style={{ padding: '20px 20px 16px', position: 'relative', zIndex: 1 }}>
+        {/* Hero / greeting with word reveal */}
+        <div>
+          <div style={{ fontSize: 13.5, color: cs.muted }}>
+            <CSWordReveal>Bonjour Léa,</CSWordReveal>
+          </div>
+          <h1 style={{
+            fontFamily: cs.serif, fontSize: 30, fontWeight: 500,
+            color: cs.ink, letterSpacing: '-0.5px',
+            margin: '4px 0 0', lineHeight: 1.15, textWrap: 'pretty',
+          }}>
+            <CSWordReveal baseDelay={2}>Pumba mange </CSWordReveal>
+            <em className="cs-word" style={{ '--w': 5, fontStyle: 'italic', color: cs.accent }}>très bien</em>
+            <CSWordReveal baseDelay={7}> ce mois-ci.</CSWordReveal>
+          </h1>
+        </div>
+
+        {/* Search by name */}
+        <div className="cs-fade-up" style={{ animationDelay: '.3s', marginTop: 18 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '0 6px 0 14px',
+            background: cs.surface, border: `1.5px solid ${cs.border}`,
+            borderRadius: 14, transition: 'border-color .18s, box-shadow .18s',
+          }}
+            onFocusCapture={(e) => { e.currentTarget.style.borderColor = 'var(--cs-green-bright)'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(74,148,34,0.08)'; }}
+            onBlurCapture={(e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.boxShadow = ''; }}>
+            <CSIconSearch size={17} color={cs.muted} />
+            <input
+              type="text" value={q} placeholder="Rechercher un produit ou une marque…"
+              onChange={(e) => setQ(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !searchBusy) onSearch(q); }}
+              aria-label="Rechercher un aliment pour animal"
+              style={{
+                flex: 1, padding: '13px 0', border: 'none', outline: 'none',
+                fontFamily: cs.sans, fontSize: 14.5, color: cs.ink,
+                background: 'transparent', minWidth: 0,
+              }}
+            />
+            <button className="cs-press" onClick={() => !searchBusy && onSearch(q)}
+              aria-label="Analyser" style={{
+                width: 40, height: 40, borderRadius: 11, flex: '0 0 auto',
+                background: cs.accent, border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: searchBusy ? 0.6 : 1,
+              }}>
+              {searchBusy
+                ? <span className="cs-spin" style={{
+                    width: 16, height: 16, borderRadius: 999,
+                    border: '2px solid rgba(255,255,255,0.4)', borderTopColor: '#fff',
+                    display: 'block',
+                  }} />
+                : <CSIconArrow size={15} color="#fff" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Big scan CTA card */}
+        <div ref={cardRef1} className="cs-card-press cs-fade-up cs-ripple-host"
+          onClick={(e) => { csRipple(e); onScan(); }}
+          style={{
+            marginTop: 22, padding: 24, borderRadius: 22,
+            background: 'linear-gradient(135deg, #1a3a0f 0%, #2d6016 100%)',
+            color: cs.cream, position: 'relative', overflow: 'hidden',
+            boxShadow: '0 12px 32px rgba(26,58,15,0.25)',
+            animationDelay: '.4s',
+          }}>
+          <div className="cs-blob" style={{
+            position: 'absolute', top: -40, right: -30,
+            width: 180, height: 180,
+            background: 'radial-gradient(circle, rgba(168,216,120,0.25) 0%, transparent 65%)',
+            pointerEvents: 'none',
+          }}></div>
+          <Sparkles count={5} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative' }}>
+            <div className="cs-pulse cs-icon-float" style={{
+              width: 60, height: 60, borderRadius: 18,
+              background: 'rgba(168,216,120,0.18)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flex: '0 0 auto',
+              boxShadow: 'inset 0 0 0 1px rgba(168,216,120,0.3)',
+            }}>
+              <CSIconScan size={26} color="#a8d878" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, color: '#a8d878', fontWeight: 600,
+                letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                Action rapide
+              </div>
+              <div style={{
+                fontFamily: cs.serif, fontSize: 20, fontWeight: 500,
+                lineHeight: 1.2, letterSpacing: '-0.3px', marginTop: 2,
+              }}>
+                Scanner un nouveau sac
+              </div>
+              <div style={{ fontSize: 12.5, color: 'rgba(250,248,242,0.65)', marginTop: 4 }}>
+                Score A→E en 2 secondes
+              </div>
+            </div>
+            <CSIconArrow size={18} color="rgba(250,248,242,0.7)" />
+          </div>
+        </div>
+
+        {/* Mes animaux preview */}
+        <div className="cs-fade-up" style={{ animationDelay: '.52s', marginTop: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
+            <h2 style={{ fontFamily: cs.serif, fontSize: 20, fontWeight: 500,
+              color: cs.ink, margin: 0, letterSpacing: '-0.2px' }}>Mes animaux</h2>
+            <button onClick={() => onGo('animals', 'right')} style={{
+              background: 'none', border: 'none', color: cs.accent,
+              fontFamily: cs.sans, fontSize: 13, fontWeight: 500, cursor: 'pointer',
+              display: 'inline-flex', alignItems: 'center', gap: 4, padding: 4,
+            }}>
+              Tout voir <CSIconArrow size={11} />
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: 12, overflowX: 'auto', scrollbarWidth: 'none',
+            margin: '0 -20px', padding: '0 20px 4px' }}>
+            {[
+              { name: 'Pumba', breed: 'Berger Australien', letter: 'B', scans: 24 },
+              { name: 'Mochi', breed: 'British Shorthair', letter: 'C', scans: 11 },
+            ].map((p, i) => (
+              <div key={i} onClick={() => onGo('pet', 'right')} className="cs-card-press cs-lift cs-ripple-host"
+                style={{
+                  minWidth: 240, padding: 16, background: cs.surface,
+                  borderRadius: 18, border: `1px solid ${cs.border}`,
+                  display: 'flex', alignItems: 'center', gap: 14, flex: '0 0 auto',
+                }}>
+                <div className="cs-placeholder" style={{
+                  width: 56, height: 56, borderRadius: 14, fontSize: 9, flex: '0 0 auto',
+                }}>{p.name}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: cs.serif, fontSize: 18, fontWeight: 500,
+                    color: cs.ink, letterSpacing: '-0.2px' }}>{p.name}</div>
+                  <div style={{ fontSize: 11.5, color: cs.muted,
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.breed} · {p.scans} scans
+                  </div>
+                </div>
+                <CSGradePill letter={p.letter} size={36} />
+              </div>
+            ))}
+            <div className="cs-press" style={{
+              minWidth: 100, height: 88,
+              border: `1.5px dashed ${cs.borderStrong}`,
+              borderRadius: 18, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 6,
+              color: cs.muted, fontSize: 12, fontWeight: 500, flex: '0 0 auto',
+            }}>
+              <CSIconPlus size={18} />
+              Ajouter
+            </div>
+          </div>
+        </div>
+
+        {/* Score moyen + chart */}
+        <div ref={cardRef2} className="cs-fade-up" style={{ animationDelay: '.6s', marginTop: 22 }}>
+          <CSCard padding={20}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 18 }}>
+              <div>
+                <div style={{ fontSize: 11.5, color: cs.muted, fontWeight: 500,
+                  letterSpacing: '0.04em', textTransform: 'uppercase' }}>Score moyen — 30 j</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 6 }}>
+                  <div className="cs-pop-badge" style={{
+                    fontFamily: cs.serif, fontSize: 42, fontWeight: 500,
+                    color: cs.accent, lineHeight: 1, letterSpacing: '-0.5px',
+                    animationDelay: '.9s',
+                  }}>B+</div>
+                  <div className="cs-fade-up" style={{
+                    animationDelay: '1.1s',
+                    fontSize: 12.5, color: cs.accent, fontWeight: 600,
+                  }}>↑ 1 cran</div>
+                </div>
+                <div style={{ fontSize: 12, color: cs.muted, marginTop: 6 }}>
+                  vs. mois précédent
+                </div>
+              </div>
+              <div style={{ flex: 1, height: 70 }}>
+                <svg width="100%" height="70" viewBox="0 0 200 70" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="homeg" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0" stopColor="#4a9422" stopOpacity="0.25" />
+                      <stop offset="1" stopColor="#4a9422" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path className="cs-chart-area"
+                    d="M0 50 L20 45 L40 48 L60 35 L80 38 L100 30 L120 24 L140 28 L160 18 L180 22 L200 12 L200 70 L0 70 Z"
+                    fill="url(#homeg)" />
+                  <path className="cs-chart-line"
+                    d="M0 50 L20 45 L40 48 L60 35 L80 38 L100 30 L120 24 L140 28 L160 18 L180 22 L200 12"
+                    stroke="#4a9422" strokeWidth="2" fill="none" />
+                </svg>
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              paddingTop: 14, borderTop: `1px solid ${cs.border}` }}>
+              <div style={{ display: 'flex', gap: 14 }}>
+                <Stat label="Scans" v={17} delay={1300} />
+                <Stat label="Marques" v={6} delay={1500} />
+                <Stat label="Alertes" v={1} warn delay={1700} />
+              </div>
+              <CSIconArrow size={14} color={cs.muted} />
+            </div>
+          </CSCard>
+        </div>
+
+        {/* Recent scans */}
+        <div className="cs-fade-up" style={{ animationDelay: '.7s', marginTop: 22 }}>
+          <h2 style={{ fontFamily: cs.serif, fontSize: 20, fontWeight: 500,
+            color: cs.ink, margin: '0 0 12px', letterSpacing: '-0.2px' }}>Scans récents</h2>
+          <CSCard padding={0}>
+            {[
+              { name: 'Marque A · Adulte Saumon', date: "Aujourd'hui · 14:32", letter: 'A' },
+              { name: 'Marque B · Sensitive Light', date: 'Hier · 19:08', letter: 'C' },
+              { name: 'Marque C · Pure Lamb', date: '08 mai', letter: 'A' },
+            ].map((s, i, arr) => (
+              <div key={i} className="cs-press cs-ripple-host" onClick={csRipple} style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '14px 18px', cursor: 'pointer',
+                borderBottom: i < arr.length - 1 ? `1px solid ${cs.border}` : 'none',
+              }}>
+                <div className="cs-placeholder" style={{
+                  width: 36, height: 46, fontSize: 8, flex: '0 0 auto',
+                }}>SAC</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 500, color: cs.ink,
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {s.name}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>{s.date}</div>
+                </div>
+                <CSGradePill letter={s.letter} size={34} />
+              </div>
+            ))}
+          </CSCard>
+        </div>
+
+        {/* Premium teaser */}
+        <div className="cs-fade-up cs-premium-ribbon cs-sparkle-host"
+          style={{ animationDelay: '.85s', marginTop: 22, position: 'relative' }}>
+          <Sparkles count={8} />
+          <CSPill tone="dark" style={{ marginBottom: 10, position: 'relative', zIndex: 1 }}>
+            <CSIconSparkle size={11} color={cs.greenLight} /> Premium
+          </CSPill>
+          <div style={{ fontFamily: cs.serif, fontSize: 20, fontWeight: 500,
+            letterSpacing: '-0.3px', lineHeight: 1.2, marginBottom: 6, position: 'relative', zIndex: 1 }}>
+            Le résumé mensuel de Pumba<br />
+            <em style={{ fontStyle: 'italic', color: cs.greenLight }}>livré dans 12 jours.</em>
+          </div>
+          <p style={{ fontSize: 13, color: 'rgba(250,248,242,0.7)', lineHeight: 1.55,
+            margin: '0 0 14px', maxWidth: 280, position: 'relative', zIndex: 1 }}>
+            Alertes additifs, tendance nutritionnelle, rapport PDF pour votre vétérinaire.
+          </p>
+          <CSButton variant="primary" size="sm" style={{ position: 'relative', zIndex: 1 }}>
+            Découvrir Premium
+          </CSButton>
+        </div>
+
+        {/* Disclaimer */}
+        <div style={{ marginTop: 20, padding: '12px 4px', fontSize: 11, color: cs.faint,
+          lineHeight: 1.5, display: 'flex', gap: 8 }}>
+          <CSIconInfo size={12} style={{ flex: '0 0 auto', marginTop: 2 }} />
+          <span>Scores indicatifs. CrocScore ne remplace pas l'avis d'un vétérinaire.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Stat({ label, v, warn, delay = 0 }) {
+  return (
+    <div>
+      <div style={{
+        fontFamily: cs.serif, fontSize: 16, fontWeight: 500,
+        color: warn ? '#c44020' : cs.ink, lineHeight: 1,
+      }}>
+        <CSCountUp to={v} delay={delay} />
+      </div>
+      <div style={{ fontSize: 10, color: cs.muted, marginTop: 3,
+        textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 500 }}>{label}</div>
+    </div>
+  );
+}
+
+window.HomeView = HomeView;
+
+</script>
+  <script type="text/babel" data-src="prototype/scan-result.jsx">
+// CrocScore — Prototype : Scan + Result (avec VRAI scanner + DB)
+
+function ScanView({ onBack, onComplete, onManual, activeAnimal, dir }) {
+  const [phase, setPhase] = useState('scanning'); // scanning | found | not-found | error
+  const [foundProduct, setFoundProduct] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [progress, setProgress] = useState(0);
+  const scannerRef = useRef(null);
+  const detectedRef = useRef(false);
+
+  // Progress decorative animation
+  useEffect(() => {
+    if (phase !== 'scanning') return;
+    let p = 0;
+    const id = setInterval(() => {
+      p = Math.min(100, p + Math.random() * 8 + 2);
+      setProgress(p);
+    }, 200);
+    return () => clearInterval(id);
+  }, [phase]);
+
+  // Start real camera scanner
+  useEffect(() => {
+    if (phase !== 'scanning') return;
+    if (typeof window.realStartScanner !== 'function') {
+      setErrorMsg('Scanner indisponible sur ce navigateur.');
+      setPhase('error');
+      return;
+    }
+    // Wait for DOM element to exist
+    const tryStart = () => {
+      if (!document.getElementById('cs-real-reader')) {
+        setTimeout(tryStart, 100);
+        return;
+      }
+      detectedRef.current = false;
+      scannerRef.current = window.realStartScanner(
+        'cs-real-reader',
+        async (barcode) => {
+          if (detectedRef.current) return;
+          detectedRef.current = true;
+          window.realStopScanner(scannerRef.current);
+          scannerRef.current = null;
+          // Lookup
+          const result = await window.realFetchByBarcode(barcode);
+          if (result && result.product) {
+            const view = window.realProductToView(result.product, barcode);
+            setFoundProduct(view);
+            setPhase('found');
+          } else {
+            setErrorMsg('Code-barres ' + barcode + ' non trouvé dans notre base.');
+            setPhase('not-found');
+          }
+        },
+        (err) => {
+          console.warn('Scanner error:', err);
+          setErrorMsg("Impossible d'accéder à la caméra. Vérifiez les permissions.");
+          setPhase('error');
+        }
+      );
+    };
+    tryStart();
+    return () => {
+      window.realStopScanner(scannerRef.current);
+      scannerRef.current = null;
+    };
+  }, [phase]);
+
+  function confirm() {
+    onComplete(foundProduct);
+  }
+
+  function manualBarcode() {
+    const code = prompt('Entrez le code-barres manuellement :');
+    if (!code || !code.trim()) return;
+    detectedRef.current = true;
+    window.realStopScanner(scannerRef.current);
+    scannerRef.current = null;
+    (async () => {
+      const result = await window.realFetchByBarcode(code.trim());
+      if (result && result.product) {
+        const view = window.realProductToView(result.product, code.trim());
+        setFoundProduct(view);
+        setPhase('found');
+      } else {
+        setErrorMsg('Code-barres ' + code + ' non trouvé.');
+        setPhase('not-found');
+      }
+    })();
+  }
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'fade'}`}
+      style={{ background: '#0b1408', color: '#fff' }}>
+      {/* Live camera feed (real Html5Qrcode) */}
+      <div id="cs-real-reader" style={{
+        position: 'absolute', inset: 0,
+        background: '#0b1408',
+        overflow: 'hidden',
+      }} />
+
+      {/* Dark vignette overlay over camera */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse at center, transparent 30%, rgba(11,20,8,0.6) 100%)',
+      }} />
+
+      <div className="cs-status-pad" />
+
+      {/* Top bar */}
+      <div style={{
+        position: 'relative', zIndex: 5,
+        padding: '8px 16px 0', display: 'flex',
+        alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <button className="cs-press" onClick={onBack} style={{
+          width: 38, height: 38, borderRadius: 999,
+          background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(20px)',
+          border: 'none', color: '#fff', fontSize: 18,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>×</button>
+
+        <div style={{
+          padding: '7px 14px', background: 'rgba(168,216,120,0.18)',
+          backdropFilter: 'blur(20px)', borderRadius: 999,
+          fontSize: 12, fontWeight: 600, color: '#a8d878',
+          display: 'flex', alignItems: 'center', gap: 8,
+          border: '1px solid rgba(168,216,120,0.3)',
+        }}>
+          <span style={{ width: 6, height: 6, background: '#a8d878', borderRadius: 999,
+            boxShadow: '0 0 8px #a8d878' }}></span>
+          {phase === 'scanning' ? 'Recherche…'
+            : phase === 'found' ? 'Trouvé !'
+            : phase === 'not-found' ? 'Non trouvé'
+            : 'Erreur'}
+        </div>
+
+        <button className="cs-press" onClick={manualBarcode} style={{
+          width: 38, height: 38, borderRadius: 999,
+          background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(20px)',
+          border: 'none', display: 'flex',
+          alignItems: 'center', justifyContent: 'center',
+        }} aria-label="Saisir le code manuellement">
+          <CSIconScan size={16} color="#fff" />
+        </button>
+      </div>
+
+      {/* Reticle */}
+      <div style={{
+        position: 'relative', zIndex: 1, flex: 1,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexDirection: 'column', gap: 20, pointerEvents: 'none',
+      }}>
+        <div style={{ width: 260, height: 180, position: 'relative' }}>
+          {[
+            { top: 0, left: 0 },
+            { top: 0, right: 0, transform: 'scaleX(-1)' },
+            { bottom: 0, right: 0, transform: 'scale(-1,-1)' },
+            { bottom: 0, left: 0, transform: 'scaleY(-1)' },
+          ].map((pos, i) => (
+            <svg key={i} className={phase === 'scanning' ? 'cs-reticle-corner' : ''}
+              width="38" height="38" viewBox="0 0 36 36"
+              style={{ position: 'absolute', ...pos }}>
+              <path d="M3 13V5a2 2 0 0 1 2-2h8"
+                stroke="#a8d878" strokeWidth="3" fill="none" strokeLinecap="round" />
+            </svg>
+          ))}
+          {phase === 'scanning' && (
+            <div style={{
+              position: 'absolute', top: '50%', left: 14, right: 14, height: 2,
+              background: 'linear-gradient(90deg, transparent 0%, #a8d878 50%, transparent 100%)',
+              boxShadow: '0 0 18px #a8d878',
+            }} className="cs-laser"></div>
+          )}
+        </div>
+      </div>
+
+      {phase === 'scanning' && (
+        <>
+          <div style={{ position: 'relative', zIndex: 2, padding: '0 32px', textAlign: 'center', marginBottom: 18 }}>
+            <div style={{
+              fontFamily: cs.serif, fontSize: 22, fontWeight: 500,
+              letterSpacing: '-0.3px', lineHeight: 1.2,
+            }}>
+              Pointez un <em style={{ fontStyle: 'italic', color: '#a8d878' }}>code-barres</em>
+            </div>
+            <div style={{ fontSize: 13, opacity: 0.65, marginTop: 8, lineHeight: 1.5 }}>
+              Détection automatique. Caméra active.
+            </div>
+          </div>
+          <div style={{ position: 'relative', zIndex: 2, padding: '0 20%', marginBottom: 100 }}>
+            <div style={{
+              height: 3, background: 'rgba(255,255,255,0.1)',
+              borderRadius: 999, overflow: 'hidden',
+            }}>
+              <div style={{
+                width: progress + '%', height: '100%',
+                background: 'linear-gradient(90deg, #a8d878, #4a9422)',
+                borderRadius: 999, transition: 'width .25s ease',
+              }}></div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Found sheet */}
+      {phase === 'found' && foundProduct && (
+        <>
+          <div className="cs-sheet-overlay" />
+          <div className="cs-sheet" style={{ paddingBottom: 28 }}>
+            <div className="cs-sheet-handle" />
+            <div style={{ padding: '8px 6px' }}>
+              <div style={{ fontSize: 11.5, color: cs.muted, fontWeight: 600,
+                letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                Produit trouvé
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 14 }}>
+                <div className="cs-placeholder" style={{ width: 56, height: 72, fontSize: 9, flex: '0 0 auto' }}>SAC</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 12, color: cs.muted }}>{foundProduct.brand}</div>
+                  <div style={{
+                    fontFamily: cs.serif, fontSize: 18, fontWeight: 500,
+                    color: cs.greenDark, lineHeight: 1.2, letterSpacing: '-0.2px',
+                  }}>
+                    {foundProduct.name}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: cs.faint, marginTop: 3, fontFamily: cs.mono }}>
+                    EAN · {foundProduct.ean}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+                <CSButton variant="secondary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+                  onClick={onBack}>Pas ça</CSButton>
+                <CSButton variant="primary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+                  onClick={confirm} trailing={<CSIconArrow size={14} />}>Analyser</CSButton>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Not found / error */}
+      {(phase === 'not-found' || phase === 'error') && (
+        <>
+          <div className="cs-sheet-overlay" />
+          <div className="cs-sheet" style={{ paddingBottom: 28 }}>
+            <div className="cs-sheet-handle" />
+            <div style={{ padding: '8px 6px' }}>
+              <div style={{ fontSize: 11.5, color: '#c44020', fontWeight: 600,
+                letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                {phase === 'error' ? 'Erreur' : 'Produit inconnu'}
+              </div>
+              <div style={{ fontFamily: cs.serif, fontSize: 18, fontWeight: 500,
+                color: cs.greenDark, lineHeight: 1.25, marginTop: 8 }}>
+                {errorMsg}
+              </div>
+              <p style={{ fontSize: 13, color: cs.muted, lineHeight: 1.5, marginTop: 10 }}>
+                {phase === 'not-found'
+                  ? "Le produit n'est pas dans notre base ni dans Open Pet Food Facts. Vous pouvez réessayer ou faire une recherche par nom."
+                  : "Vérifiez les permissions caméra de votre navigateur, ou saisissez le code-barres manuellement."}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>
+                <CSButton variant="primary" size="md" style={{ width: '100%', justifyContent: 'center' }}
+                  onClick={() => { window.realStopScanner(scannerRef.current); scannerRef.current = null; onManual && onManual(''); }}>
+                  Renseigner manuellement
+                </CSButton>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <CSButton variant="secondary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+                    onClick={onBack}>Retour</CSButton>
+                  <CSButton variant="secondary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+                    onClick={manualBarcode}>Saisir un code</CSButton>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── Result View ─────────────────────────────────────────────────────────
+function ResultView({ product, onBack, onSave, dir }) {
+  const letter = csGradeFromScore(product.score);
+  const c = csGradeColors(letter);
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'fade'} cs-score-reveal`}>
+      <div className="cs-status-pad" />
+      <TopBar
+        title="Résultat"
+        onBack={onBack}
+        right={
+          <button className="cs-press" style={{
+            width: 38, height: 38, borderRadius: 999,
+            background: cs.white, border: '1px solid rgba(26,58,15,0.12)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <CSIconHeart size={15} color={cs.greenDark} />
+          </button>
+        }
+      />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 16px 16px' }}>
+        {/* Header card */}
+        <CSCard padding={0} style={{ overflow: 'hidden' }}>
+          <div style={{ padding: 22, display: 'flex', alignItems: 'center', gap: 16,
+            borderBottom: '1px solid rgba(26,58,15,0.06)' }}>
+            <div className="cs-placeholder" style={{ width: 60, height: 78, fontSize: 9, flex: '0 0 auto' }}>SAC</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11.5, color: cs.muted, fontWeight: 500 }}>{product.brand}</div>
+              <div style={{
+                fontFamily: cs.serif, fontSize: 19, fontWeight: 500,
+                color: cs.greenDark, marginTop: 2, lineHeight: 1.25, letterSpacing: '-0.2px',
+              }}>{product.name}</div>
+              <div style={{ fontSize: 12, color: cs.muted, marginTop: 4 }}>{product.size}</div>
+            </div>
+          </div>
+
+          {/* Animated grade ring */}
+          <div style={{ padding: '24px 22px 18px', display: 'flex', alignItems: 'center', gap: 18 }}>
+            <AnimatedGradeRing score={product.score} letter={letter} c={c} />
+            <div style={{ flex: 1 }}>
+              <div style={{
+                display: 'inline-block', padding: '4px 12px',
+                background: c.bg, color: c.fg, borderRadius: 20,
+                fontSize: 11.5, fontWeight: 600,
+                letterSpacing: '0.04em', textTransform: 'uppercase',
+              }}>
+                Score {c.label.toLowerCase()}
+              </div>
+              <div className="cs-fade-up" style={{
+                animationDelay: '1.2s',
+                fontSize: 13.5, lineHeight: 1.45, marginTop: 10, color: cs.ink,
+              }}>
+                {product.verdict}
+              </div>
+            </div>
+          </div>
+
+          {/* Pet verdict */}
+          <div className="cs-fade-up" style={{
+            animationDelay: '1.35s',
+            margin: '0 16px 18px', padding: 14, background: cs.greenPale,
+            borderRadius: 12, display: 'flex', alignItems: 'center', gap: 12,
+          }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: 999, background: cs.white,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <CSIconPaw size={16} color={cs.greenMid} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 11.5, color: cs.greenMid, fontWeight: 500 }}>Pour Pumba</div>
+              <div style={{ fontFamily: cs.serif, fontSize: 15, fontWeight: 500,
+                color: cs.greenDark, letterSpacing: '-0.1px' }}>
+                {letter === 'A' ? 'Recommandé · 220 g/jour conseillé'
+                  : letter === 'B' ? 'Adapté · 220 g/jour conseillé'
+                  : letter === 'C' ? 'À varier · transition douce conseillée'
+                  : 'À éviter pour son profil'}
+              </div>
+            </div>
+          </div>
+        </CSCard>
+
+        {/* Macros bars */}
+        <div style={{ marginTop: 18, animationDelay: '.6s' }} className="cs-fade-up">
+          <div style={{ fontSize: 11.5, color: cs.muted, fontWeight: 600,
+            letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 12, padding: '0 4px' }}>
+            Détail des critères
+          </div>
+          <CSCard padding={0}>
+            {[
+              { label: 'Protéines', v: product.macros.prot * 2.5, raw: product.macros.prot + ' g / 100 g', hint: 'ratio fort' },
+              { label: 'Matières grasses', v: product.macros.fat * 3, raw: product.macros.fat + ' g / 100 g', hint: 'dans la plage' },
+              { label: 'Glucides', v: product.macros.carb * 1.2, raw: product.macros.carb + ' g / 100 g', hint: product.macros.carb > 35 ? 'légèrement élevés' : 'corrects' },
+              { label: 'Viande identifiée', v: product.macros.meat, raw: product.macros.meat + ' %', hint: product.macros.meat >= 50 ? 'source principale' : 'à compléter' },
+            ].map((r, i, arr) => (
+              <div key={i} className="cs-fade-up" style={{
+                animationDelay: `${0.7 + i * 0.1}s`,
+                padding: '14px 18px',
+                borderBottom: i < arr.length - 1 ? '1px solid rgba(26,58,15,0.06)' : 'none',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 500, color: cs.ink }}>{r.label}</div>
+                  <div style={{ fontFamily: cs.mono, fontSize: 12, fontWeight: 600, color: csScoreColor(Math.min(r.v, 100)) }}>
+                    {r.raw}
+                  </div>
+                </div>
+                <div className="cs-bar" style={{ height: 5, background: cs.creamDark, borderRadius: 999, overflow: 'hidden' }}>
+                  <i style={{
+                    display: 'block', height: '100%',
+                    '--bar-w': Math.min(r.v, 100) + '%',
+                    background: csScoreColor(Math.min(r.v, 100)),
+                    animationDelay: `${0.9 + i * 0.1}s`,
+                  }}></i>
+                </div>
+                <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 6 }}>{r.hint}</div>
+              </div>
+            ))}
+          </CSCard>
+        </div>
+
+        {/* Ingredients */}
+        <div className="cs-fade-up" style={{ animationDelay: '1.4s', marginTop: 18 }}>
+          <CSCard padding={20}>
+            <div style={{ fontSize: 11.5, color: cs.muted, fontWeight: 600,
+              letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 10 }}>
+              Composition
+            </div>
+            <p style={{ fontSize: 13.5, color: cs.ink, lineHeight: 1.55, margin: 0 }}>
+              {product.ingredients}
+            </p>
+            <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(26,58,15,0.08)' }}>
+              <div style={{ fontSize: 11.5, color: cs.muted, fontWeight: 600,
+                letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 6 }}>
+                Additifs
+              </div>
+              <p style={{ fontSize: 13, color: cs.ink, margin: 0, lineHeight: 1.5 }}>
+                {product.additives}
+              </p>
+            </div>
+          </CSCard>
+        </div>
+
+        {/* CTAs */}
+        <div className="cs-fade-up" style={{ animationDelay: '1.55s', marginTop: 18,
+          display: 'flex', gap: 10 }}>
+          <CSButton variant="secondary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+            onClick={onBack}>Refaire un scan</CSButton>
+          <CSButton variant="primary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+            icon={<CSIconCheck size={14} />} onClick={onSave}>Enregistrer</CSButton>
+        </div>
+
+        <div style={{ marginTop: 18, padding: '4px 4px 4px', fontSize: 11, color: cs.faint,
+          lineHeight: 1.5, display: 'flex', gap: 8 }}>
+          <CSIconInfo size={12} style={{ flex: '0 0 auto', marginTop: 2 }} />
+          <span>Score <em>indicatif</em>. Données Open Pet Food Facts. Ne remplace pas un avis vétérinaire.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Animated ring with CSS custom prop for stroke offset
+function AnimatedGradeRing({ score, letter, c }) {
+  const size = 130, strokeWidth = 10;
+  const r = (size - strokeWidth) / 2;
+  const C = 2 * Math.PI * r;
+  const targetOffset = C - (Math.min(Math.max(score, 0), 100) / 100) * C;
+
+  // Animated number count
+  const [displayScore, setDisplayScore] = useState(0);
+  useEffect(() => {
+    const start = performance.now();
+    const duration = 900;
+    let raf;
+    function tick(t) {
+      const elapsed = t - start;
+      const p = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplayScore(Math.round(score * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    }
+    const delay = setTimeout(() => { raf = requestAnimationFrame(tick); }, 1100);
+    return () => { clearTimeout(delay); if (raf) cancelAnimationFrame(raf); };
+  }, [score]);
+
+  return (
+    <div style={{ position: 'relative', width: size, height: size, flex: '0 0 auto' }}>
+      {/* Particle burst / confetti for high scores */}
+      {letter === 'A' && <ConfettiBurst count={26} />}
+      {letter === 'B' && <ParticleBurst count={14} color={c.fg} />}
+
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
+        style={{ '--ring-c': C, '--ring-target': targetOffset, position: 'relative', zIndex: 1 }}>
+        <circle cx={size/2} cy={size/2} r={r} stroke="rgba(26,58,15,0.07)"
+          strokeWidth={strokeWidth} fill="none" />
+        <circle className="cs-ring-fg"
+          cx={size/2} cy={size/2} r={r}
+          stroke={c.fg} strokeWidth={strokeWidth} fill="none"
+          strokeLinecap="round"
+          strokeDasharray={C}
+          strokeDashoffset={targetOffset}
+          transform={`rotate(-90 ${size/2} ${size/2})`}
+          style={{ strokeDasharray: C, filter: `drop-shadow(0 0 8px ${c.fg}40)` }}
+        />
+      </svg>
+      <div style={{
+        position: 'absolute', inset: 0, display: 'flex',
+        flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 2,
+      }}>
+        <div className="cs-grade-letter" style={{
+          fontFamily: cs.serif, fontSize: size * 0.45, fontWeight: 600,
+          color: c.fg, lineHeight: 0.9,
+        }}>{letter}</div>
+        <div className="cs-score-num" style={{
+          fontFamily: cs.mono, fontSize: size * 0.08, fontWeight: 500,
+          color: cs.muted, marginTop: 6, letterSpacing: '0.04em',
+        }}>
+          {displayScore} <span style={{ color: cs.faint }}>/100</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Manual Entry View ───────────────────────────────────────────────
+// Saisie manuelle des nutriments → score (reproduit submitManualForm de index.html)
+function ManualEntryView({ name, onBack, onSubmit, dir }) {
+  const [pname, setPname] = useState(name || '');
+  const [prot, setProt] = useState('');
+  const [fat, setFat] = useState('');
+  const [carb, setCarb] = useState('');
+  const [ingr, setIngr] = useState('');
+  const [save, setSave] = useState(true);
+
+  function submit() {
+    onSubmit({
+      name: pname.trim() || 'Produit saisi',
+      prot, fat, carb, ingr, save,
+    });
+  }
+
+  const numField = (label, value, set, ph) => (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <label style={{ display: 'block', fontSize: 11.5, color: cs.muted,
+        marginBottom: 6, fontWeight: 500 }}>{label}</label>
+      <input type="number" inputMode="decimal" step="0.1" min="0" max="100"
+        value={value} placeholder={ph}
+        onChange={(e) => set(e.target.value)}
+        onFocus={(e) => e.target.style.borderColor = 'var(--cs-green-bright)'}
+        onBlur={(e) => e.target.style.borderColor = ''}
+        style={{
+          width: '100%', padding: '11px 12px', boxSizing: 'border-box',
+          border: `1.5px solid ${cs.border}`, borderRadius: 10,
+          fontFamily: cs.sans, fontSize: 14, color: cs.ink,
+          background: cs.surface, outline: 'none', transition: 'border-color .18s',
+        }}
+      />
+    </div>
+  );
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title="Saisie manuelle" onBack={onBack} />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 20px 24px' }}>
+        <div className="cs-fade-up" style={{ marginBottom: 18 }}>
+          <h1 style={{
+            fontFamily: cs.serif, fontSize: 25, fontWeight: 500,
+            color: cs.ink, letterSpacing: '-0.4px', margin: 0, lineHeight: 1.2,
+          }}>
+            Produit introuvable.<br />
+            <em style={{ fontStyle: 'italic', color: cs.accent }}>Calculons son score.</em>
+          </h1>
+          <p style={{ fontSize: 13, color: cs.muted, marginTop: 8, lineHeight: 1.5 }}>
+            Recopiez les valeurs du tableau nutritionnel (« constituants analytiques »)
+            au dos du sac. Le score se calcule avec la même méthode que pour les produits référencés.
+          </p>
+        </div>
+
+        <div className="cs-fade-up" style={{ animationDelay: '.06s' }}>
+          {/* Name */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 11.5, color: cs.muted,
+              marginBottom: 6, fontWeight: 500 }}>Nom du produit</label>
+            <input type="text" value={pname} placeholder="ex: Marque — Adulte Poulet"
+              onChange={(e) => setPname(e.target.value)}
+              onFocus={(e) => e.target.style.borderColor = 'var(--cs-green-bright)'}
+              onBlur={(e) => e.target.style.borderColor = ''}
+              style={{
+                width: '100%', padding: '12px 14px', boxSizing: 'border-box',
+                border: `1.5px solid ${cs.border}`, borderRadius: 11,
+                fontFamily: cs.sans, fontSize: 14.5, color: cs.ink,
+                background: cs.surface, outline: 'none', transition: 'border-color .18s',
+              }}
+            />
+          </div>
+
+          {/* Macros grid */}
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+            {numField('Protéines', prot, setProt, 'g/100g')}
+            {numField('Lipides', fat, setFat, 'g/100g')}
+            {numField('Glucides', carb, setCarb, 'g/100g')}
+          </div>
+
+          {/* Ingredients */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 11.5, color: cs.muted,
+              marginBottom: 6, fontWeight: 500 }}>Ingrédients <span style={{ color: cs.faint }}>(optionnel)</span></label>
+            <input type="text" value={ingr} placeholder="ex: poulet, riz, maïs, graisses…"
+              onChange={(e) => setIngr(e.target.value)}
+              onFocus={(e) => e.target.style.borderColor = 'var(--cs-green-bright)'}
+              onBlur={(e) => e.target.style.borderColor = ''}
+              style={{
+                width: '100%', padding: '12px 14px', boxSizing: 'border-box',
+                border: `1.5px solid ${cs.border}`, borderRadius: 11,
+                fontFamily: cs.sans, fontSize: 14.5, color: cs.ink,
+                background: cs.surface, outline: 'none', transition: 'border-color .18s',
+              }}
+            />
+            <div style={{ fontSize: 11, color: cs.faint, marginTop: 6, lineHeight: 1.4 }}>
+              Le 1ᵉʳ ingrédient compte le plus : une viande nommée en tête améliore le score.
+            </div>
+          </div>
+
+          {/* Save toggle */}
+          <label onClick={() => setSave(!save)} style={{
+            display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer',
+            padding: '12px 14px', background: cs.surface2, borderRadius: 12,
+            border: `1px solid ${cs.border}`, userSelect: 'none',
+          }}>
+            <div style={{
+              width: 20, height: 20, borderRadius: 6, flex: '0 0 auto',
+              background: save ? cs.accent : 'transparent',
+              border: `1.5px solid ${save ? cs.accent : cs.borderStrong}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'background .18s, border-color .18s',
+            }}>
+              {save && <CSIconCheck size={13} color="#fff" />}
+            </div>
+            <div style={{ fontSize: 13, color: cs.ink }}>
+              Enregistrer pour la prochaine fois <span style={{ color: cs.muted }}>(sur cet appareil)</span>
+            </div>
+          </label>
+
+          <CSButton variant="primary" size="lg"
+            style={{ width: '100%', justifyContent: 'center', marginTop: 18 }}
+            icon={<CSIconScan size={15} />}
+            onClick={submit}>
+            Calculer le score
+          </CSButton>
+
+          <div style={{ marginTop: 16, fontSize: 11, color: cs.faint,
+            lineHeight: 1.5, display: 'flex', gap: 8 }}>
+            <CSIconInfo size={12} style={{ flex: '0 0 auto', marginTop: 2 }} />
+            <span>Score <em>indicatif</em> basé sur vos saisies. Ne remplace pas un avis vétérinaire.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+window.ScanView = ScanView;
+window.ResultView = ResultView;
+window.ManualEntryView = ManualEntryView;
+
+</script>
+  <script type="text/babel" data-src="prototype/animals-pet.jsx">
+// CrocScore — Prototype : Animaux + Profil
+
+function AnimalsView({ onBack, onPick, dir }) {
+  const pets = [
+    { name: 'Pumba', breed: 'Berger Australien · 4 ans', letter: 'B', scans: 24, last: 'Aujourd\'hui' },
+    { name: 'Mochi', breed: 'British Shorthair · 2 ans', letter: 'C', scans: 11, last: 'Hier' },
+  ];
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title="Mes animaux" right={
+        <button className="cs-press" style={{
+          width: 38, height: 38, borderRadius: 999,
+          background: 'linear-gradient(135deg, #4a9422 0%, #2d6016 100%)',
+          color: '#fff', border: 'none', display: 'flex',
+          alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 4px 12px rgba(74,148,34,0.3)',
+        }}>
+          <CSIconPlus size={16} color="#fff" />
+        </button>
+      } />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 16px 20px' }}>
+        <div className="cs-fade-up" style={{ marginBottom: 16 }}>
+          <h1 style={{
+            fontFamily: cs.serif, fontSize: 28, fontWeight: 500,
+            color: cs.greenDark, letterSpacing: '-0.4px', margin: 0, lineHeight: 1.15,
+          }}>
+            Suivez chacun de vos <em style={{ fontStyle: 'italic', color: cs.greenBright }}>compagnons</em>.
+          </h1>
+          <p style={{ fontSize: 13.5, color: cs.muted, marginTop: 8, lineHeight: 1.5 }}>
+            Score nutritionnel adapté à l'âge, à la race et au profil de chacun.
+          </p>
+        </div>
+
+        {pets.map((p, i) => (
+          <div key={i} onClick={() => onPick(p.name)} className="cs-card-press cs-fade-up"
+            style={{
+              animationDelay: `${0.1 + i * 0.08}s`,
+              padding: 0, background: cs.white, borderRadius: 20,
+              border: '1px solid rgba(26,58,15,0.08)',
+              overflow: 'hidden', marginBottom: 14,
+            }}>
+            <div className="cs-placeholder" style={{
+              height: 140, borderRadius: '20px 20px 0 0', minHeight: 0,
+            }}>{p.name}</div>
+            <div style={{ padding: 18 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: cs.serif, fontSize: 22, fontWeight: 500,
+                    color: cs.greenDark, letterSpacing: '-0.3px', lineHeight: 1 }}>
+                    {p.name}
+                  </div>
+                  <div style={{ fontSize: 12.5, color: cs.muted, marginTop: 4 }}>{p.breed}</div>
+                </div>
+                <CSGradePill letter={p.letter} size={42} />
+              </div>
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(26,58,15,0.06)',
+                fontSize: 12, color: cs.muted,
+              }}>
+                <span>{p.scans} scans · dernier {p.last}</span>
+                <CSIconArrow size={13} color={cs.muted} />
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <div className="cs-fade-up" style={{ animationDelay: '.3s' }}>
+          <CSCard padding={20} style={{ background: 'transparent',
+            border: `1.5px dashed rgba(26,58,15,0.18)` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 14, background: cs.greenPale,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flex: '0 0 auto',
+              }}>
+                <CSIconPlus size={20} color={cs.greenMid} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: cs.serif, fontSize: 16, fontWeight: 500,
+                  color: cs.greenDark, letterSpacing: '-0.1px' }}>
+                  Ajouter un animal
+                </div>
+                <div style={{ fontSize: 12, color: cs.muted, marginTop: 2 }}>
+                  Personnalisez le suivi pour chacun
+                </div>
+              </div>
+            </div>
+          </CSCard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Pet profile ─────────────────────────────────────────────────────────
+function PetView({ name, onBack, dir }) {
+  const tags = ['Berger Australien', 'Mâle stérilisé', 'Activité élevée'];
+  const events = [
+    { date: "Aujourd'hui", type: 'scan', label: 'Marque A — Adulte Saumon', letter: 'A' },
+    { date: 'Hier', type: 'weight', label: 'Pesée enregistrée', value: '24,1 kg' },
+    { date: '12 mai', type: 'scan', label: 'Marque C — Sensitive Light', letter: 'B' },
+    { date: '08 mai', type: 'note', label: 'Transition saumon entamée' },
+  ];
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title={name} onBack={onBack} right={
+        <button className="cs-press" style={{
+          width: 38, height: 38, borderRadius: 999,
+          background: cs.white, border: '1px solid rgba(26,58,15,0.12)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <CSIconSettings size={15} color={cs.greenDark} />
+        </button>
+      } />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 16px 20px' }}>
+        {/* Hero card */}
+        <div className="cs-fade-up">
+          <CSCard padding={0} style={{ overflow: 'hidden' }}>
+            <div className="cs-placeholder" style={{
+              height: 160, borderRadius: '20px 20px 0 0', minHeight: 0,
+            }}>Photo de {name}</div>
+            <div style={{ padding: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 11.5, color: cs.muted, fontWeight: 500,
+                    letterSpacing: '0.04em', textTransform: 'uppercase' }}>Chien · ♂ 4 ans</div>
+                  <h1 style={{
+                    fontFamily: cs.serif, fontSize: 32, fontWeight: 500,
+                    color: cs.greenDark, letterSpacing: '-0.5px',
+                    margin: '4px 0 0', lineHeight: 1,
+                  }}>{name}</h1>
+                </div>
+                <CSGradePill letter="B" size={52} />
+              </div>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14 }}>
+                {tags.map((t, i) => <CSPill key={i} tone="outline">{t}</CSPill>)}
+              </div>
+
+              <div style={{
+                display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14,
+                marginTop: 18, paddingTop: 16, borderTop: '1px solid rgba(26,58,15,0.06)',
+              }}>
+                <PetStat label="Poids" v="24,1" unit="kg" />
+                <PetStat label="Scans / mois" v="11" />
+                <PetStat label="Tendance" v="↑" accent />
+              </div>
+            </div>
+          </CSCard>
+        </div>
+
+        {/* Score trend */}
+        <div className="cs-fade-up" style={{ animationDelay: '.1s', marginTop: 18 }}>
+          <CSCard padding={20}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 }}>
+              <h3 style={{ fontFamily: cs.serif, fontSize: 17, fontWeight: 500,
+                color: cs.greenDark, margin: 0 }}>Évolution du score</h3>
+              <div style={{ display: 'flex', gap: 4 }}>
+                {['7j', '30j', '12s'].map((p, i) => (
+                  <button key={i} style={{
+                    padding: '4px 10px', fontSize: 11.5, fontWeight: 500,
+                    background: p === '30j' ? cs.greenDark : 'transparent',
+                    color: p === '30j' ? cs.cream : cs.muted,
+                    border: 'none', borderRadius: 6, cursor: 'pointer', fontFamily: cs.sans,
+                  }}>{p}</button>
+                ))}
+              </div>
+            </div>
+            <svg width="100%" height="120" viewBox="0 0 320 120" style={{ marginTop: 12 }}>
+              <defs>
+                <linearGradient id="petg" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stopColor="#4a9422" stopOpacity="0.22" />
+                  <stop offset="1" stopColor="#4a9422" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {['A','B','C','D'].map((l, i) => (
+                <text key={i} x="14" y={20 + i * 28}
+                  fontSize="11" fill={cs.faint} fontFamily="Fraunces" fontWeight="500"
+                  textAnchor="end">{l}</text>
+              ))}
+              {[16, 44, 72, 100].map((y, i) => (
+                <line key={i} x1="22" x2="320" y1={y} y2={y}
+                  stroke="rgba(26,58,15,0.05)" strokeDasharray="2 4" />
+              ))}
+              <path d="M28 70 L60 65 L92 68 L124 50 L156 55 L188 45 L220 38 L252 42 L284 32 L320 28 L320 120 L28 120 Z" fill="url(#petg)" />
+              <path d="M28 70 L60 65 L92 68 L124 50 L156 55 L188 45 L220 38 L252 42 L284 32 L320 28"
+                stroke="#4a9422" strokeWidth="2.5" fill="none" />
+              {[[28,70],[60,65],[92,68],[124,50],[156,55],[188,45],[220,38],[252,42],[284,32],[320,28]].map((p,i) => (
+                <circle key={i} cx={p[0]} cy={p[1]} r="3.5"
+                  fill={cs.white} stroke="#4a9422" strokeWidth="2" />
+              ))}
+            </svg>
+          </CSCard>
+        </div>
+
+        {/* Daily intake */}
+        <div className="cs-fade-up" style={{ animationDelay: '.18s', marginTop: 18 }}>
+          <h3 style={{ fontFamily: cs.serif, fontSize: 18, fontWeight: 500,
+            color: cs.greenDark, margin: '0 0 12px', letterSpacing: '-0.2px' }}>
+            Apport quotidien · 7j
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            {[
+              { l: 'Énergie', v: '1 480', u: 'kcal', t: 'cible 1 500 kcal', ok: true },
+              { l: 'Protéines', v: '28', u: '%', t: '≥ 25 %', ok: true },
+              { l: 'Lipides', v: '17', u: '%', t: '15-20 %', ok: true },
+              { l: 'Glucides', v: '34', u: '%', t: '≤ 35 %', ok: true },
+            ].map((m, i) => (
+              <CSCard key={i} padding={14}>
+                <div style={{ fontSize: 11, color: cs.muted, fontWeight: 500,
+                  textTransform: 'uppercase', letterSpacing: '0.04em' }}>{m.l}</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 6 }}>
+                  <div style={{ fontFamily: cs.serif, fontSize: 22, fontWeight: 500,
+                    color: cs.greenDark, letterSpacing: '-0.3px' }}>{m.v}</div>
+                  <div style={{ fontSize: 11.5, color: cs.faint }}>{m.u}</div>
+                </div>
+                <div style={{ fontSize: 11, color: m.ok ? cs.greenBright : '#c44020',
+                  marginTop: 6, fontWeight: 500 }}>
+                  ✓ {m.t}
+                </div>
+              </CSCard>
+            ))}
+          </div>
+        </div>
+
+        {/* Journal */}
+        <div className="cs-fade-up" style={{ animationDelay: '.26s', marginTop: 18 }}>
+          <h3 style={{ fontFamily: cs.serif, fontSize: 18, fontWeight: 500,
+            color: cs.greenDark, margin: '0 0 12px', letterSpacing: '-0.2px' }}>
+            Journal récent
+          </h3>
+          <CSCard padding={0}>
+            {events.map((ev, i, arr) => (
+              <div key={i} style={{
+                padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12,
+                borderBottom: i < arr.length - 1 ? '1px solid rgba(26,58,15,0.06)' : 'none',
+              }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: 9, flex: '0 0 auto',
+                  background: ev.type === 'scan' ? cs.greenPale
+                    : ev.type === 'weight' ? cs.creamDark
+                    : cs.creamDark,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {ev.type === 'scan' && <CSIconScan size={14} color={cs.greenMid} />}
+                  {ev.type === 'weight' && <CSIconWeight size={14} color={cs.ink2} />}
+                  {ev.type === 'note' && <CSIconInfo size={14} color={cs.ink2} />}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 500, color: cs.ink,
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.label}</div>
+                  <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>{ev.date}</div>
+                </div>
+                {ev.letter && <CSGradePill letter={ev.letter} size={28} />}
+                {ev.value && (
+                  <div style={{ fontFamily: cs.serif, fontSize: 14, fontWeight: 500,
+                    color: cs.greenDark }}>{ev.value}</div>
+                )}
+              </div>
+            ))}
+          </CSCard>
+        </div>
+
+        {/* Vet share */}
+        <div className="cs-fade-up cs-premium-ribbon" style={{ animationDelay: '.32s', marginTop: 18 }}>
+          <CSPill tone="dark" style={{ marginBottom: 10 }}>
+            <CSIconSparkle size={11} color={cs.greenLight} /> Premium
+          </CSPill>
+          <div style={{ fontFamily: cs.serif, fontSize: 18, fontWeight: 500,
+            letterSpacing: '-0.2px', lineHeight: 1.2, marginBottom: 6 }}>
+            Partager avec votre vétérinaire
+          </div>
+          <p style={{ fontSize: 12.5, color: 'rgba(250,248,242,0.7)',
+            lineHeight: 1.55, margin: '0 0 14px' }}>
+            Rapport PDF chiffré, partage soumis à consentement (RGPD).
+          </p>
+          <CSButton variant="primary" size="sm" icon={<CSIconLock size={13} />}>
+            Générer un rapport
+          </CSButton>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PetStat({ label, v, unit, accent }) {
+  return (
+    <div>
+      <div style={{ fontSize: 10.5, color: cs.muted, fontWeight: 500,
+        textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginTop: 4 }}>
+        <div style={{ fontFamily: cs.serif, fontSize: 20, fontWeight: 500,
+          color: accent ? cs.greenBright : cs.greenDark, letterSpacing: '-0.3px', lineHeight: 1 }}>
+          {v}
+        </div>
+        {unit && <div style={{ fontSize: 11.5, color: cs.faint }}>{unit}</div>}
+      </div>
+    </div>
+  );
+}
+
+window.AnimalsView = AnimalsView;
+window.PetView = PetView;
+
+</script>
+  <script type="text/babel" data-src="prototype/account-auth.jsx">
+// CrocScore — Vues Auth + Compte
+
+// ─── Auth (sign in / sign up avec CGU) ───────────────────────────────
+function AuthView({ onBack, onSignIn, onGo, dir }) {
+  const [tab, setTab] = useState('signin');
+  const [email, setEmail] = useState('');
+  const [pw, setPw] = useState('');
+  const [name, setName] = useState('');
+  const [pwVisible, setPwVisible] = useState(false);
+  const [cguOk, setCguOk] = useState(false);
+  const [ageOk, setAgeOk] = useState(false);
+  const [marketing, setMarketing] = useState(false);
+  const [err, setErr] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  async function trySignIn() {
+    setErr('');
+    if (!email.includes('@')) { setErr('Email invalide.'); return; }
+    if (pw.length < 6) { setErr('Mot de passe trop court.'); return; }
+    setBusy(true);
+    try {
+      const user = await window.realSignIn(email, pw);
+      onSignIn({
+        name: user.displayName || email.split('@')[0],
+        email: user.email, uid: user.uid, plan: 'free',
+      });
+    } catch (e) {
+      setErr(window.realAuthErrorMessage(e.code) || e.message);
+    } finally { setBusy(false); }
+  }
+
+  async function trySignUp() {
+    setErr('');
+    if (!name) return setErr('Indiquez votre prénom.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setErr('Adresse email invalide.');
+    if (pw.length < 6) return setErr('Mot de passe : 6 caractères minimum.');
+    if (!ageOk) return setErr('Vous devez certifier avoir 15 ans ou plus (Art. 8 RGPD).');
+    if (!cguOk) return setErr("Acceptez les CGU et la politique de confidentialité.");
+    setBusy(true);
+    try {
+      const user = await window.realSignUp({ email, password: pw, name });
+      onSignIn({
+        name: user.displayName || name,
+        email: user.email, uid: user.uid, plan: 'free', marketing,
+      });
+    } catch (e) {
+      setErr(window.realAuthErrorMessage(e.code) || e.message);
+    } finally { setBusy(false); }
+  }
+
+  async function tryReset() {
+    setErr('');
+    if (!email.includes('@')) { setErr('Entrez votre email puis réessayez.'); return; }
+    try {
+      await window.realResetPassword(email);
+      setErr('✓ Email de réinitialisation envoyé à ' + email);
+    } catch (e) {
+      setErr(window.realAuthErrorMessage(e.code) || e.message);
+    }
+  }
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title={tab === 'signin' ? 'Se connecter' : 'Créer un compte'} onBack={onBack} />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 20px 24px' }}>
+        <div className="cs-fade-up" style={{ marginBottom: 20 }}>
+          <div style={{
+            width: 60, height: 60, borderRadius: 18,
+            background: cs.accentTint, margin: '0 auto 16px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <CSIconLock size={26} color={cs.accent} />
+          </div>
+          <h1 style={{
+            fontFamily: cs.serif, fontSize: 26, fontWeight: 500,
+            color: cs.ink, textAlign: 'center', letterSpacing: '-0.4px',
+            margin: 0, lineHeight: 1.2,
+          }}>
+            {tab === 'signin'
+              ? <>Heureux de vous <em style={{ fontStyle: 'italic', color: cs.accent }}>retrouver</em>.</>
+              : <>Suivez le régime de <em style={{ fontStyle: 'italic', color: cs.accent }}>vos animaux</em>.</>}
+          </h1>
+          <p style={{ fontSize: 13, color: cs.muted, textAlign: 'center', marginTop: 8, lineHeight: 1.5 }}>
+            {tab === 'signin' ? 'Connectez-vous pour retrouver votre historique de scans.'
+              : 'Compte gratuit. Vos données restent en UE, jamais vendues à des tiers.'}
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="cs-fade-up" style={{ animationDelay: '.08s',
+          display: 'flex', background: cs.surface, borderRadius: 12,
+          padding: 4, border: `1px solid ${cs.border}`, marginBottom: 18 }}>
+          {[['signin', 'Se connecter'], ['signup', 'Créer']].map(([k, l]) => (
+            <button key={k} onClick={() => { setTab(k); setErr(''); }} className="cs-press" style={{
+              flex: 1, padding: '10px 14px', fontSize: 13.5, fontWeight: 600,
+              border: 'none', borderRadius: 9, cursor: 'pointer',
+              background: tab === k ? cs.accent : 'transparent',
+              color: tab === k ? '#fff' : cs.muted,
+              fontFamily: cs.sans, transition: 'background .25s ease, color .2s',
+            }}>{l}</button>
+          ))}
+        </div>
+
+        {/* Form */}
+        <div className="cs-fade-up" style={{ animationDelay: '.12s' }}>
+          {tab === 'signup' && (
+            <Field label="Prénom" value={name} onChange={setName} placeholder="Votre prénom" />
+          )}
+          <Field label="Email" value={email} onChange={setEmail}
+            placeholder="votre@email.com" type="email" />
+          {tab === 'signup' && (
+            <div style={{
+              fontSize: 11, color: cs.muted, margin: '-10px 0 12px',
+              lineHeight: 1.4, padding: '0 4px',
+            }}>
+              Utilisé pour l'authentification — non partagé à des tiers (Art. 6.1.b RGPD).
+            </div>
+          )}
+          <Field label="Mot de passe" value={pw} onChange={setPw}
+            placeholder={tab === 'signup' ? '6 caractères minimum' : 'Votre mot de passe'}
+            type={pwVisible ? 'text' : 'password'}
+            trailing={
+              <button className="cs-press" onClick={() => setPwVisible(!pwVisible)} style={{
+                background: 'transparent', border: 'none', color: cs.muted, cursor: 'pointer',
+                padding: 4, display: 'flex',
+              }}>
+                {pwVisible ? <CSIconLock size={16} /> : <CSIconInfo size={16} />}
+              </button>
+            }
+          />
+          {tab === 'signup' && (
+            <div style={{
+              fontSize: 11, color: cs.muted, margin: '-10px 0 14px',
+              lineHeight: 1.4, padding: '0 4px',
+            }}>
+              Chiffré par Firebase Auth (Google). CrocScore ne stocke jamais votre mot de passe en clair.
+            </div>
+          )}
+
+          {tab === 'signup' && (
+            <div style={{
+              background: cs.surface2, borderRadius: 12, padding: 14, marginTop: 4,
+              border: `1px solid ${cs.border}`,
+            }}>
+              <Check checked={ageOk} onToggle={() => setAgeOk(!ageOk)}>
+                Je certifie avoir <strong>15 ans ou plus</strong> (Art. 8 RGPD).
+              </Check>
+              <div style={{ height: 12 }} />
+              <Check checked={cguOk} onToggle={() => setCguOk(!cguOk)}>
+                J'ai lu et j'accepte les{' '}
+                <a onClick={(e) => { e.stopPropagation(); onGo('legal', 'right'); }}
+                  style={{ color: cs.accent, fontWeight: 600 }}>CGU</a>
+                {' '}et la{' '}
+                <a onClick={(e) => { e.stopPropagation(); onGo('legal', 'right'); }}
+                  style={{ color: cs.accent, fontWeight: 600 }}>politique de confidentialité</a>.
+              </Check>
+              <div style={{ height: 12 }} />
+              <Check checked={marketing} onToggle={() => setMarketing(!marketing)}>
+                <span style={{ color: cs.muted }}>
+                  (Optionnel) Recevoir le résumé mensuel et conseils par email — révocable à tout moment.
+                </span>
+              </Check>
+            </div>
+          )}
+
+          {tab === 'signin' && (
+            <a onClick={tryReset} style={{
+              display: 'block', textAlign: 'right', fontSize: 12, color: cs.accent,
+              fontWeight: 500, marginTop: -4, marginBottom: 14, cursor: 'pointer',
+            }}>Mot de passe oublié ?</a>
+          )}
+
+          {err && (
+            <div className="cs-fade-up" style={{
+              padding: '10px 12px', background: 'rgba(180, 60, 40, 0.12)',
+              borderRadius: 10, color: '#c44020', fontSize: 12.5, marginTop: 4, marginBottom: 14,
+              border: '1px solid rgba(180,60,40,0.2)',
+            }}>{err}</div>
+          )}
+
+          <CSButton variant="primary" size="lg" style={{ width: '100%', justifyContent: 'center', marginTop: 6, opacity: busy ? 0.7 : 1 }}
+            onClick={tab === 'signin' ? trySignIn : trySignUp}>
+            {busy ? '… patientez' : (tab === 'signin' ? 'Se connecter' : 'Créer mon compte')}
+          </CSButton>
+
+          <p style={{ fontSize: 10.5, color: cs.faint, textAlign: 'center',
+            marginTop: 14, lineHeight: 1.55 }}>
+            Authentification gérée par Firebase Auth (Google).<br />
+            Suppression du compte sur demande : <a href="mailto:crocscore.help@gmail.com"
+              style={{ color: cs.accent }}>crocscore.help@gmail.com</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, value, onChange, placeholder, type = 'text', trailing }) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 500,
+        color: cs.muted, marginBottom: 6, padding: '0 4px' }}>{label}</label>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 6,
+        padding: '0 12px 0 14px',
+        background: cs.surface, border: `1.5px solid ${cs.border}`,
+        borderRadius: 11, transition: 'border-color .18s, box-shadow .18s',
+      }}>
+        <input type={type} value={value} placeholder={placeholder}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={(e) => e.target.parentElement.style.borderColor = 'var(--cs-green-bright)'}
+          onBlur={(e) => e.target.parentElement.style.borderColor = ''}
+          style={{
+            flex: 1, padding: '12px 0', border: 'none', outline: 'none',
+            fontFamily: cs.sans, fontSize: 14.5, color: cs.ink,
+            background: 'transparent', minWidth: 0,
+          }}
+        />
+        {trailing}
+      </div>
+    </div>
+  );
+}
+
+function Check({ checked, onToggle, children }) {
+  return (
+    <label onClick={onToggle} style={{
+      display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer',
+      userSelect: 'none',
+    }}>
+      <div style={{
+        width: 20, height: 20, borderRadius: 6,
+        background: checked ? cs.accent : 'transparent',
+        border: `1.5px solid ${checked ? cs.accent : cs.borderStrong}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flex: '0 0 auto', marginTop: 1,
+        transition: 'background .18s ease, border-color .18s',
+      }}>
+        {checked && <CSIconCheck size={13} color="#fff" />}
+      </div>
+      <div style={{ fontSize: 12.5, color: cs.ink, lineHeight: 1.5 }}>{children}</div>
+    </label>
+  );
+}
+
+// ─── Compte ──────────────────────────────────────────────────────────
+function AccountView({ user, onSignOut, onGo, dir }) {
+  // Pas connecté
+  if (!user) {
+    return (
+      <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+        <div className="cs-status-pad" />
+        <TopBar title="Mon compte" />
+        <div className="cs-screen-scroll" style={{
+          padding: '8px 20px', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+        }}>
+          <div className="cs-pop-in" style={{
+            width: 80, height: 80, borderRadius: 24, background: cs.accentTint,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 40,
+          }}>
+            <CSIconUser size={36} color={cs.accent} />
+          </div>
+          <h2 className="cs-fade-up" style={{
+            fontFamily: cs.serif, fontSize: 26, fontWeight: 500,
+            color: cs.ink, letterSpacing: '-0.4px', marginTop: 22, lineHeight: 1.2,
+            animationDelay: '.1s',
+          }}>
+            Créez votre <em style={{ fontStyle: 'italic', color: cs.accent }}>profil</em>.
+          </h2>
+          <p className="cs-fade-up" style={{
+            fontSize: 14, color: cs.muted, lineHeight: 1.55, maxWidth: 320, marginTop: 10,
+            animationDelay: '.16s',
+          }}>
+            Synchronisez vos animaux, votre historique de scans et recevez
+            (si vous le souhaitez) le résumé mensuel.
+          </p>
+          <div className="cs-fade-up" style={{
+            display: 'flex', gap: 10, marginTop: 26, width: '100%', maxWidth: 320,
+            animationDelay: '.22s',
+          }}>
+            <CSButton variant="secondary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+              onClick={() => onGo('auth', 'right')}>Se connecter</CSButton>
+            <CSButton variant="primary" size="md" style={{ flex: 1, justifyContent: 'center' }}
+              onClick={() => onGo('auth', 'right')}>Créer un compte</CSButton>
+          </div>
+          <p style={{ fontSize: 11, color: cs.faint, marginTop: 18, lineHeight: 1.5 }}>
+            Aucune obligation — vous pouvez utiliser CrocScore sans compte.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Connecté
+  const initial = (user.name || user.email || '?')[0].toUpperCase();
+  const items = [
+    { id: 'pricing', icon: <CSIconSparkle size={16} />, label: 'Abonnement Premium',
+      sub: user.plan === 'premium' ? 'Actif' : 'Découvrir' },
+    { id: 'settings', icon: <CSIconSettings size={16} />, label: 'Paramètres',
+      sub: 'Thème, notifications, données' },
+    { id: 'legal', icon: <CSIconShield size={16} />, label: 'Confidentialité & légal',
+      sub: 'CGU · Politique RGPD · Cookies' },
+  ];
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title="Mon compte" />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 20px 24px' }}>
+        {/* Profile card */}
+        <div className="cs-fade-up" style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          padding: '12px 0 20px',
+        }}>
+          <div style={{
+            width: 80, height: 80, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #4a9422 0%, #2d6016 100%)',
+            color: '#fff', fontFamily: cs.serif, fontSize: 32, fontWeight: 600,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 8px 22px rgba(74,148,34,0.32)',
+          }}>{initial}</div>
+          <div style={{
+            fontFamily: cs.serif, fontSize: 22, fontWeight: 500, color: cs.ink,
+            marginTop: 12, letterSpacing: '-0.3px',
+          }}>{user.name || 'Sans nom'}</div>
+          <div style={{ fontSize: 13, color: cs.muted, marginTop: 2 }}>{user.email}</div>
+        </div>
+
+        {/* Plan card */}
+        <div className="cs-fade-up cs-premium-ribbon" style={{ animationDelay: '.08s' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: cs.greenLight,
+            textTransform: 'uppercase', letterSpacing: '0.06em' }}>Mon abonnement</div>
+          <div style={{
+            fontFamily: cs.serif, fontSize: 28, fontWeight: 500, color: cs.cream,
+            letterSpacing: '-0.4px', marginTop: 6,
+          }}>
+            {user.plan === 'premium' ? 'Premium' : 'Gratuit'}
+          </div>
+          <p style={{ fontSize: 12.5, color: 'rgba(250,248,242,0.65)',
+            lineHeight: 1.5, margin: '8px 0 16px' }}>
+            {user.plan === 'premium'
+              ? 'Suivi mensuel, alertes, rapport vétérinaire — actifs.'
+              : 'Passez à Premium pour le suivi mensuel + rapport vétérinaire.'}
+          </p>
+          <CSButton variant="primary" size="sm" onClick={() => onGo('pricing', 'right')}>
+            {user.plan === 'premium' ? 'Gérer mon abonnement' : 'Passer à Premium'}
+          </CSButton>
+        </div>
+
+        {/* Items */}
+        <div className="cs-fade-up" style={{ animationDelay: '.14s', marginTop: 20 }}>
+          {items.map((item, i) => (
+            <div key={item.id} className="cs-card-press" onClick={() => onGo(item.id, 'right')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '14px 16px', background: cs.surface,
+                borderRadius: 14, border: `1px solid ${cs.border}`, marginBottom: 10,
+              }}>
+              <div style={{
+                width: 38, height: 38, borderRadius: 11, background: cs.accentTint,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: cs.accent, flex: '0 0 auto',
+              }}>{item.icon}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 14, fontWeight: 500, color: cs.ink }}>{item.label}</div>
+                <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>{item.sub}</div>
+              </div>
+              <CSIconArrow size={14} color={cs.muted} />
+            </div>
+          ))}
+        </div>
+
+        {/* Sign out */}
+        <div className="cs-fade-up" style={{ animationDelay: '.22s', marginTop: 18 }}>
+          <button className="cs-press" onClick={onSignOut} style={{
+            width: '100%', padding: '14px', background: 'transparent',
+            border: `1px solid ${cs.borderStrong}`, borderRadius: 12,
+            color: cs.muted, fontFamily: cs.sans, fontSize: 14, fontWeight: 500, cursor: 'pointer',
+          }}>Se déconnecter</button>
+        </div>
+
+        <p style={{ fontSize: 11, color: cs.faint, textAlign: 'center',
+          marginTop: 20, lineHeight: 1.6 }}>
+          Suppression définitive du compte sur demande :<br />
+          <a href="mailto:crocscore.help@gmail.com" style={{ color: cs.accent }}>
+            crocscore.help@gmail.com
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+window.AuthView = AuthView;
+window.AccountView = AccountView;
+
+</script>
+  <script type="text/babel" data-src="prototype/settings-legal.jsx">
+// CrocScore — Paramètres, Tarifs, Légal
+
+// ─── Paramètres (thème, notifications, données) ──────────────────────
+function SettingsView({ theme, setTheme, onBack, onGo, dir }) {
+  const [notif, setNotif] = useState(true);
+  const [analytics, setAnalytics] = useState(false);
+  const [marketing, setMarketing] = useState(false);
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title="Paramètres" onBack={onBack} />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 20px 24px' }}>
+        {/* Theme */}
+        <Section title="Apparence" delay={0}>
+          <div style={{
+            padding: 4, background: cs.surface, borderRadius: 14,
+            border: `1px solid ${cs.border}`, display: 'flex', gap: 4,
+          }}>
+            {[
+              { id: 'light', label: 'Clair', icon: <SunIcon /> },
+              { id: 'dark', label: 'Sombre', icon: <MoonIcon /> },
+            ].map(opt => (
+              <button key={opt.id} className="cs-press"
+                onClick={(e) => csAnimateThemeChange(e, () => setTheme(opt.id))}
+                style={{
+                  flex: 1, padding: '14px 12px',
+                  background: theme === opt.id ? cs.accent : 'transparent',
+                  color: theme === opt.id ? '#fff' : cs.muted,
+                  border: 'none', borderRadius: 10, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  fontFamily: cs.sans, fontSize: 14, fontWeight: 600,
+                  transition: 'background .3s ease, color .25s',
+                }}>
+                {opt.icon} {opt.label}
+              </button>
+            ))}
+          </div>
+          <Note>Le mode sombre s'applique partout dans l'app et se mémorise sur votre appareil uniquement.</Note>
+        </Section>
+
+        {/* Notifications */}
+        <Section title="Notifications" delay={0.06}>
+          <SettingRow title="Alertes scan" sub="Quand un additif sensible est détecté."
+            value={notif} onChange={setNotif} />
+          <SettingRow title="Résumé mensuel" sub="Tendance nutritionnelle (Premium)."
+            value={marketing} onChange={setMarketing} disabled />
+          <Note>
+            Notifications push gérées par OneSignal. Désactivables individuellement. Aucune donnée vendue.
+          </Note>
+        </Section>
+
+        {/* Données */}
+        <Section title="Mes données" delay={0.12}>
+          <SettingRow title="Mesure d'audience anonyme" sub="Statistiques de navigation, sans identifiant."
+            value={analytics} onChange={setAnalytics} />
+          <button className="cs-card-press" onClick={() => onGo('legal', 'right')}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+              padding: 14, background: cs.surface, border: `1px solid ${cs.border}`,
+              borderRadius: 12, marginTop: 8, cursor: 'pointer',
+            }}>
+            <div style={{
+              width: 34, height: 34, borderRadius: 10, background: cs.accentTint,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto',
+            }}>
+              <CSIconShield size={15} color={cs.accent} />
+            </div>
+            <div style={{ flex: 1, textAlign: 'left' }}>
+              <div style={{ fontSize: 13.5, fontWeight: 500, color: cs.ink }}>
+                Gérer mes consentements cookies
+              </div>
+              <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>
+                Réafficher la bannière CNIL
+              </div>
+            </div>
+            <CSIconArrow size={13} color={cs.muted} />
+          </button>
+
+          <button className="cs-card-press"
+            onClick={() => { window.realExportData(); }}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+              padding: 14, background: cs.surface, border: `1px solid ${cs.border}`,
+              borderRadius: 12, marginTop: 8, cursor: 'pointer',
+            }}>
+            <div style={{
+              width: 34, height: 34, borderRadius: 10, background: cs.accentTint,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto',
+            }}>
+              <CSIconExternal size={15} color={cs.accent} />
+            </div>
+            <div style={{ flex: 1, textAlign: 'left' }}>
+              <div style={{ fontSize: 13.5, fontWeight: 500, color: cs.ink }}>
+                Exporter mes données (RGPD)
+              </div>
+              <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>
+                Télécharger un fichier JSON de vos données
+              </div>
+            </div>
+            <CSIconArrow size={13} color={cs.muted} />
+          </button>
+
+          <a href="mailto:crocscore.help@gmail.com?subject=Suppression%20de%20compte%20CrocScore"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: 14, marginTop: 8,
+              background: 'rgba(180,60,40,0.06)', border: '1px solid rgba(180,60,40,0.16)',
+              borderRadius: 12, textDecoration: 'none',
+            }} className="cs-card-press">
+            <div style={{
+              width: 34, height: 34, borderRadius: 10, background: 'rgba(180,60,40,0.12)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto',
+            }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="#c44020" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+              </svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 500, color: '#c44020' }}>
+                Supprimer mon compte
+              </div>
+              <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>
+                Sur demande par email — sous 30 jours (Art. 17 RGPD)
+              </div>
+            </div>
+          </a>
+        </Section>
+
+        <Note style={{ marginTop: 24, padding: '14px 4px', textAlign: 'center' }}>
+          Vos préférences sont stockées localement sur cet appareil uniquement.
+        </Note>
+      </div>
+    </div>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  );
+}
+function MoonIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function Section({ title, delay, children }) {
+  return (
+    <div className="cs-fade-up" style={{ animationDelay: `${delay}s`, marginBottom: 24 }}>
+      <div style={{
+        fontSize: 11.5, color: cs.muted, fontWeight: 600,
+        letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0 4px 10px',
+      }}>{title}</div>
+      {children}
+    </div>
+  );
+}
+
+function Note({ children, style }) {
+  return (
+    <div style={{
+      fontSize: 11, color: cs.faint, lineHeight: 1.55, padding: '10px 4px 2px', ...style,
+    }}>{children}</div>
+  );
+}
+
+function SettingRow({ title, sub, value, onChange, disabled }) {
+  return (
+    <div className="cs-press" onClick={() => !disabled && onChange(!value)} style={{
+      display: 'flex', alignItems: 'center', gap: 14,
+      padding: '14px 16px', background: cs.surface,
+      borderRadius: 12, border: `1px solid ${cs.border}`, marginBottom: 8,
+      opacity: disabled ? 0.55 : 1, cursor: disabled ? 'not-allowed' : 'pointer',
+    }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 500, color: cs.ink }}>{title}</div>
+        <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>{sub}</div>
+      </div>
+      <Toggle on={value} disabled={disabled} />
+    </div>
+  );
+}
+
+function Toggle({ on, disabled }) {
+  return (
+    <div style={{
+      width: 44, height: 26, borderRadius: 999,
+      background: on ? cs.accent : cs.borderStrong,
+      position: 'relative', transition: 'background .3s ease',
+      flex: '0 0 auto',
+    }}>
+      <div style={{
+        position: 'absolute', top: 3, left: on ? 21 : 3,
+        width: 20, height: 20, borderRadius: '50%', background: '#fff',
+        transition: 'left .25s cubic-bezier(.22,.9,.3,1)',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+      }}></div>
+    </div>
+  );
+}
+
+// ─── Tarifs ──────────────────────────────────────────────────────────
+function PricingView({ onBack, dir, onSubscribe }) {
+  const [period, setPeriod] = useState('month');
+
+  const plans = [
+    {
+      id: 'free',
+      name: 'Gratuit',
+      price: '0 €',
+      period: 'pour toujours',
+      features: [
+        ['Score indicatif A à E', true],
+        ['Recherche par nom', true],
+        ['Scan code-barres', true],
+        ['Historique illimité', true],
+        ['Suivi nutritionnel mensuel', false],
+        ['Rapport vétérinaire PDF', false],
+      ],
+      cta: 'Plan actuel',
+      variant: 'secondary',
+    },
+    {
+      id: 'premium',
+      name: 'Premium',
+      price: period === 'year' ? '24 €' : '2,99 €',
+      period: period === 'year' ? '/ an (économisez 33 %)' : '/ mois',
+      featured: true,
+      features: [
+        ['Tout du plan gratuit', true],
+        ['Suivi nutritionnel mensuel', true],
+        ['Alertes additifs personnalisées', true],
+        ['Rapport vétérinaire PDF chiffré', true],
+        ['Comparateur de croquettes', true],
+        ['Sans publicité', true],
+      ],
+      cta: "S'abonner",
+      variant: 'primary',
+    },
+  ];
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title="Tarifs" onBack={onBack} />
+
+      <div className="cs-screen-scroll" style={{ padding: '4px 20px 24px' }}>
+        <div className="cs-fade-up" style={{ textAlign: 'center', marginBottom: 18 }}>
+          <h1 style={{
+            fontFamily: cs.serif, fontSize: 28, fontWeight: 500,
+            color: cs.ink, letterSpacing: '-0.4px', margin: 0, lineHeight: 1.2,
+          }}>
+            Commencez <em style={{ fontStyle: 'italic', color: cs.accent }}>gratuitement</em>.
+          </h1>
+          <p style={{ fontSize: 13.5, color: cs.muted, marginTop: 8, lineHeight: 1.5 }}>
+            Sans carte bancaire. Passez en Premium quand vous voulez.
+          </p>
+        </div>
+
+        {/* Period toggle */}
+        <div className="cs-fade-up" style={{ animationDelay: '.06s',
+          display: 'flex', padding: 4, background: cs.surface, borderRadius: 12,
+          border: `1px solid ${cs.border}`, marginBottom: 18,
+        }}>
+          {[['month', 'Mensuel'], ['year', 'Annuel · −33 %']].map(([k, l]) => (
+            <button key={k} onClick={() => setPeriod(k)} className="cs-press" style={{
+              flex: 1, padding: '10px 12px', fontSize: 13, fontWeight: 600,
+              border: 'none', borderRadius: 9, cursor: 'pointer',
+              background: period === k ? cs.accent : 'transparent',
+              color: period === k ? '#fff' : cs.muted,
+              fontFamily: cs.sans, transition: 'background .25s ease, color .2s',
+            }}>{l}</button>
+          ))}
+        </div>
+
+        {plans.map((plan, i) => (
+          <div key={plan.id} className="cs-fade-up cs-card-press"
+            style={{
+              animationDelay: `${0.1 + i * 0.08}s`,
+              borderRadius: 22, padding: 24, marginBottom: 14,
+              background: plan.featured ? 'linear-gradient(135deg, #1a3a0f 0%, #2d6016 100%)' : cs.surface,
+              color: plan.featured ? cs.cream : cs.ink,
+              border: plan.featured ? 'none' : `1px solid ${cs.border}`,
+              position: 'relative', overflow: 'hidden',
+              boxShadow: plan.featured ? '0 18px 40px rgba(26,58,15,0.25)' : 'none',
+            }}>
+            {plan.featured && (
+              <>
+                <div className="cs-blob" style={{
+                  position: 'absolute', top: -30, right: -20, width: 180, height: 180,
+                  background: 'radial-gradient(circle, rgba(168,216,120,0.3) 0%, transparent 65%)',
+                  pointerEvents: 'none',
+                }}></div>
+                <div style={{
+                  position: 'absolute', top: 16, right: 16,
+                  fontSize: 10.5, fontWeight: 600,
+                  background: 'rgba(168,216,120,0.22)', color: '#a8d878',
+                  padding: '4px 10px', borderRadius: 999,
+                  letterSpacing: '0.06em', textTransform: 'uppercase',
+                }}>Recommandé</div>
+              </>
+            )}
+            <div style={{ position: 'relative' }}>
+              <div style={{ fontSize: 11.5, fontWeight: 600,
+                color: plan.featured ? '#a8d878' : cs.muted,
+                letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                {plan.name}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 8 }}>
+                <div style={{
+                  fontFamily: cs.serif, fontSize: 40, fontWeight: 500,
+                  letterSpacing: '-0.6px', lineHeight: 1,
+                }}>{plan.price}</div>
+                <div style={{ fontSize: 13, opacity: 0.7 }}>{plan.period}</div>
+              </div>
+
+              <div style={{
+                marginTop: 18, paddingTop: 16,
+                borderTop: plan.featured ? '1px solid rgba(168,216,120,0.18)' : `1px solid ${cs.border}`,
+              }}>
+                {plan.features.map(([label, ok], j) => (
+                  <div key={j} style={{
+                    display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0',
+                    fontSize: 13, opacity: ok ? 1 : 0.45,
+                  }}>
+                    <div style={{
+                      width: 18, height: 18, borderRadius: 999,
+                      background: plan.featured
+                        ? (ok ? 'rgba(168,216,120,0.22)' : 'rgba(232,226,216,0.1)')
+                        : (ok ? cs.accentTint : cs.surface2),
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flex: '0 0 auto',
+                    }}>
+                      {ok ? <CSIconCheck size={11} color={plan.featured ? '#a8d878' : cs.accent} />
+                        : <span style={{ fontSize: 12, color: cs.faint }}>·</span>}
+                    </div>
+                    {label}
+                  </div>
+                ))}
+              </div>
+
+              <button className="cs-press" onClick={onSubscribe} style={{
+                width: '100%', marginTop: 18, padding: '14px',
+                background: plan.featured ? cs.cream : cs.ink,
+                color: plan.featured ? cs.greenDark : cs.cream,
+                border: 'none', borderRadius: 12, fontWeight: 600, fontSize: 14,
+                cursor: 'pointer', fontFamily: cs.sans,
+              }}>{plan.cta}</button>
+            </div>
+          </div>
+        ))}
+
+        {/* Legal notice */}
+        <div className="cs-fade-up" style={{
+          animationDelay: '.3s', padding: 16,
+          background: cs.surface2, borderRadius: 14, marginTop: 8,
+          fontSize: 12, color: cs.muted, lineHeight: 1.6,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <CSIconShield size={16} color={cs.muted} style={{ flex: '0 0 auto', marginTop: 2 }} />
+            <div>
+              <strong style={{ color: cs.ink }}>Droit de rétractation (Art. L221-18 C. conso).</strong>
+              {' '}14 jours sans justification pour annuler. Résiliation possible à tout moment depuis votre compte.
+              Paiement sécurisé par Stripe (PCI-DSS Niveau 1).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Légal (3 documents accessibles via tabs) ────────────────────────
+function LegalView({ onBack, onCookieReset, dir }) {
+  const [doc, setDoc] = useState('confid');
+  const docs = {
+    mentions: { title: 'Mentions légales', content: <MentionsContent /> },
+    cgu: { title: "CGU", content: <CGUContent /> },
+    confid: { title: 'Confidentialité', content: <ConfidContent /> },
+  };
+
+  return (
+    <div className={`cs-screen enter-${dir === 'right' ? 'right' : 'left'}`}>
+      <div className="cs-status-pad" />
+      <TopBar title="Confidentialité & légal" onBack={onBack} />
+
+      <div style={{ padding: '4px 20px 8px' }}>
+        <div className="cs-fade-up" style={{
+          display: 'flex', padding: 4, background: cs.surface, borderRadius: 12,
+          border: `1px solid ${cs.border}`,
+        }}>
+          {[['confid', 'Confidentialité'], ['cgu', 'CGU'], ['mentions', 'Mentions']].map(([k, l]) => (
+            <button key={k} onClick={() => setDoc(k)} className="cs-press" style={{
+              flex: 1, padding: '9px 8px', fontSize: 12.5, fontWeight: 600,
+              border: 'none', borderRadius: 8, cursor: 'pointer',
+              background: doc === k ? cs.accent : 'transparent',
+              color: doc === k ? '#fff' : cs.muted,
+              fontFamily: cs.sans, transition: 'background .25s ease, color .2s',
+            }}>{l}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="cs-screen-scroll" style={{ padding: '12px 20px 24px' }}>
+        <div className="cs-fade-up" key={doc} style={{ animationDelay: '.04s' }}>
+          <h2 style={{
+            fontFamily: cs.serif, fontSize: 22, fontWeight: 500,
+            color: cs.ink, letterSpacing: '-0.3px', margin: '4px 0 8px',
+          }}>{docs[doc].title}</h2>
+          {docs[doc].content}
+        </div>
+
+        {doc === 'confid' && (
+          <div className="cs-fade-up" style={{ animationDelay: '.2s', marginTop: 16 }}>
+            <button className="cs-card-press" onClick={onCookieReset}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                padding: 14, background: cs.accentTint, border: 'none',
+                borderRadius: 12, cursor: 'pointer',
+              }}>
+              <div style={{
+                width: 34, height: 34, borderRadius: 10, background: cs.surface,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto',
+              }}>
+                <CSIconShield size={15} color={cs.accent} />
+              </div>
+              <div style={{ flex: 1, textAlign: 'left' }}>
+                <div style={{ fontSize: 13.5, fontWeight: 500, color: cs.accentInk }}>
+                  Modifier mes choix cookies
+                </div>
+                <div style={{ fontSize: 11.5, color: cs.muted, marginTop: 2 }}>
+                  Réafficher la bannière CNIL
+                </div>
+              </div>
+              <CSIconArrow size={13} color={cs.accentInk} />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Legal content components ─────────────────────────────────────────
+function LegalP({ children }) {
+  return <p style={{ fontSize: 13, color: cs.ink, lineHeight: 1.6, marginBottom: 12 }}>{children}</p>;
+}
+function LegalH({ children }) {
+  return (
+    <h3 style={{
+      fontSize: 14, fontWeight: 600, color: cs.ink, margin: '20px 0 8px',
+      paddingBottom: 6, borderBottom: `1px solid ${cs.border}`,
+    }}>{children}</h3>
+  );
+}
+
+function MentionsContent() {
+  return (
+    <>
+      <div style={{ fontSize: 11, color: cs.faint, marginBottom: 12, fontStyle: 'italic' }}>
+        Conformément à l'article 6 LCEN (loi n° 2004-575 du 21 juin 2004). Mis à jour mai 2026.
+      </div>
+      <LegalH>Éditeur</LegalH>
+      <LegalP>
+        CrocScore — auto-entreprise enregistrée en France.<br />
+        Contact : <a href="mailto:crocscore.help@gmail.com" style={{ color: cs.accent }}>crocscore.help@gmail.com</a>
+      </LegalP>
+      <LegalH>Directeur de la publication</LegalH>
+      <LegalP>Le représentant légal de CrocScore.</LegalP>
+      <LegalH>Hébergeur</LegalH>
+      <LegalP>
+        Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, USA.
+      </LegalP>
+      <LegalH>Propriété intellectuelle</LegalH>
+      <LegalP>
+        Les contenus de CrocScore (textes, design, logo) sont protégés. Les marques de croquettes
+        évaluées restent la propriété de leurs ayants droit ; aucun partenariat éditorial n'est sous-entendu.
+      </LegalP>
+      <LegalH>Données nutritionnelles</LegalH>
+      <LegalP>
+        Open Pet Food Facts (licence ODbL) + base CrocScore. Exactitude non garantie.
+      </LegalP>
+    </>
+  );
+}
+
+function CGUContent() {
+  return (
+    <>
+      <div style={{ fontSize: 11, color: cs.faint, marginBottom: 12, fontStyle: 'italic' }}>
+        Version en vigueur. Toute modification vous sera notifiée 15 jours à l'avance.
+      </div>
+      <LegalH>1. Acceptation</LegalH>
+      <LegalP>
+        L'accès à CrocScore vaut acceptation pleine et entière des présentes CGU et de la
+        politique de confidentialité.
+      </LegalP>
+      <LegalH>2. Âge minimum</LegalH>
+      <LegalP>
+        Service réservé aux personnes de <strong>15 ans ou plus</strong> (Art. 8 RGPD). Les mineurs
+        doivent obtenir l'accord d'un titulaire de l'autorité parentale.
+      </LegalP>
+      <LegalH>3. Nature du service</LegalH>
+      <LegalP>
+        CrocScore fournit des <strong>scores indicatifs</strong> de A à E, à titre purement informatif.
+        <strong> Ces scores ne constituent pas un avis vétérinaire</strong> et ne se substituent en aucun
+        cas à une consultation de professionnel de santé animale.
+      </LegalP>
+      <LegalH>4. Limites de responsabilité</LegalH>
+      <LegalP>
+        CrocScore ne peut être tenu responsable des décisions prises sur la base de ses scores.
+        Pour tout changement d'alimentation, consultez un vétérinaire.
+      </LegalP>
+      <LegalH>5. Compte utilisateur</LegalH>
+      <LegalP>
+        Authentification gérée par Firebase Auth (Google). Vous êtes responsable de la confidentialité
+        de vos identifiants. Suppression du compte sur simple demande par email.
+      </LegalP>
+      <LegalH>6. Données fournies</LegalH>
+      <LegalP>
+        Les scans, photos et profils animaux que vous saisissez restent vos données. Ils ne sont jamais
+        vendus à des tiers. Voir politique de confidentialité.
+      </LegalP>
+      <LegalH>7. Liens affiliés</LegalH>
+      <LegalP>
+        Lorsqu'un lien d'achat externe rémunère CrocScore, il est explicitement étiqueté <em>Affilié</em>.
+        Cette rémunération <strong>n'influence jamais le score</strong>.
+      </LegalP>
+      <LegalH>8. Droit applicable</LegalH>
+      <LegalP>
+        Droit français. Pour tout litige : tentative de médiation préalable obligatoire,
+        puis juridiction française compétente.
+      </LegalP>
+    </>
+  );
+}
+
+function ConfidContent() {
+  return (
+    <>
+      <div style={{ fontSize: 11, color: cs.faint, marginBottom: 12, fontStyle: 'italic' }}>
+        Conforme RGPD (UE) 2016/679. Mis à jour mai 2026.
+      </div>
+      <LegalH>Responsable du traitement</LegalH>
+      <LegalP>
+        CrocScore — <a href="mailto:crocscore.help@gmail.com" style={{ color: cs.accent }}>crocscore.help@gmail.com</a>
+      </LegalP>
+      <LegalH>Données collectées</LegalH>
+      <LegalP>
+        <strong>Compte</strong> : prénom, email, mot de passe chiffré (Firebase Auth).<br />
+        <strong>Usage</strong> : historique des scans, profils animaux (locaux sur l'appareil + sync compte).<br />
+        <strong>Technique</strong> : adresse IP (logs sécurité 30 j), cookies (voir ci-dessous).
+      </LegalP>
+      <LegalH>Base légale</LegalH>
+      <LegalP>
+        Art. 6.1.b RGPD (exécution du contrat) pour l'authentification.<br />
+        Art. 6.1.a RGPD (consentement) pour les cookies non essentiels et les communications marketing.
+      </LegalP>
+      <LegalH>Durée de conservation</LegalH>
+      <LegalP>
+        Compte actif : pendant l'usage du service.<br />
+        Après inactivité de 3 ans : email envoyé puis suppression.<br />
+        Sur demande : sous 30 jours (Art. 17 RGPD).
+      </LegalP>
+      <LegalH>Vos droits</LegalH>
+      <LegalP>
+        Accès, rectification, effacement, portabilité, limitation, opposition.
+        Réclamation possible auprès de la <a href="https://www.cnil.fr" target="_blank"
+          rel="noopener" style={{ color: cs.accent }}>CNIL</a>.
+      </LegalP>
+      <LegalH>Transferts hors UE</LegalH>
+      <LegalP>
+        Firebase Auth (Google) — données stockées en UE, transferts encadrés par les CCT.<br />
+        Vercel (hébergement) — basé USA, certifié DPF (Data Privacy Framework).
+      </LegalP>
+      <LegalH>Sécurité</LegalH>
+      <LegalP>
+        TLS 1.3 sur toutes les communications. Mots de passe chiffrés. Aucun mot de passe stocké en clair.
+      </LegalP>
+      <LegalH>Cookies</LegalH>
+      <LegalP>
+        Strictement nécessaires (session, préférences) : sans consentement.<br />
+        Mesure d'audience anonyme : avec consentement.<br />
+        Pas de cookies publicitaires.
+      </LegalP>
+    </>
+  );
+}
+
+window.SettingsView = SettingsView;
+window.PricingView = PricingView;
+window.LegalView = LegalView;
+
+</script>
+
+  <script type="text/babel">
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

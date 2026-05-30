@@ -14,7 +14,26 @@ Disallow: /localdb.js
 Disallow: /more_products.js
 Disallow: /opff_db.js
 Disallow: /sw.js
+
+# Scripts internes — non destinés au public
 Disallow: /gen-localdb*.js
+Disallow: /generate-localdb.js
+Disallow: /fetch-opff.js
+Disallow: /fetch-more.js
+Disallow: /extra_products.js
+Disallow: /premium-anims.js
+Disallow: /premium-overlay.css
+
+# Anciennes versions et archives
+Disallow: /crocscore-app.html
+Disallow: /crocscore-app%20(2).html
+Disallow: /crocscore-app%20(3).html
+Disallow: /crocscore-app%20(4).html
+Disallow: /crocscore-app%20(5).html
+Disallow: /CrocScore.zip
+Disallow: /CrocScore%20(1).zip
+Disallow: /CrocScore%20(2).zip
+
 Disallow: /.well-known/
 
 # ── Interdiction totale aux scrapers IA / LLM ────────────────────────────────

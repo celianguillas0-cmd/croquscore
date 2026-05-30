@@ -71,7 +71,7 @@ Attribution obligatoire ODbL respectée dans les mentions légales de l'applicat
 
 ---
 
-## Total système
+## Total système (actif en production)
 
 | Base | Produits | Données nutritionnelles | Source |
 |---|---|---|---|
@@ -79,6 +79,17 @@ Attribution obligatoire ODbL respectée dans les mentions légales de l'applicat
 | opff_db.js | ~632 | Réelles | ODbL — Open Pet Food Facts |
 | more_products.js | ~1 460 | Réelles | ODbL — Open Pet Food Facts / Open Food Facts |
 | **Total** | **~15 003** | | |
+
+## Fichier retiré : extra_products.js (30 mai 2026)
+
+Le fichier `extra_products.js` (~10 717 produits) a été **supprimé définitivement** du dépôt et du déploiement le 30 mai 2026 pour les raisons suivantes :
+
+- Données nutritionnelles **estimées** (`_estimated: true`) non issues d'étiquettes réelles
+- Fichier **non utilisé** dans l'application de production (`index.html`)
+- Risque théorique de contestation par des marques (données approximatives publiées sous leur nom)
+- Principe de précaution légale : suppression préventive d'une source de risque sans impact utilisateur
+
+Ce fichier n'apparaît plus dans aucun déploiement. Sa suppression est irréversible sur la branche de production.
 
 ---
 

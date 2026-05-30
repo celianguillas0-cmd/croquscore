@@ -26,8 +26,21 @@ files.zip
 # Backups d'anciennes versions — ne doivent pas être servis publiquement
 crocscore-app.html
 crocscore-app (2).html
+crocscore-app (3).html
+crocscore-app (4).html
+crocscore-app (5).html
 *.html.bak
 *.html.old
+
+# Archives zip — ne doivent pas être servis publiquement
+CrocScore.zip
+CrocScore (1).zip
+CrocScore (2).zip
+
+# Fichiers CSS/JS premium (non utilisés dans index.html)
+premium-anims.js
+premium-overlay.css
+
 package.json
 package-lock.json
 node_modules/
